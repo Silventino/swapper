@@ -1,0 +1,7 @@
+backend/src/shared/*
+frontend/src/shared/*
+node_modules/
+.env
+.idea
+.vscode
+build/
