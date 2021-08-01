@@ -13,36 +13,30 @@ import React, { useContext, useEffect, useState } from "react";
 import "reflect-metadata";
 import { waitForConfirmation } from "./algoHelper";
 import "./App.css";
+import CreateTransactionPage from "./components/CreateTransactionPage";
 import GridCenter from "./components/generic/GridCenter";
 import Header from "./components/Header";
 import SwapTransaction from "./components/SwapTransaction";
-import WalletContext from "./components/WalletContextProvider";
+import WalletContext, {
+  SimpleTransaction,
+} from "./components/WalletContextProvider";
 import { HEADER_HEIGHT } from "./constants";
 
 function App() {
   const walletContext = useContext(WalletContext);
   const classes = useStyles();
 
-  // useEffect(() => {
-  //   console.log("wallet", walletContext.state);
-  // }, [walletContext.state]);
+  const [transactions, setTransactions] = useState<SimpleTransaction[]>([
+    { from: "", to: "", asset: null, amount: 0 },
+    { from: "", to: "", asset: null, amount: 0 },
+  ]);
 
   return (
     <div className="App">
       <Header />
 
       <div className={classes.appContent}>
-        <Grid container spacing={4}>
-          <GridCenter item xs={12} md={6} style={{ marginTop: 10 }}>
-            <SwapTransaction index={0} />
-          </GridCenter>
-          <GridCenter item xs={12} md={6} style={{ marginTop: 10 }}>
-            <SwapTransaction index={1} />
-          </GridCenter>
-          <GridCenter item xs={12} style={{ marginTop: 20 }}>
-            <Button variant={"contained"}>CREATE ATOMIC TRANSACTION</Button>
-          </GridCenter>
-        </Grid>
+        <CreateTransactionPage />
       </div>
     </div>
   );
@@ -54,6 +48,7 @@ const useStyles = makeStyles<Theme>((theme) =>
       padding: 25,
       paddingTop: HEADER_HEIGHT + 25,
     },
+    swapGrid: { marginTop: 10 },
   })
 );
 

@@ -1,11 +1,12 @@
 import {
+  Button,
   createStyles,
   Grid,
   makeStyles,
   Theme,
   Typography,
 } from "@material-ui/core";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "reflect-metadata";
 import "../App.css";
 import GridCenter from "./generic/GridCenter";
@@ -13,21 +14,30 @@ import MyAddressInput from "./generic/MyAddressInput";
 import MyNumberInput from "./generic/MyNumberInput";
 import MySelect from "./generic/MySelect";
 import Title from "./generic/Title";
-import WalletContext from "./WalletContextProvider";
+import WalletContext, {
+  AssetInfo,
+  SimpleTransaction,
+} from "./WalletContextProvider";
 
 type Props = {
   index: number;
-  // transaction: MyTransaction;
-  // setTransaction: (x: MyTransaction) => void;
+  transaction: SimpleTransaction;
+  setTransaction: (x: SimpleTransaction) => void;
+  forceSenderLogged?: boolean;
+  forceReceiverLogged?: boolean;
 };
 
 const SwapTransaction: React.FC<Props> = (props) => {
-  const { index } = props;
+  const {
+    index,
+    transaction,
+    setTransaction,
+    forceSenderLogged,
+    forceReceiverLogged,
+  } = props;
   const classes = useStyles();
-  const [sender, setSender] = useState("");
-  const [receiver, setReceiver] = useState("");
-  const [asset, setAsset] = useState<any>(null);
-  const [quantity, setQuantity] = useState(0);
+
+  const [disabled, setDisabled] = useState(false);
 
   const walletContext = useContext(WalletContext);
 
@@ -41,37 +51,61 @@ const SwapTransaction: React.FC<Props> = (props) => {
         <GridCenter item xs={12}>
           <Title variant={"h4"}>Transaction #{index + 1}</Title>
         </GridCenter>
+
         <Grid item xs={12}>
-          <MyAddressInput
-            label={"Sender Address"}
-            value={sender}
-            onChange={(txt) => setSender(txt)}
-          />
+          {forceSenderLogged ? (
+            <MySelect
+              label={"Sender Address"}
+              options={walletContext.accounts.map((item) => item.address)}
+              getOptionLabel={(item) => (item ? `${item}` : "")}
+              value={transaction.from}
+              setValue={(txt) => setTransaction({ ...transaction, from: txt })}
+            />
+          ) : (
+            <MyAddressInput
+              label={"Sender Address"}
+              value={transaction.from}
+              onChange={(txt) => setTransaction({ ...transaction, from: txt })}
+            />
+          )}
         </Grid>
         <Grid item xs={12}>
-          <MyAddressInput
-            label={"Receiver Address"}
-            value={receiver}
-            onChange={(txt) => setReceiver(txt)}
-          />
+          {forceReceiverLogged ? (
+            <MySelect
+              label={"Receiver Address"}
+              options={walletContext.accounts.map((item) => item.address)}
+              getOptionLabel={(item) => (item ? `${item}` : "")}
+              value={transaction.to}
+              setValue={(txt) => setTransaction({ ...transaction, to: txt })}
+            />
+          ) : (
+            <MyAddressInput
+              label={"Receiver Address"}
+              value={transaction.to}
+              onChange={(txt) => setTransaction({ ...transaction, to: txt })}
+            />
+          )}
         </Grid>
 
         <Grid item xs={12}>
-          <MySelect
+          <MySelect<AssetInfo>
             label={"Asset"}
-            options={walletContext.selectedAccount.assets}
-            getOptionLabel={(item) => (item ? item["asset-id"].toString() : "")}
-            value={asset}
-            setValue={(x) => setAsset(x)}
+            options={walletContext.assets}
+            getOptionLabel={(item) =>
+              item ? `${item.assetname} (ID ${item.id})` : ""
+            }
+            value={transaction.asset}
+            setValue={(txt) => setTransaction({ ...transaction, asset: txt })}
           />
         </Grid>
 
         <Grid item xs={12}>
           <MyNumberInput
-            label={"Quantity"}
+            label={"Amount"}
             fullWidth
-            value={quantity}
-            onChange={(num) => setQuantity(num)}
+            decimalScale={transaction.asset ? transaction.asset.decimals : 0}
+            value={transaction.amount}
+            onChange={(txt) => setTransaction({ ...transaction, amount: txt })}
           />
         </Grid>
       </Grid>
