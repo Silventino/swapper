@@ -43,8 +43,7 @@ const Header: React.FC = (props) => {
 
 const useStyles = makeStyles<Theme>((theme) =>
   createStyles({
-    logo: { height: HEADER_HEIGHT - 10 },
-
+    logo: { height: HEADER_HEIGHT - 25 },
     header: {
       width: "100vw",
       backgroundColor: "#282c34",
@@ -56,7 +55,7 @@ const useStyles = makeStyles<Theme>((theme) =>
       alignItems: "center",
       justifyContent: "space-between",
       paddingRight: 10,
-      // paddingLeft: 10,
+      paddingLeft: 10,
     },
   })
 );
