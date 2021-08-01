@@ -8,6 +8,7 @@ import App from "./App";
 import { createTheme, MuiThemeProvider } from "@material-ui/core/styles";
 
 import { createGlobalStyle } from "styled-components";
+import { WalletContextProvider } from "./components/WalletContextProvider";
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -42,7 +43,9 @@ ReactDOM.render(
   <React.StrictMode>
     <GlobalStyle />
     <MuiThemeProvider theme={darkTheme}>
-      <App />
+      <WalletContextProvider>
+        <App />
+      </WalletContextProvider>
     </MuiThemeProvider>
   </React.StrictMode>,
   document.getElementById("root")
