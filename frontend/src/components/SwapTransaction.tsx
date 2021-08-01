@@ -1,18 +1,28 @@
-import { createStyles, Grid, makeStyles, Theme } from "@material-ui/core";
+import {
+  createStyles,
+  Grid,
+  makeStyles,
+  Theme,
+  Typography,
+} from "@material-ui/core";
 import React, { useContext, useState } from "react";
 import "reflect-metadata";
 import "../App.css";
+import GridCenter from "./generic/GridCenter";
 import MyAddressInput from "./generic/MyAddressInput";
 import MyNumberInput from "./generic/MyNumberInput";
 import MySelect from "./generic/MySelect";
+import Title from "./generic/Title";
 import WalletContext from "./WalletContextProvider";
 
 type Props = {
+  index: number;
   // transaction: MyTransaction;
   // setTransaction: (x: MyTransaction) => void;
 };
 
-const SwapTransaction: React.FC<Props> = () => {
+const SwapTransaction: React.FC<Props> = (props) => {
+  const { index } = props;
   const classes = useStyles();
   const [sender, setSender] = useState("");
   const [receiver, setReceiver] = useState("");
@@ -28,6 +38,9 @@ const SwapTransaction: React.FC<Props> = () => {
   return (
     <div>
       <Grid container className={classes.container} spacing={4}>
+        <GridCenter item xs={12}>
+          <Title variant={"h4"}>Transaction #{index + 1}</Title>
+        </GridCenter>
         <Grid item xs={12}>
           <MyAddressInput
             label={"Sender Address"}
@@ -76,6 +89,7 @@ const useStyles = makeStyles<Theme>((theme) =>
       borderRadius: "5px",
       display: "flex",
       alignItems: "center",
+      // marginTop: 50,
     },
   })
 );

@@ -1,6 +1,7 @@
 import {
   Button,
   createStyles,
+  Grid,
   makeStyles,
   Theme,
   Typography,
@@ -12,6 +13,7 @@ import React, { useContext, useEffect, useState } from "react";
 import "reflect-metadata";
 import { waitForConfirmation } from "./algoHelper";
 import "./App.css";
+import GridCenter from "./components/generic/GridCenter";
 import Header from "./components/Header";
 import SwapTransaction from "./components/SwapTransaction";
 import WalletContext from "./components/WalletContextProvider";
@@ -30,25 +32,18 @@ function App() {
       <Header />
 
       <div className={classes.appContent}>
-        <SwapTransaction />
+        <Grid container spacing={4}>
+          <GridCenter item xs={12} md={6} style={{ marginTop: 10 }}>
+            <SwapTransaction index={0} />
+          </GridCenter>
+          <GridCenter item xs={12} md={6} style={{ marginTop: 10 }}>
+            <SwapTransaction index={1} />
+          </GridCenter>
+          <GridCenter item xs={12} style={{ marginTop: 20 }}>
+            <Button variant={"contained"}>CREATE ATOMIC TRANSACTION</Button>
+          </GridCenter>
+        </Grid>
       </div>
-      {/* <div>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={() => connectMyAlgo()}
-      >
-        Connect
-      </Button>
-        <Button variant="contained" color="primary" onClick={() => balance()}>
-          BALANCE
-        </Button>
-        <Button variant="contained" color="primary" onClick={() => group()}>
-          SEND
-        </Button>
-      </div> */}
-
-      {/* {login ? <Login /> : <SignIn />} */}
     </div>
   );
 }
