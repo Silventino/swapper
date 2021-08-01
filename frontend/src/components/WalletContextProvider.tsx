@@ -1,6 +1,7 @@
 import React, { createContext, useEffect, useState } from "react";
 import MyAlgoClient from "@randlabs/myalgo-connect";
 import algosdk, { Algodv2 } from "algosdk";
+import axios from "axios";
 
 const token =
   "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
@@ -56,7 +57,6 @@ type PropsWalletContext = {
   accounts: AccountInfo[];
   selectedAccount: AccountDetailedInfo | null;
   myAlgoClient: MyAlgoClient;
-  algodClient: Algodv2;
   functions: {
     connectMyAlgo: () => void;
     selectAccount: (addr: string) => void;
@@ -69,7 +69,6 @@ const DEFAULT_VALUE = {
   selectedAccount: null,
   // setState: () => {}, //função de inicialização
   myAlgoClient: new MyAlgoClient(),
-  algodClient: new algosdk.Algodv2(token, server, port),
   functions: { connectMyAlgo: () => {}, selectAccount: (addr: string) => {} },
 };
 
@@ -88,7 +87,6 @@ const WalletContextProvider: React.FC = ({ children }) => {
   ] = useState<AccountDetailedInfo | null>(null);
 
   const [myAlgoClient] = useState(new MyAlgoClient());
-  const [algodClient] = useState(new algosdk.Algodv2(token, server, port));
 
   const connectMyAlgo = async () => {
     try {
@@ -106,12 +104,10 @@ const WalletContextProvider: React.FC = ({ children }) => {
 
   const selectAccount = async (address: string) => {
     try {
-      let accountInfo = (await algodClient
-        .accountInformation(address)
-        .do()) as AccountDetailedInfo;
-      setSelectedAccount(accountInfo);
-      // console.log("Account balance: %d microAlgos", accountInfo.amount);
-      // console.log("Account", accountInfo);
+      const res = await axios.get<AccountDetailedInfo>(
+        `https://testnet.algoexplorerapi.io/v2/accounts/${address}`
+      );
+      setSelectedAccount(res.data);
     } catch (err) {
       console.log("err", err);
     }
@@ -125,7 +121,6 @@ const WalletContextProvider: React.FC = ({ children }) => {
     <WalletContext.Provider
       value={{
         myAlgoClient,
-        algodClient,
         accounts,
         selectedAccount,
         functions: { connectMyAlgo, selectAccount },

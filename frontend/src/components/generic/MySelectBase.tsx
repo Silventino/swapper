@@ -9,8 +9,8 @@ import React, { useEffect } from "react";
 
 type Props<T> = {
   options: T[];
-  getOptionLabel: (x: T) => string;
-  value: T;
+  getOptionLabel: (x: T | null) => string;
+  value: T | null;
   setValue: (x: T) => void;
 };
 

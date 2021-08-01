@@ -36,6 +36,7 @@ const GlobalStyle = createGlobalStyle`
 const darkTheme = createTheme({
   palette: {
     type: "dark",
+    primary: { main: "#61dafb" },
   },
 });
 

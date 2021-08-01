@@ -14,18 +14,22 @@ import MySelectBase from "./MySelectBase";
 type Props<T> = {
   label: string;
   options: T[];
-  getOptionLabel: (x: T) => string;
-  value: T;
+  getOptionLabel: (x: T | null) => string;
+  value: T | null;
   setValue: (x: T) => void;
+  fullWidth?: boolean;
 };
 
 function MySelect<T>(props: Props<T>) {
-  const { label, options, getOptionLabel, value, setValue } = props;
+  const { label, options, getOptionLabel, value, setValue, fullWidth } = props;
 
   useEffect(() => {}, []);
 
   return (
-    <FormControl variant="filled">
+    <FormControl
+      // variant="filled"
+      fullWidth={fullWidth === false ? false : true}
+    >
       <InputLabel>{label}</InputLabel>
       <MySelectBase
         options={options}
