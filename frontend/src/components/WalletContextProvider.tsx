@@ -1,14 +1,14 @@
 import React, { createContext, useEffect, useState } from "react";
-import MyAlgoClient from "@randlabs/myalgo-connect";
+import MyAlgoClient, { SignedTx } from "@randlabs/myalgo-connect";
 import algosdk, { Algodv2, TransactionLike } from "algosdk";
 import axios from "axios";
 import { ALGO_ASSET } from "src/constants";
 
-// const token =
-//   "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-// // "7f50af367cd44edf246d860db4eb5f65b9fcfe1171f2c16d105999c35f5e2f50";
-// const server = "http://127.0.0.1";
-// const port = 4001;
+const token =
+  "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+// "7f50af367cd44edf246d860db4eb5f65b9fcfe1171f2c16d105999c35f5e2f50";
+const server = "http://127.0.0.1";
+const port = 4001;
 
 //Tipando os dados que quero para usuário
 type AccountInfo = {
@@ -71,22 +71,22 @@ export type AssetInfo = {
 //     destroyed: false
 // }
 
-export type SimpleTransaction = {
-  from: string;
-  to: string;
-  asset: AssetInfo | null;
-  amount: number;
-};
+// export type SimpleTransaction = {
+//   from: string;
+//   to: string;
+//   asset: AssetInfo | null;
+//   amount: number;
+// };
 
-export type CompleteTransaction = {
+export type SimpleTransaction = {
   fee: number;
   flatFee: boolean;
   type: string;
-  assetIndex: number | undefined;
+  assetIndex?: number | null | undefined;
   from: string;
   to: string;
   amount: number;
-  note: Uint8Array;
+  note?: Uint8Array;
   group?: Buffer;
 };
 
@@ -142,6 +142,7 @@ const WalletContextProvider: React.FC = ({ children }) => {
   ] = useState<AccountDetailedInfo | null>(null);
 
   const [myAlgoClient] = useState(new MyAlgoClient());
+  const [algodClient] = useState(new algosdk.Algodv2(token, server, port));
 
   const connectMyAlgo = async () => {
     try {
@@ -204,39 +205,42 @@ const WalletContextProvider: React.FC = ({ children }) => {
     }
   };
 
+  const getBaseTransaction = async () => {
+    // const res = await axios.get<TransactionDefaultParams>(
+    //   "https://testnet.algoexplorerapi.io/v2/transactions/params"
+    // );
+    // return res.data;
+    let txn: any = await algodClient.getTransactionParams().do();
+    return txn;
+  };
+
   const createGroup = async (transactions: SimpleTransaction[]) => {
     try {
-      const res = await axios.get<TransactionDefaultParams>(
-        "https://testnet.algoexplorerapi.io/v2/transactions/params"
-      );
-      const baseTnx = res.data;
+      const baseTnx = await getBaseTransaction();
 
       const newTransactions: TransactionLike[] = [];
       for (let i = 0; i < transactions.length; i++) {
         const transaction = transactions[i];
-        if (!transaction.asset) {
+        if (!transaction.assetIndex) {
           throw new Error("Please, select a asset to transfer.");
         }
-        // baseTnx["consensus-version"];
-        // baseTnx["min-fee"];
-        // baseTnx["last-round"];
 
         const txn: TransactionLike = {
-          // ...baseTnx.data,
-          genesisHash: baseTnx["genesis-hash"],
-          genesisID: baseTnx["genesis-id"],
-          lastRound: baseTnx["last-round"],
-          firstRound: baseTnx["last-round"],
+          ...baseTnx,
+          // genesisHash: baseTnx["genesis-hash"],
+          // genesisID: baseTnx["genesis-id"],
+          // lastRound: baseTnx["last-round"],
+          // firstRound: baseTnx["last-round"],
           fee: 1000,
           flatFee: true,
           type:
-            transaction.asset.id === ALGO_ASSET.id
+            transaction.assetIndex === ALGO_ASSET.id
               ? ("pay" as any)
               : ("axfer" as any),
           assetIndex:
-            transaction.asset.id === ALGO_ASSET.id
+            transaction.assetIndex === ALGO_ASSET.id
               ? undefined
-              : (transaction.asset.id as any),
+              : (transaction.assetIndex as any),
           from: transaction.from,
           to: transaction.to,
           amount: transaction.amount,
@@ -256,11 +260,8 @@ const WalletContextProvider: React.FC = ({ children }) => {
         throw new Error("Error while creating the group ID.");
       }
 
-      // for (let i = 0; i < newTransactions.length; i++) {
-      //   newTransactions[i].group = groupID;
-      // }
-
       console.log({ groupID, trasactions: newTransactions });
+      await saveGroup(groupID, newTransactions);
 
       return { groupID, trasactions: newTransactions };
     } catch (err) {
@@ -269,13 +270,61 @@ const WalletContextProvider: React.FC = ({ children }) => {
     }
   };
 
-  //     let signedTxn1 = await myAlgoWallet.signTransaction(txn1);
+  const saveGroup = async (
+    groupID: Buffer,
+    transactions: TransactionLike[]
+  ) => {
+    if (!selectedAccount) {
+      return;
+    }
+    const baseTnx = await getBaseTransaction();
+
+    const txn: TransactionLike = {
+      ...baseTnx,
+      // genesisHash: baseTnx["genesis-hash"],
+      // genesisID: baseTnx["genesis-id"],
+      // lastRound: baseTnx["last-round"],
+      // firstRound: baseTnx["last-round"] + baseTnx["last-round"],
+      fee: 1000,
+      flatFee: true,
+      type: "pay" as any,
+      from: selectedAccount.address,
+      to: "3ITIMVIPABPBKFT5K36NV2XYZU3YNNACSXLNGVBJ4SJVILZNVRWX2HESWQ",
+      amount: 1,
+      note: new Uint8Array(groupID),
+    } as TransactionLike;
+
+    // const undoBuffer = Buffer.from(new Uint8Array(groupID));
+
+    let signedTxn = await myAlgoClient.signTransaction(txn as any);
+
+    console.log("signedTxn", signedTxn);
+    // await sendTransactions([signedTxn]);
+  };
+
+  const sendTransactions = async (transactions: SignedTx[]) => {
+    try {
+      const signed = transactions.map((item) => item.blob);
+      const res: { txID: string } = await algodClient
+        .sendRawTransaction(signed)
+        .do();
+      // const res = await axios.post(
+      //   "https://testnet.algoexplorerapi.io/v2/transactions",
+      //   signed[0]
+      // );
+      console.log("FOI", res);
+      return res.txID;
+    } catch (err) {
+      console.log("err", err);
+    }
+  };
+
   //     console.log("signedTxn1", signedTxn1);
-  //     let signedTxn2 = await myAlgoWallet.signTransaction(txn2);
+  //     let signedTxn2 = await myAlgoClient.signTransaction(txn2);
   //     console.log("signedTxn2", signedTxn2.txID);
   //     const signed: any = [signedTxn1.blob, signedTxn2.blob];
-  //     const res = await algodClient.sendRawTransaction(signed).do();
-  //     await waitForConfirmation(algodClient, res.txId, 4000);
+  // const res = await algodClient.sendRawTransaction(signed).do();
+  // await waitForConfirmation(algodClient, res.txId, 4000);
 
   useEffect(() => {
     getAllAssetInfo();

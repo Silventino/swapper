@@ -1,9 +1,9 @@
 import { Router } from "express";
-import authRoute from "./routes/authRoute";
+import atomicRoute from "./routes/atomicRoute";
 
 export default () => {
   const app = Router();
-  authRoute(app);
+  atomicRoute(app);
 
   return app;
 };

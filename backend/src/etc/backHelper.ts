@@ -1,9 +1,9 @@
 import env from "../loaders/env";
 import jwt from "jsonwebtoken";
 
-export function createToken(user: { id: string }): string {
-  user = Object.assign({}, user);
-  const token = jwt.sign(user, env.JWT_SECRET, {
+export function createToken(atomic: { id: string }): string {
+  atomic = Object.assign({}, atomic);
+  const token = jwt.sign(atomic, env.JWT_SECRET, {
     // expiresIn: seconds, // if you want to put a expire date
   });
 

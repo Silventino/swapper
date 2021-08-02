@@ -19,8 +19,24 @@ function CreateTransactionPage() {
   const classes = useStyles();
 
   const [transactions, setTransactions] = useState<SimpleTransaction[]>([
-    { from: "", to: "", asset: null, amount: 0 },
-    { from: "", to: "", asset: null, amount: 0 },
+    {
+      from: "",
+      to: "",
+      assetIndex: null,
+      amount: 0,
+      fee: 1000,
+      flatFee: true,
+      type: "",
+    },
+    {
+      from: "",
+      to: "",
+      assetIndex: null,
+      amount: 0,
+      fee: 1000,
+      flatFee: true,
+      type: "",
+    },
   ]);
 
   if (!walletContext.selectedAccount) {
@@ -38,8 +54,6 @@ function CreateTransactionPage() {
               transactions[index] = t;
               setTransactions([...transactions]);
             }}
-            forceSenderLogged={index === 0}
-            forceReceiverLogged={index !== 0}
           />
         </GridCenter>
       ))}

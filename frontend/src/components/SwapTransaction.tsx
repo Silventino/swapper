@@ -23,23 +23,23 @@ type Props = {
   index: number;
   transaction: SimpleTransaction;
   setTransaction: (x: SimpleTransaction) => void;
-  forceSenderLogged?: boolean;
-  forceReceiverLogged?: boolean;
 };
 
 const SwapTransaction: React.FC<Props> = (props) => {
-  const {
-    index,
-    transaction,
-    setTransaction,
-    forceSenderLogged,
-    forceReceiverLogged,
-  } = props;
+  const { index, transaction, setTransaction } = props;
   const classes = useStyles();
 
   const [disabled, setDisabled] = useState(false);
+  const [selectedAsset, setSelectedAsset] = useState<AssetInfo | null>(null);
 
   const walletContext = useContext(WalletContext);
+
+  useEffect(() => {
+    const newAsset = walletContext.assets.find(
+      (item) => item.id === transaction.assetIndex
+    );
+    setSelectedAsset(newAsset ?? null);
+  }, [transaction.assetIndex]);
 
   if (!walletContext.selectedAccount) {
     return null;
@@ -53,38 +53,18 @@ const SwapTransaction: React.FC<Props> = (props) => {
         </GridCenter>
 
         <Grid item xs={12}>
-          {forceSenderLogged ? (
-            <MySelect
-              label={"Sender Address"}
-              options={walletContext.accounts.map((item) => item.address)}
-              getOptionLabel={(item) => (item ? `${item}` : "")}
-              value={transaction.from}
-              setValue={(txt) => setTransaction({ ...transaction, from: txt })}
-            />
-          ) : (
-            <MyAddressInput
-              label={"Sender Address"}
-              value={transaction.from}
-              onChange={(txt) => setTransaction({ ...transaction, from: txt })}
-            />
-          )}
+          <MyAddressInput
+            label={"Sender Address"}
+            value={transaction.from}
+            onChange={(txt) => setTransaction({ ...transaction, from: txt })}
+          />
         </Grid>
         <Grid item xs={12}>
-          {forceReceiverLogged ? (
-            <MySelect
-              label={"Receiver Address"}
-              options={walletContext.accounts.map((item) => item.address)}
-              getOptionLabel={(item) => (item ? `${item}` : "")}
-              value={transaction.to}
-              setValue={(txt) => setTransaction({ ...transaction, to: txt })}
-            />
-          ) : (
-            <MyAddressInput
-              label={"Receiver Address"}
-              value={transaction.to}
-              onChange={(txt) => setTransaction({ ...transaction, to: txt })}
-            />
-          )}
+          <MyAddressInput
+            label={"Receiver Address"}
+            value={transaction.to}
+            onChange={(txt) => setTransaction({ ...transaction, to: txt })}
+          />
         </Grid>
 
         <Grid item xs={12}>
@@ -94,8 +74,10 @@ const SwapTransaction: React.FC<Props> = (props) => {
             getOptionLabel={(item) =>
               item ? `${item.assetname} (ID ${item.id})` : ""
             }
-            value={transaction.asset}
-            setValue={(txt) => setTransaction({ ...transaction, asset: txt })}
+            value={selectedAsset}
+            setValue={(asset) =>
+              setTransaction({ ...transaction, assetIndex: asset.id })
+            }
           />
         </Grid>
 
@@ -103,7 +85,7 @@ const SwapTransaction: React.FC<Props> = (props) => {
           <MyNumberInput
             label={"Amount"}
             fullWidth
-            decimalScale={transaction.asset ? transaction.asset.decimals : 0}
+            decimalScale={selectedAsset ? selectedAsset.decimals : 0}
             value={transaction.amount}
             onChange={(txt) => setTransaction({ ...transaction, amount: txt })}
           />

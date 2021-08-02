@@ -8,15 +8,15 @@ import { createConnection } from "typeorm";
 // import "reflect-metadata";
 import env from "./loaders/env";
 import expressLoader from "./loaders/express";
-import UserModel from "./models/UserModel";
+import AtomicModel from "./models/AtomicModel";
 
 const main = async () => {
   try {
     const connection = await createConnection();
     console.log("Testing database connection...");
-    const userModel = connection.getCustomRepository(UserModel);
-    const usuario = await userModel.findOne({ select: ["name"] });
-    console.log("User checked:", usuario);
+    const atomicModel = connection.getCustomRepository(AtomicModel);
+    const usuario = await atomicModel.findOne({ select: ["name"] });
+    console.log("Atomic checked:", usuario);
 
     // load app
     const app = expressLoader();
