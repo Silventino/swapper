@@ -1,9 +1,9 @@
-import { Router } from "express";
-import atomicRoute from "./routes/atomicRoute";
+import { Router } from 'express';
+import transactionRoute from './routes/transactionRoute';
 
 export default () => {
   const app = Router();
-  atomicRoute(app);
+  transactionRoute(app);
 
   return app;
 };
