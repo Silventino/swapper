@@ -1,23 +1,13 @@
-import {
-  Button,
-  createStyles,
-  Grid,
-  makeStyles,
-  Theme,
-  Typography,
-} from "@material-ui/core";
-import React, { useContext, useEffect, useState } from "react";
-import "reflect-metadata";
-import "../App.css";
-import GridCenter from "./generic/GridCenter";
-import MyAddressInput from "./generic/MyAddressInput";
-import MyNumberInput from "./generic/MyNumberInput";
-import MySelect from "./generic/MySelect";
-import Title from "./generic/Title";
-import WalletContext, {
-  AssetInfo,
-  SimpleTransaction,
-} from "./WalletContextProvider";
+import { Button, createStyles, Grid, makeStyles, Theme, Typography } from '@material-ui/core';
+import React, { useContext, useEffect, useState } from 'react';
+import 'reflect-metadata';
+import '../App.css';
+import GridCenter from './generic/GridCenter';
+import MyAddressInput from './generic/MyAddressInput';
+import MyNumberInput from './generic/MyNumberInput';
+import MySelect from './generic/MySelect';
+import Title from './generic/Title';
+import WalletContext, { AssetInfo, SimpleTransaction } from './WalletContextProvider';
 
 type Props = {
   index: number;
@@ -35,9 +25,7 @@ const SwapTransaction: React.FC<Props> = (props) => {
   const walletContext = useContext(WalletContext);
 
   useEffect(() => {
-    const newAsset = walletContext.assets.find(
-      (item) => item.id === transaction.assetIndex
-    );
+    const newAsset = walletContext.assets.find((item) => item.id === transaction.assetIndex);
     setSelectedAsset(newAsset ?? null);
   }, [transaction.assetIndex]);
 
@@ -49,41 +37,38 @@ const SwapTransaction: React.FC<Props> = (props) => {
     <div>
       <Grid container className={classes.container} spacing={4}>
         <GridCenter item xs={12}>
-          <Title variant={"h4"}>Transaction #{index + 1}</Title>
+          <Title variant={'h4'}>Transaction #{index + 1}</Title>
         </GridCenter>
 
         <Grid item xs={12}>
+          <MySelect<AssetInfo>
+            label={'Asset'}
+            options={walletContext.assets}
+            getOptionLabel={(item) => (item ? `${item.assetname}` : '')}
+            // getOptionLabel={(item) => (item ? `${item.assetname} (ID ${item.id})` : '')}
+            value={selectedAsset}
+            setValue={(asset) => setTransaction({ ...transaction, assetIndex: asset.id })}
+          />
+        </Grid>
+
+        <Grid item xs={12}>
           <MyAddressInput
-            label={"Sender Address"}
+            label={'Sender Address'}
             value={transaction.from}
             onChange={(txt) => setTransaction({ ...transaction, from: txt })}
           />
         </Grid>
         <Grid item xs={12}>
           <MyAddressInput
-            label={"Receiver Address"}
+            label={'Receiver Address'}
             value={transaction.to}
             onChange={(txt) => setTransaction({ ...transaction, to: txt })}
           />
         </Grid>
 
         <Grid item xs={12}>
-          <MySelect<AssetInfo>
-            label={"Asset"}
-            options={walletContext.assets}
-            getOptionLabel={(item) =>
-              item ? `${item.assetname} (ID ${item.id})` : ""
-            }
-            value={selectedAsset}
-            setValue={(asset) =>
-              setTransaction({ ...transaction, assetIndex: asset.id })
-            }
-          />
-        </Grid>
-
-        <Grid item xs={12}>
           <MyNumberInput
-            label={"Amount"}
+            label={'Amount'}
             fullWidth
             decimalScale={selectedAsset ? selectedAsset.decimals : 0}
             value={transaction.amount}
@@ -98,15 +83,15 @@ const SwapTransaction: React.FC<Props> = (props) => {
 const useStyles = makeStyles<Theme>((theme) =>
   createStyles({
     container: {
-      backgroundColor: "#282c34",
+      backgroundColor: '#282c34',
       // width: "300px",
       // minHeight: "400px",
       maxWidth: 400,
-      borderRadius: "5px",
-      display: "flex",
-      alignItems: "center",
+      borderRadius: '5px',
+      display: 'flex',
+      alignItems: 'center'
       // marginTop: 50,
-    },
+    }
   })
 );
 

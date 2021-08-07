@@ -1,13 +1,14 @@
-import React, { createContext, useEffect, useState } from "react";
-import MyAlgoClient, { SignedTx } from "@randlabs/myalgo-connect";
-import algosdk, { Algodv2, TransactionLike } from "algosdk";
-import axios from "axios";
-import { ALGO_ASSET } from "src/constants";
+import React, { createContext, useEffect, useState } from 'react';
+import MyAlgoClient, { SignedTx } from '@randlabs/myalgo-connect';
+import algosdk, { Algodv2, TransactionLike } from 'algosdk';
+import axios from 'axios';
+import { ALGO_ASSET } from 'src/constants';
+import { waitForConfirmation } from 'src/helpers/algoHelper';
+import transactionApi from 'src/api/transactionApi';
 
-const token =
-  "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+const token = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
 // "7f50af367cd44edf246d860db4eb5f65b9fcfe1171f2c16d105999c35f5e2f50";
-const server = "http://127.0.0.1";
+const server = 'http://127.0.0.1';
 const port = 4001;
 
 //Tipando os dados que quero para usuário
@@ -19,19 +20,19 @@ type AccountInfo = {
 type AccountDetailedInfo = {
   address: string;
   amount: number;
-  "amount-without-pending-rewards": number;
-  "apps-local-state": [];
-  "apps-total-schema": { "num-byte-slice": number; "num-uint": number };
+  'amount-without-pending-rewards': number;
+  'apps-local-state': [];
+  'apps-total-schema': { 'num-byte-slice': number; 'num-uint': number };
   assets: {
     amount: number;
-    "asset-id": number;
+    'asset-id': number;
     creator: string;
-    "is-frozen": boolean;
+    'is-frozen': boolean;
   }[];
-  "created-apps": [];
-  "created-assets": [];
-  "pending-rewards": number;
-  "reward-base": number;
+  'created-apps': [];
+  'created-assets': [];
+  'pending-rewards': number;
+  'reward-base': number;
   rewards: number;
   round: number;
   status: string;
@@ -104,12 +105,12 @@ type PropsWalletContext = {
 };
 
 type TransactionDefaultParams = {
-  "consensus-version": string;
+  'consensus-version': string;
   fee: number;
-  "genesis-hash": string;
-  "genesis-id": string;
-  "last-round": number;
-  "min-fee": number;
+  'genesis-hash': string;
+  'genesis-id': string;
+  'last-round': number;
+  'min-fee': number;
 };
 
 //Valor default do contexto
@@ -122,8 +123,8 @@ const DEFAULT_VALUE = {
   functions: {
     connectMyAlgo: () => {},
     selectAccount: (addr: string) => {},
-    createGroup: (t: SimpleTransaction[]) => {},
-  },
+    createGroup: (t: SimpleTransaction[]) => {}
+  }
 };
 
 //criando nosso contexto WalletContext
@@ -136,10 +137,7 @@ const WalletContext = createContext<PropsWalletContext>(DEFAULT_VALUE);
 const WalletContextProvider: React.FC = ({ children }) => {
   const [accounts, setAccounts] = useState<AccountInfo[]>([]);
   const [assets, setAssets] = useState<AssetInfo[]>([]);
-  const [
-    selectedAccount,
-    setSelectedAccount,
-  ] = useState<AccountDetailedInfo | null>(null);
+  const [selectedAccount, setSelectedAccount] = useState<AccountDetailedInfo | null>(null);
 
   const [myAlgoClient] = useState(new MyAlgoClient());
   const [algodClient] = useState(new algosdk.Algodv2(token, server, port));
@@ -152,33 +150,29 @@ const WalletContextProvider: React.FC = ({ children }) => {
       if (!selectedAccount && res.length) {
         selectAccount(res[0].address);
       }
-      console.log("res", res);
+      console.log('res', res);
     } catch (err) {
-      console.log("err", err);
+      console.log('err', err);
       throw err;
     }
   };
 
   const selectAccount = async (address: string) => {
     try {
-      const res = await axios.get<AccountDetailedInfo>(
-        `https://testnet.algoexplorerapi.io/v2/accounts/${address}`
-      );
+      const res = await axios.get<AccountDetailedInfo>(`https://testnet.algoexplorerapi.io/v2/accounts/${address}`);
       setSelectedAccount(res.data);
     } catch (err) {
-      console.log("err", err);
+      console.log('err', err);
       throw err;
     }
   };
 
   const getAssetInfo = async (assetId: string | number) => {
     try {
-      const res = await axios.get<AssetInfo>(
-        `https://testnet.algoexplorerapi.io/v1/asset/${assetId}`
-      );
+      const res = await axios.get<AssetInfo>(`https://testnet.algoexplorerapi.io/v1/asset/${assetId}`);
       return res.data;
     } catch (err) {
-      console.log("err", err);
+      console.log('err', err);
       throw err;
     }
   };
@@ -192,7 +186,7 @@ const WalletContextProvider: React.FC = ({ children }) => {
       const newAssets: AssetInfo[] = [ALGO_ASSET];
       for (let i = 0; i < selectedAccount.assets.length; i++) {
         const item = selectedAccount.assets[i];
-        const res = await getAssetInfo(item["asset-id"]);
+        const res = await getAssetInfo(item['asset-id']);
         if (res) {
           newAssets.push(res);
         }
@@ -200,7 +194,7 @@ const WalletContextProvider: React.FC = ({ children }) => {
 
       setAssets(newAssets);
     } catch (err) {
-      console.log("err", err);
+      console.log('err', err);
       throw err;
     }
   };
@@ -222,42 +216,30 @@ const WalletContextProvider: React.FC = ({ children }) => {
       for (let i = 0; i < transactions.length; i++) {
         const transaction = transactions[i];
         if (!transaction.assetIndex) {
-          throw new Error("Please, select a asset to transfer.");
+          throw new Error('Please, select a asset to transfer.');
         }
 
         const txn: TransactionLike = {
           ...baseTnx,
-          // genesisHash: baseTnx["genesis-hash"],
-          // genesisID: baseTnx["genesis-id"],
-          // lastRound: baseTnx["last-round"],
-          // firstRound: baseTnx["last-round"],
           fee: 1000,
           flatFee: true,
-          type:
-            transaction.assetIndex === ALGO_ASSET.id
-              ? ("pay" as any)
-              : ("axfer" as any),
-          assetIndex:
-            transaction.assetIndex === ALGO_ASSET.id
-              ? undefined
-              : (transaction.assetIndex as any),
+          type: transaction.assetIndex === ALGO_ASSET.id ? ('pay' as any) : ('axfer' as any),
+          assetIndex: transaction.assetIndex === ALGO_ASSET.id ? undefined : (transaction.assetIndex as any),
           from: transaction.from,
           to: transaction.to,
           amount: transaction.amount,
-          note: new Uint8Array(
-            Buffer.from("Transaction made with the help of Atomic Ant")
-          ),
+          note: new Uint8Array(Buffer.from('Transaction made with the help of Atomic Ant'))
         } as TransactionLike;
         newTransactions.push(txn);
       }
 
       // Group both transactions
       let txgroup = algosdk.assignGroupID(newTransactions as TransactionLike[]);
-      console.log("txgroup", txgroup);
+      console.log('txgroup', txgroup);
 
       const groupID = txgroup[0].group;
       if (!groupID) {
-        throw new Error("Error while creating the group ID.");
+        throw new Error('Error while creating the group ID.');
       }
 
       console.log({ groupID, trasactions: newTransactions });
@@ -265,15 +247,12 @@ const WalletContextProvider: React.FC = ({ children }) => {
 
       return { groupID, trasactions: newTransactions };
     } catch (err) {
-      console.log("err", err);
+      console.log('err', err);
       throw err;
     }
   };
 
-  const saveGroup = async (
-    groupID: Buffer,
-    transactions: TransactionLike[]
-  ) => {
+  const saveGroup = async (groupID: Buffer, transactions: TransactionLike[]) => {
     if (!selectedAccount) {
       return;
     }
@@ -281,41 +260,40 @@ const WalletContextProvider: React.FC = ({ children }) => {
 
     const txn: TransactionLike = {
       ...baseTnx,
-      // genesisHash: baseTnx["genesis-hash"],
-      // genesisID: baseTnx["genesis-id"],
-      // lastRound: baseTnx["last-round"],
-      // firstRound: baseTnx["last-round"] + baseTnx["last-round"],
       fee: 1000,
       flatFee: true,
-      type: "pay" as any,
+      type: 'pay' as any,
       from: selectedAccount.address,
-      to: "3ITIMVIPABPBKFT5K36NV2XYZU3YNNACSXLNGVBJ4SJVILZNVRWX2HESWQ",
+      to: '3ITIMVIPABPBKFT5K36NV2XYZU3YNNACSXLNGVBJ4SJVILZNVRWX2HESWQ',
       amount: 1,
-      note: new Uint8Array(groupID),
+      note: new Uint8Array(groupID)
     } as TransactionLike;
 
     // const undoBuffer = Buffer.from(new Uint8Array(groupID));
 
     let signedTxn = await myAlgoClient.signTransaction(txn as any);
 
-    console.log("signedTxn", signedTxn);
-    // await sendTransactions([signedTxn]);
+    console.log('signedTxn', signedTxn);
+    const txID = await sendTransactions([signedTxn]);
+    if (!txID) {
+      throw new Error('Transaction incompleted.');
+    }
+    waitForConfirmation(algodClient, txID, 10000);
+    transactionApi.insertAtomicTransaction(transactions, txID);
   };
 
   const sendTransactions = async (transactions: SignedTx[]) => {
     try {
       const signed = transactions.map((item) => item.blob);
-      const res: { txID: string } = await algodClient
-        .sendRawTransaction(signed)
-        .do();
+      const res: { txID: string } = await algodClient.sendRawTransaction(signed).do();
       // const res = await axios.post(
       //   "https://testnet.algoexplorerapi.io/v2/transactions",
       //   signed[0]
       // );
-      console.log("FOI", res);
+      console.log('FOI', res);
       return res.txID;
     } catch (err) {
-      console.log("err", err);
+      console.log('err', err);
     }
   };
 
@@ -337,7 +315,7 @@ const WalletContextProvider: React.FC = ({ children }) => {
         accounts,
         selectedAccount,
         assets,
-        functions: { connectMyAlgo, selectAccount, createGroup },
+        functions: { connectMyAlgo, selectAccount, createGroup }
         // setState,
       }}
     >

@@ -1,14 +1,17 @@
-import "reflect-metadata";
-import React from "react";
-import ReactDOM from "react-dom";
+import 'reflect-metadata';
+import React from 'react';
+import ReactDOM from 'react-dom';
 // import "./index.css";
-import App from "./App";
+import App from './App';
 // import reportWebVitals from "./reportWebVitals";
 
-import { createTheme, MuiThemeProvider } from "@material-ui/core/styles";
+import { createTheme, MuiThemeProvider } from '@material-ui/core/styles';
 
-import { createGlobalStyle } from "styled-components";
-import { WalletContextProvider } from "./components/WalletContextProvider";
+import { createGlobalStyle } from 'styled-components';
+import { WalletContextProvider } from './components/WalletContextProvider';
+
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -35,21 +38,32 @@ const GlobalStyle = createGlobalStyle`
 
 const darkTheme = createTheme({
   palette: {
-    type: "dark",
-    primary: { main: "#61dafb" },
-  },
+    type: 'dark',
+    primary: { main: '#61dafb' }
+  }
 });
 
 ReactDOM.render(
   <React.StrictMode>
     <GlobalStyle />
+    <ToastContainer
+      position="top-right"
+      autoClose={5000}
+      hideProgressBar={false}
+      newestOnTop={false}
+      closeOnClick
+      rtl={false}
+      pauseOnFocusLoss
+      draggable
+      pauseOnHover
+    />
     <MuiThemeProvider theme={darkTheme}>
       <WalletContextProvider>
         <App />
       </WalletContextProvider>
     </MuiThemeProvider>
   </React.StrictMode>,
-  document.getElementById("root")
+  document.getElementById('root')
 );
 
 // If you want to start measuring performance in your app, pass a function

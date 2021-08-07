@@ -1,10 +1,10 @@
-import { createStyles, makeStyles, Theme } from "@material-ui/core";
-import React from "react";
-import "reflect-metadata";
-import "./App.css";
-import CreateTransactionPage from "./components/CreateTransactionPage";
-import Header from "./components/Header";
-import { HEADER_HEIGHT } from "./constants";
+import { createStyles, makeStyles, Theme } from '@material-ui/core';
+import React from 'react';
+import 'reflect-metadata';
+import './App.css';
+import CreateTransactionPage from './components/CreateTransactionPage';
+import Header from './components/Header';
+import { HEADER_HEIGHT } from './constants';
 
 function App() {
   const classes = useStyles();
@@ -25,8 +25,10 @@ const useStyles = makeStyles<Theme>((theme) =>
     appContent: {
       padding: 25,
       paddingTop: HEADER_HEIGHT + 25,
+      display: 'flex',
+      justifyContent: 'center'
     },
-    swapGrid: { marginTop: 10 },
+    swapGrid: { marginTop: 10 }
   })
 );
 
