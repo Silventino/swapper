@@ -6,6 +6,7 @@ import GridCenter from './generic/GridCenter';
 import MyAddressInput from './generic/MyAddressInput';
 import MyNumberInput from './generic/MyNumberInput';
 import MySelect from './generic/MySelect';
+import RainbowDiv from './generic/RainbowDiv';
 import Title from './generic/Title';
 import WalletContext, { AssetInfo, SimpleTransaction } from './WalletContextProvider';
 

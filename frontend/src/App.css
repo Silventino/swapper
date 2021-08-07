@@ -2,7 +2,7 @@
 /*#61dafb*/
 
 .App {
-  background-color: #000;
+  background-color: #151320;
   width: 100vw;
   min-height: 100vh;
   max-width: 100vw;
@@ -30,4 +30,45 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+/*animate the background gradient position, use vh so that start/end syncs up viewport horizontal*/
+.rainbow {
+  height: 100%;
+  width: 100%;
+  position: relative;
+  border-radius: 5px;
+  box-shadow: 0 20px 35px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+.rainbow:before {
+  content: '';
+  height: 300%;
+  width: 300%;
+  position: absolute;
+  background: conic-gradient(#fd004c, #fe9000, #fff020, #3edf4b, #3363ff, #b102b7, #fd004c);
+  left: -100%;
+  top: -100%;
+  animation: spin 2s infinite linear;
+}
+@keyframes spin {
+  100% {
+    transform: rotate(-360deg);
+  }
+}
+.rainbow:after {
+  content: '';
+  position: absolute;
+  background-color: #1c1b29;
+  height: calc(100% - 10px);
+  width: calc(100% - 10px);
+  top: 5px;
+  left: 5px;
+  border-radius: 5px;
+  /* font-family: 'Poppins', sans-serif;
+  color: #ffffff;
+  font-size: 20px;
+  letter-spacing: 6px;
+  display: grid;
+  place-items: center; */
 }

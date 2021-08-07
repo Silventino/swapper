@@ -3,6 +3,7 @@ import React from 'react';
 import 'reflect-metadata';
 import './App.css';
 import CreateTransactionPage from './components/CreateTransactionPage';
+import RainbowDiv from './components/generic/RainbowDiv';
 import Header from './components/Header';
 import { HEADER_HEIGHT } from './constants';
 
