@@ -1,8 +1,9 @@
 import { TransactionLike } from 'algosdk';
 import axios from 'axios';
-import SimpleTransaction from 'src/types/SimpleTransaction';
-
-const api = axios.create({ timeout: 30000 });
+import { fromCompleteTransaction } from 'src/helpers/helper';
+import CompleteTransaction from 'src/types/CompleteTransaction';
+import TransactionReq from 'src/types/TransactionReq';
+import myAxios from './myAxios';
 
 const PREFIX = 'api';
 const ROUTE = 'transaction';
@@ -10,7 +11,7 @@ const ROUTE = 'transaction';
 class TransactionApi {
   async getAtomicTransaction(parent: string) {
     try {
-      let res = await api.get(`/${PREFIX}/${ROUTE}`, { params: parent });
+      let res = await myAxios.post(`/${PREFIX}/${ROUTE}/get`, { params: parent });
       let data = res.data;
       return data;
     } catch (error) {
@@ -19,9 +20,10 @@ class TransactionApi {
     }
   }
 
-  async insertAtomicTransaction(transactions: TransactionLike[], parent: string) {
+  async insertAtomicTransaction(transactions: CompleteTransaction[], parent: string) {
     try {
-      let res = await api.post(`/${PREFIX}/${ROUTE}`, { transactions, parent });
+      const treated = transactions.map((item) => fromCompleteTransaction(item));
+      let res = await myAxios.post(`/${PREFIX}/${ROUTE}/insert`, { transactions: treated, parent });
       let data = res.data;
       return data;
     } catch (error) {

@@ -1,16 +1,9 @@
-import {
-  createStyles,
-  IconButton,
-  makeStyles,
-  Menu,
-  MenuItem,
-  Theme,
-} from "@material-ui/core";
-import Visibility from "@material-ui/icons/Visibility";
-import React, { useContext } from "react";
-import MyInput from "./MyInput";
-import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
-import WalletContext from "../WalletContextProvider";
+import { createStyles, IconButton, makeStyles, Menu, MenuItem, Theme } from '@material-ui/core';
+import Visibility from '@material-ui/icons/Visibility';
+import React, { useContext } from 'react';
+import MyInput from './MyInput';
+import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
+import WalletContext from '../WalletContextProvider';
 
 type Props = {
   label: string;
@@ -49,15 +42,9 @@ const MyAddressInput: React.FC<Props> = (props) => {
         }
       />
 
-      <Menu
-        id="simple-menu"
-        anchorEl={anchorEl}
-        keepMounted
-        open={Boolean(anchorEl)}
-        onClose={handleClose}
-      >
+      <Menu id="simple-menu" anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
         {walletContext.accounts.map((item) => (
-          <MenuItem onClick={() => onSelect(item.address)}>
+          <MenuItem key={item.address} onClick={() => onSelect(item.address)}>
             {item.address}
           </MenuItem>
         ))}

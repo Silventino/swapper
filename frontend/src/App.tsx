@@ -1,11 +1,13 @@
 import { createStyles, makeStyles, Theme } from '@material-ui/core';
+import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import React from 'react';
 import 'reflect-metadata';
 import './App.css';
-import CreateTransactionPage from './components/CreateTransactionPage';
+import CreateSwapPage from './pages/CreateSwapPage';
 import RainbowDiv from './components/generic/RainbowDiv';
 import Header from './components/Header';
 import { HEADER_HEIGHT } from './constants';
+import SignTransactionPage from './pages/SignTransactionPage';
 
 function App() {
   const classes = useStyles();
@@ -15,7 +17,16 @@ function App() {
       <Header />
 
       <div className={classes.appContent}>
-        <CreateTransactionPage />
+        <Router>
+          <Switch>
+            <Route path="/t/:id">
+              <SignTransactionPage />
+            </Route>
+            <Route path="/">
+              <CreateSwapPage />
+            </Route>
+          </Switch>
+        </Router>
       </div>
     </div>
   );

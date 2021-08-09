@@ -5,6 +5,10 @@ import axios from 'axios';
 import { ALGO_ASSET } from 'src/constants';
 import { waitForConfirmation } from 'src/helpers/algoHelper';
 import transactionApi from 'src/api/transactionApi';
+import { makeTestID } from 'src/helpers/helper';
+import BaseTransaction from 'src/types/BaseTransaction';
+import PartialTransaction from 'src/types/PartialTransaction';
+import CompleteTransaction from 'src/types/CompleteTransaction';
 
 const token = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
 // "7f50af367cd44edf246d860db4eb5f65b9fcfe1171f2c16d105999c35f5e2f50";
@@ -12,7 +16,7 @@ const server = 'http://127.0.0.1';
 const port = 4001;
 
 //Tipando os dados que quero para usuário
-type AccountInfo = {
+export type AccountInfo = {
   name: string;
   address: string;
 };
@@ -55,42 +59,6 @@ export type AssetInfo = {
   destroyed: boolean;
 };
 
-// type AssetInfo = {
-//     creator: "5DYIZMX7N4SAB44HLVRUGLYBPSN4UMPDZVTX7V73AIRMJQA3LKTENTLFZ4",
-//     owner: null,
-//     total: 12,
-//     decimals: 0,
-//     defaultfrozen: false,
-//     unitname: "YLDG004",
-//     assetname: "Yieldling Original #004",
-//     url: "https://ipfs.io/ipfs/bafkreihywqndusxvw27y5diiai3bndcetuiqzq6jgwciqjnbfki7mw4unq",
-//     managerkey: "5DYIZMX7N4SAB44HLVRUGLYBPSN4UMPDZVTX7V73AIRMJQA3LKTENTLFZ4",
-//     reserveaddr: "5DYIZMX7N4SAB44HLVRUGLYBPSN4UMPDZVTX7V73AIRMJQA3LKTENTLFZ4",
-//     circulatingsupply: 12,
-//     id: 284079976,
-//     verified: false,
-//     destroyed: false
-// }
-
-// export type SimpleTransaction = {
-//   from: string;
-//   to: string;
-//   asset: AssetInfo | null;
-//   amount: number;
-// };
-
-export type SimpleTransaction = {
-  fee: number;
-  flatFee: boolean;
-  type: string;
-  assetIndex?: number | null | undefined;
-  from: string;
-  to: string;
-  amount: number;
-  note?: Uint8Array;
-  group?: Buffer;
-};
-
 //Tipando as Props do contexto
 type PropsWalletContext = {
   accounts: AccountInfo[];
@@ -98,19 +66,10 @@ type PropsWalletContext = {
   assets: AssetInfo[];
   myAlgoClient: MyAlgoClient;
   functions: {
-    connectMyAlgo: () => void;
-    selectAccount: (addr: string) => void;
-    createGroup: (t: SimpleTransaction[]) => any;
+    connectMyAlgo: () => Promise<void>;
+    selectAccount: (addr: string) => Promise<void>;
+    createGroup: (t: PartialTransaction[]) => Promise<any>;
   };
-};
-
-type TransactionDefaultParams = {
-  'consensus-version': string;
-  fee: number;
-  'genesis-hash': string;
-  'genesis-id': string;
-  'last-round': number;
-  'min-fee': number;
 };
 
 //Valor default do contexto
@@ -121,9 +80,9 @@ const DEFAULT_VALUE = {
   // setState: () => {}, //função de inicialização
   myAlgoClient: new MyAlgoClient(),
   functions: {
-    connectMyAlgo: () => {},
-    selectAccount: (addr: string) => {},
-    createGroup: (t: SimpleTransaction[]) => {}
+    connectMyAlgo: async () => {},
+    selectAccount: async (addr: string) => {},
+    createGroup: async (t: PartialTransaction[]) => {}
   }
 };
 
@@ -144,8 +103,18 @@ const WalletContextProvider: React.FC = ({ children }) => {
 
   const connectMyAlgo = async () => {
     try {
-      const res = await myAlgoClient.connect();
-      // Accounts is an array that has all public account shared by the user
+      // const res = await myAlgoClient.connect();
+
+      const res = [
+        {
+          address: '3ITIMVIPABPBKFT5K36NV2XYZU3YNNACSXLNGVBJ4SJVILZNVRWX2HESWQ',
+          name: 'MyAlgoWallet'
+        },
+        {
+          address: 'DHMWJUWE5RSLI6Y7PU53UUT3VMN5U7NWP7DH2XLGYO3FRYJIUJUXBAXGLU',
+          name: 'TipBot'
+        }
+      ];
       setAccounts(res);
       if (!selectedAccount && res.length) {
         selectAccount(res[0].address);
@@ -204,22 +173,22 @@ const WalletContextProvider: React.FC = ({ children }) => {
     //   "https://testnet.algoexplorerapi.io/v2/transactions/params"
     // );
     // return res.data;
-    let txn: any = await algodClient.getTransactionParams().do();
+    let txn = (await algodClient.getTransactionParams().do()) as BaseTransaction;
     return txn;
   };
 
-  const createGroup = async (transactions: SimpleTransaction[]) => {
+  const createGroup = async (transactions: PartialTransaction[]) => {
     try {
       const baseTnx = await getBaseTransaction();
 
-      const newTransactions: TransactionLike[] = [];
+      const newTransactions: CompleteTransaction[] = [];
       for (let i = 0; i < transactions.length; i++) {
         const transaction = transactions[i];
         if (!transaction.assetIndex) {
           throw new Error('Please, select a asset to transfer.');
         }
 
-        const txn: TransactionLike = {
+        const txn: CompleteTransaction = {
           ...baseTnx,
           fee: 1000,
           flatFee: true,
@@ -229,7 +198,7 @@ const WalletContextProvider: React.FC = ({ children }) => {
           to: transaction.to,
           amount: transaction.amount,
           note: new Uint8Array(Buffer.from('Transaction made with the help of Atomic Ant'))
-        } as TransactionLike;
+        };
         newTransactions.push(txn);
       }
 
@@ -242,7 +211,10 @@ const WalletContextProvider: React.FC = ({ children }) => {
         throw new Error('Error while creating the group ID.');
       }
 
-      console.log({ groupID, trasactions: newTransactions });
+      for (let i = 0; i < newTransactions.length; i++) {
+        newTransactions[i].group = groupID;
+      }
+
       await saveGroup(groupID, newTransactions);
 
       return { groupID, trasactions: newTransactions };
@@ -252,48 +224,56 @@ const WalletContextProvider: React.FC = ({ children }) => {
     }
   };
 
-  const saveGroup = async (groupID: Buffer, transactions: TransactionLike[]) => {
+  const saveGroup = async (groupID: Buffer, transactions: CompleteTransaction[]) => {
     if (!selectedAccount) {
       return;
     }
-    const baseTnx = await getBaseTransaction();
 
+    // PRODUCTION ///////////
+    const baseTnx = await getBaseTransaction();
     const txn: TransactionLike = {
       ...baseTnx,
       fee: 1000,
       flatFee: true,
       type: 'pay' as any,
       from: selectedAccount.address,
-      to: '3ITIMVIPABPBKFT5K36NV2XYZU3YNNACSXLNGVBJ4SJVILZNVRWX2HESWQ',
+      to: 'DHMWJUWE5RSLI6Y7PU53UUT3VMN5U7NWP7DH2XLGYO3FRYJIUJUXBAXGLU',
       amount: 1,
       note: new Uint8Array(groupID)
     } as TransactionLike;
-
-    // const undoBuffer = Buffer.from(new Uint8Array(groupID));
-
     let signedTxn = await myAlgoClient.signTransaction(txn as any);
 
-    console.log('signedTxn', signedTxn);
-    const txID = await sendTransactions([signedTxn]);
+    // TEST
+    // console.log('signedTxn.blob 1.', signedTxn.blob);
+    // signedTxn.blob = new Uint8Array(Object.values(JSON.parse(JSON.stringify(signedTxn.blob))) as any);
+    // console.log('signedTxn.blob 2', signedTxn.blob);
+
+    const txID = await sendTransactions([signedTxn.blob]);
+
     if (!txID) {
       throw new Error('Transaction incompleted.');
     }
     waitForConfirmation(algodClient, txID, 10000);
-    transactionApi.insertAtomicTransaction(transactions, txID);
+    //////////////////////////
+
+    // DEV //////////////////
+    // const txID = makeTestID(20);
+    /////////////////////////
+
+    await transactionApi.insertAtomicTransaction(transactions, txID);
   };
 
-  const sendTransactions = async (transactions: SignedTx[]) => {
+  const sendTransactions = async (transactions: Uint8Array[]) => {
     try {
-      const signed = transactions.map((item) => item.blob);
-      const res: { txID: string } = await algodClient.sendRawTransaction(signed).do();
+      const res: { txId: string } = await algodClient.sendRawTransaction(transactions).do();
       // const res = await axios.post(
       //   "https://testnet.algoexplorerapi.io/v2/transactions",
       //   signed[0]
       // );
-      console.log('FOI', res);
-      return res.txID;
+      return res.txId;
     } catch (err) {
       console.log('err', err);
+      throw err;
     }
   };
 

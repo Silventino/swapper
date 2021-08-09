@@ -23,11 +23,11 @@ export default (app: Router) => {
 
   route.post('/insert', async (req: Request<InsertTransaction>, res: Response) => {
     try {
-      await getManager().transaction(async (EM) => {
+      const ret = await getManager().transaction(async (EM) => {
         const transactionService = new TransactionService(EM);
-        transactionService.insertAtomicTransaction(req.body.transactions, req.body.parent);
+        return await transactionService.insertAtomicTransaction(req.body.transactions, req.body.parent);
       });
-      return res.json({ ok: true }).status(200);
+      return res.json(ret).status(200);
     } catch (error) {
       return res.status(error.statusCode || 500).send(error.message);
     }

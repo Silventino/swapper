@@ -16,12 +16,18 @@ export default class TransactionService {
   }
 
   async insertAtomicTransaction(transactions: SimpleTransaction[], parent: string) {
+    // console.log('FLAG 1', transactions);
     const transactionModel = this.EM.getRepository(Transaction);
     for (let i = 0; i < transactions.length; i++) {
+      // console.log('FLAG 2');
       const untreated = transactions[i];
       const treated = new Transaction();
+      // console.log('FLAG 3');
       treated.fromSimpleTransaction(untreated, parent);
-      transactionModel.insert(treated);
+      // console.log('FLAG 4');
+      await transactionModel.insert(treated);
+      // console.log('FLAG 5');
     }
+    return await this.getAtomicTransaction(parent);
   }
 }

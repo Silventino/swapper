@@ -20,7 +20,7 @@ export default class Transaction {
   type!: string;
 
   @Column()
-  assetIndex?: number;
+  assetIndex!: number;
 
   @Column()
   from!: string;
@@ -42,11 +42,11 @@ export default class Transaction {
     this.fee = s.fee;
     this.flatFee = s.flatFee;
     this.type = s.type;
-    this.assetIndex = s.assetIndex;
+    this.assetIndex = s.assetIndex ?? 0;
     this.from = s.from;
     this.to = s.to;
     this.amount = s.amount;
-    this.note = new TextDecoder().decode(s.note);
+    this.note = '';
     this.group = JSON.stringify(s.group);
   }
 }

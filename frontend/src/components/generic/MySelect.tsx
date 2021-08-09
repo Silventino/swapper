@@ -1,27 +1,19 @@
-import {
-  makeStyles,
-  Theme,
-  createStyles,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-} from "@material-ui/core";
-import React, { useEffect } from "react";
+import { makeStyles, Theme, createStyles, FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
+import React, { useEffect } from 'react';
 
-import MySelectBase from "./MySelectBase";
+import MySelectBase from './MySelectBase';
 
 type Props<T> = {
   label: string;
   options: T[];
   getOptionLabel: (x: T | null) => string;
   value: T | null;
-  setValue: (x: T) => void;
+  onChange: (x: T) => void;
   fullWidth?: boolean;
 };
 
 function MySelect<T>(props: Props<T>) {
-  const { label, options, getOptionLabel, value, setValue, fullWidth } = props;
+  const { label, options, getOptionLabel, value, onChange, fullWidth } = props;
 
   useEffect(() => {}, []);
 
@@ -31,12 +23,7 @@ function MySelect<T>(props: Props<T>) {
       fullWidth={fullWidth === false ? false : true}
     >
       <InputLabel>{label}</InputLabel>
-      <MySelectBase
-        options={options}
-        getOptionLabel={getOptionLabel}
-        value={value}
-        setValue={setValue}
-      />
+      <MySelectBase options={options} getOptionLabel={getOptionLabel} value={value} onChange={onChange} />
     </FormControl>
   );
 }
