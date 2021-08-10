@@ -68,7 +68,7 @@ type PropsWalletContext = {
   functions: {
     connectMyAlgo: () => Promise<void>;
     selectAccount: (addr: string) => Promise<void>;
-    createGroup: (t: PartialTransaction[]) => Promise<any>;
+    createGroup: (t: PartialTransaction[]) => Promise<string>;
   };
 };
 
@@ -82,7 +82,7 @@ const DEFAULT_VALUE = {
   functions: {
     connectMyAlgo: async () => {},
     selectAccount: async (addr: string) => {},
-    createGroup: async (t: PartialTransaction[]) => {}
+    createGroup: async (t: PartialTransaction[]) => ''
   }
 };
 
@@ -215,9 +215,9 @@ const WalletContextProvider: React.FC = ({ children }) => {
         newTransactions[i].group = groupID;
       }
 
-      await saveGroup(groupID, newTransactions);
+      const txID = await saveGroup(groupID, newTransactions);
 
-      return { groupID, trasactions: newTransactions };
+      return txID;
     } catch (err) {
       console.log('err', err);
       throw err;
@@ -226,7 +226,7 @@ const WalletContextProvider: React.FC = ({ children }) => {
 
   const saveGroup = async (groupID: Buffer, transactions: CompleteTransaction[]) => {
     if (!selectedAccount) {
-      return;
+      return '';
     }
 
     // PRODUCTION ///////////
@@ -261,6 +261,8 @@ const WalletContextProvider: React.FC = ({ children }) => {
     /////////////////////////
 
     await transactionApi.insertAtomicTransaction(transactions, txID);
+
+    return txID;
   };
 
   const sendTransactions = async (transactions: Uint8Array[]) => {

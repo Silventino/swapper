@@ -1,15 +1,5 @@
-import {
-  makeStyles,
-  Theme,
-  createStyles,
-  FormControl,
-  InputLabel,
-  Input,
-  InputAdornment,
-  IconButton,
-} from "@material-ui/core";
-import React, { ReactNode, useEffect } from "react";
-import Visibility from "@material-ui/icons/Visibility";
+import { createStyles, FormControl, Input, InputAdornment, InputLabel, makeStyles, Theme } from '@material-ui/core';
+import React, { ReactNode } from 'react';
 
 type Props = {
   label: string;
@@ -17,10 +7,11 @@ type Props = {
   endAdornment?: ReactNode;
   value: string;
   onChange: (x: string) => void;
+  disabled?: boolean;
 };
 
 const MyInput: React.FC<Props> = (props) => {
-  const { label, fullWidth, endAdornment, value, onChange } = props;
+  const { label, fullWidth, endAdornment, value, onChange, disabled } = props;
   // useEffect(() => {}, []);
 
   return (
@@ -28,13 +19,10 @@ const MyInput: React.FC<Props> = (props) => {
       <InputLabel>{label}</InputLabel>
       <Input
         fullWidth={fullWidth}
-        endAdornment={
-          endAdornment ? (
-            <InputAdornment position="end">{endAdornment}</InputAdornment>
-          ) : undefined
-        }
+        endAdornment={endAdornment ? <InputAdornment position="end">{endAdornment}</InputAdornment> : undefined}
         value={value}
         onChange={(event) => onChange(event.target.value)}
+        disabled={disabled}
       />
     </FormControl>
   );

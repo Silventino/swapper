@@ -1,13 +1,13 @@
 import { Request, Response, Router } from 'express';
 import { getManager } from 'typeorm';
 import TransactionService from '../../services/TransactionService';
-import SimpleTransaction from '../../types/SimpleTransaction';
+import TransactionReq from '../../types/TransactionReq';
 
 const route = Router();
 
 type InsertTransaction = {
   parent: string;
-  transactions: SimpleTransaction[];
+  transactions: TransactionReq[];
 };
 
 export default (app: Router) => {
@@ -17,8 +17,11 @@ export default (app: Router) => {
     try {
       const EM = getManager();
       const transactionService = new TransactionService(EM);
-      transactionService.getAtomicTransaction(req.body.parent);
-    } catch (err) {}
+      const ret = await transactionService.getAtomicTransaction(req.body.parent);
+      return res.json(ret).status(200);
+    } catch (error) {
+      return res.status(error.statusCode || 500).send(error.message);
+    }
   });
 
   route.post('/insert', async (req: Request<InsertTransaction>, res: Response) => {

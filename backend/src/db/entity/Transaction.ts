@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { TextDecoder } from 'util';
-import SimpleTransaction from '../../types/SimpleTransaction';
+import TransactionReq from '../../types/TransactionReq';
 
 @Entity()
 export default class Transaction {
@@ -37,16 +37,23 @@ export default class Transaction {
   @Column()
   group?: string;
 
-  fromSimpleTransaction(s: SimpleTransaction, parent?: string) {
+  @Column()
+  firstRound!: number;
+
+  @Column()
+  genesisHash!: string;
+
+  @Column()
+  genesisID!: string;
+
+  @Column()
+  lastRound!: number;
+
+  @Column({ default: null })
+  blob?: string;
+
+  fromTransactionReq(s: TransactionReq, parent?: string) {
+    Object.assign(this, s);
     this.parentTransaction = parent ?? '';
-    this.fee = s.fee;
-    this.flatFee = s.flatFee;
-    this.type = s.type;
-    this.assetIndex = s.assetIndex ?? 0;
-    this.from = s.from;
-    this.to = s.to;
-    this.amount = s.amount;
-    this.note = '';
-    this.group = JSON.stringify(s.group);
   }
 }

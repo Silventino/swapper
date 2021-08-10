@@ -1,6 +1,6 @@
 import { makeStyles, Theme, createStyles, Button } from '@material-ui/core';
 import React, { useContext, useEffect } from 'react';
-import { HEADER_HEIGHT } from 'src/constants';
+import { colors, HEADER_HEIGHT } from 'src/constants';
 import logo from '../logo.svg';
 
 import clsx from 'clsx';
@@ -24,7 +24,8 @@ const Header: React.FC = (props) => {
   };
 
   return (
-    <div className={classes.header}>
+    <div className={clsx(classes.header)}>
+      {/* <h4 className={'pacifico'}>ROI</h4> */}
       <img src={logo} className={clsx(classes.logo, 'App-logo')} alt="logo" />
 
       {!Boolean(walletContext.accounts.length) && (
@@ -50,7 +51,7 @@ const useStyles = makeStyles<Theme>((theme) =>
     logo: { height: HEADER_HEIGHT - 25 },
     header: {
       width: '100vw',
-      backgroundColor: '#282c34',
+      backgroundColor: colors.background,
       position: 'absolute',
       top: 0,
       left: 0,
@@ -60,6 +61,11 @@ const useStyles = makeStyles<Theme>((theme) =>
       justifyContent: 'space-between',
       paddingRight: 10,
       paddingLeft: 10
+      // borderBottomWidth: 0.01,
+      // borderBottom: 'solid white'
+    },
+    title: {
+      color: 'white'
     }
   })
 );

@@ -8,6 +8,7 @@ import '../App.css';
 import ConnectedWalletSelect from './generic/ConnectedWalletSelect';
 import GridCenter from './generic/GridCenter';
 import MyAddressInput from './generic/MyAddressInput';
+import MyInput from './generic/MyInput';
 import MyNumberInput from './generic/MyNumberInput';
 import MySelect from './generic/MySelect';
 // // import RainbowDiv from './generic/RainbowDiv';
@@ -18,16 +19,12 @@ type Props = {
   index: number;
   transaction: PartialTransaction;
   setTransaction: (x: PartialTransaction) => void;
-  title?: string;
-  forceSenderConnected?: boolean;
-  forceReceiverConnected?: boolean;
 };
 
-const TransactionForm: React.FC<Props> = (props) => {
-  const { index, transaction, setTransaction, title, forceSenderConnected, forceReceiverConnected } = props;
+const TransactionSign: React.FC<Props> = (props) => {
+  const { index, transaction, setTransaction } = props;
   const classes = useStyles();
 
-  const [disabled, setDisabled] = useState(false);
   const [selectedAsset, setSelectedAsset] = useState<AssetInfo | null>(null);
 
   const walletContext = useContext(WalletContext);
@@ -44,7 +41,7 @@ const TransactionForm: React.FC<Props> = (props) => {
   return (
     <Grid container className={clsx(classes.container, 'rainbow-box')} spacing={4}>
       <GridCenter item xs={12}>
-        <Title variant={'h4'}>{title ?? `Transaction #${index + 1}`}</Title>
+        <Title variant={'h4'}>{`Transaction #${index + 1}`}</Title>
       </GridCenter>
 
       <GridCenter item xs={12}>
@@ -56,55 +53,18 @@ const TransactionForm: React.FC<Props> = (props) => {
       </GridCenter>
 
       <Grid item xs={12}>
-        <MySelect<AssetInfo>
-          label={'Asset'}
-          options={walletContext.assets}
-          getOptionLabel={(item) => (item ? `${item.assetname}` : '')}
-          // getOptionLabel={(item) => (item ? `${item.assetname} (ID ${item.id})` : '')}
-          value={selectedAsset}
-          onChange={(asset) => setTransaction({ ...transaction, assetIndex: asset.id })}
-        />
+        <MyInput label={'Asset'} value={selectedAsset?.assetname ?? ''} onChange={(asset) => {}} disabled />
       </Grid>
 
       <Grid item xs={12}>
-        {forceSenderConnected ? (
-          <ConnectedWalletSelect
-            label={'From'}
-            value={transaction.from}
-            onChange={(txt) => setTransaction({ ...transaction, from: txt })}
-          />
-        ) : (
-          <MyAddressInput
-            label={'From'}
-            value={transaction.from}
-            onChange={(txt) => setTransaction({ ...transaction, from: txt })}
-          />
-        )}
+        <MyInput label={'From'} value={transaction.from} onChange={(txt) => {}} disabled />
       </Grid>
       <Grid item xs={12}>
-        {forceReceiverConnected ? (
-          <ConnectedWalletSelect
-            label={'To'}
-            value={transaction.to}
-            onChange={(txt) => setTransaction({ ...transaction, to: txt })}
-          />
-        ) : (
-          <MyAddressInput
-            label={'To'}
-            value={transaction.to}
-            onChange={(txt) => setTransaction({ ...transaction, to: txt })}
-          />
-        )}
+        <MyInput label={'To'} value={transaction.to} onChange={(txt) => {}} disabled />
       </Grid>
 
       <Grid item xs={12}>
-        <MyNumberInput
-          label={'Amount'}
-          fullWidth
-          decimalScale={selectedAsset ? selectedAsset.decimals : 0}
-          value={transaction.amount}
-          onChange={(txt) => setTransaction({ ...transaction, amount: txt })}
-        />
+        <MyInput label={'Amount'} fullWidth value={transaction.amount.toString()} onChange={(txt) => {}} disabled />
       </Grid>
     </Grid>
   );
@@ -128,4 +88,4 @@ const useStyles = makeStyles<Theme>((theme) =>
   })
 );
 
-export default TransactionForm;
+export default TransactionSign;

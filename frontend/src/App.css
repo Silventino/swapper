@@ -1,4 +1,4 @@
-/*#282c34*/
+/*#1f2229*/
 /*#61dafb*/
 
 .App {
@@ -6,7 +6,7 @@
   width: 100vw;
   min-height: 100vh;
   max-width: 100vw;
-  overflow-y: hidden;
+  overflow: hidden;
   /* text-align: center;
   display: flex;
   justify-content: center;
@@ -33,7 +33,7 @@
 }
 
 /*animate the background gradient position, use vh so that start/end syncs up viewport horizontal*/
-.rainbow {
+/* .rainbow {
   height: 100%;
   width: 100%;
   position: relative;
@@ -65,10 +65,49 @@
   top: 5px;
   left: 5px;
   border-radius: 5px;
-  /* font-family: 'Poppins', sans-serif;
+  font-family: 'Poppins', sans-serif;
   color: #ffffff;
   font-size: 20px;
   letter-spacing: 6px;
   display: grid;
-  place-items: center; */
+  place-items: center;
+}
+*/
+
+/* .rainbow-box {
+  background-color: #302244;
+  border: 3px solid transparent;
+  border-image: linear-gradient(to bottom right, #b827fc 0%, #2c90fc 25%, #b8fd33 50%, #fec837 75%, #fd1892 100%);
+  border-image-slice: 1;
+  margin: 20px auto;
+} */
+
+.rainbowGradient {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  border-radius: 5px;
+  /* box-shadow: inset 0 0 12px 12px white, inset 0 0 3px 2px white; */
+  /* background: linear-gradient(to right, orange, yellow, green, cyan, blue, rgb(238, 130, 238)); */
+  background: linear-gradient(250deg, rgba(255, 0, 0, 0.8), rgba(255, 0, 0, 0) 70.71%),
+    linear-gradient(127deg, rgba(0, 255, 0, 0.8), rgba(0, 255, 0, 0) 70.71%),
+    linear-gradient(336deg, rgba(0, 0, 255, 0.8), rgba(0, 0, 255, 0) 70.71%);
+}
+.rainbowGradient2 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  border-radius: 5px;
+  /* box-shadow: inset 0 0 12px 12px white, inset 0 0 3px 2px white; */
+  background: linear-gradient(to right, orange, yellow, green, cyan, blue, rgb(238, 130, 238));
+  /* background: linear-gradient(250deg, rgba(255, 0, 0, 0.8), rgba(255, 0, 0, 0) 70.71%),
+    linear-gradient(127deg, rgba(0, 255, 0, 0.8), rgba(0, 255, 0, 0) 70.71%),
+    linear-gradient(336deg, rgba(0, 0, 255, 0.8), rgba(0, 0, 255, 0) 70.71%); */
+}
+
+.pacifico {
+  font-family: 'Pacifico', cursive;
+  color: white;
 }

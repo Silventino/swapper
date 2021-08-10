@@ -1,6 +1,6 @@
 import { AssetInfo } from './components/WalletContextProvider';
 
-export const HEADER_HEIGHT = 55;
+export const HEADER_HEIGHT = 70;
 
 export const ALGO_ASSET: AssetInfo = {
   creator: '',
@@ -18,4 +18,9 @@ export const ALGO_ASSET: AssetInfo = {
   id: 0,
   verified: true,
   destroyed: false
+};
+
+export const colors = {
+  backgroundDark: '#151320',
+  background: '#1f2229'
 };

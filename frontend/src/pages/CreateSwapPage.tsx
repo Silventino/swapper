@@ -9,10 +9,16 @@ import WalletContext from '../components/WalletContextProvider';
 import { HEADER_HEIGHT } from '../constants';
 import { showError } from 'src/helpers/helper';
 import PartialTransaction from 'src/types/PartialTransaction';
+import { useHistory } from 'react-router-dom';
+import Loader from 'src/components/generic/Loader';
 
 function CreateSwapPage() {
   const walletContext = useContext(WalletContext);
+
+  const [loading, setLoading] = useState(false);
   const classes = useStyles();
+
+  const history = useHistory();
 
   // DEV /////////////
   const [transactions, setTransactions] = useState<PartialTransaction[]>([
@@ -75,15 +81,22 @@ function CreateSwapPage() {
   };
 
   const createAtomicTransaction = async () => {
+    setLoading(true);
     try {
-      await walletContext.functions.createGroup(transactions);
+      const tx = await walletContext.functions.createGroup(transactions);
+      history.replace(`/tx/${tx}`);
     } catch (err) {
       showError(err);
     }
+    setLoading(false);
   };
 
   if (!walletContext.selectedAccount) {
     return null;
+  }
+
+  if (loading) {
+    return <Loader />;
   }
 
   return (
@@ -109,7 +122,7 @@ function CreateSwapPage() {
 
       <GridCenter item xs={12} style={{ marginTop: 20 }}>
         <Button variant={'contained'} onClick={() => createAtomicTransaction()}>
-          CREATE ATOMIC TRANSACTION
+          LET'S GO!
         </Button>
       </GridCenter>
     </Grid>

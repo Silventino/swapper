@@ -1,6 +1,6 @@
 import { EntityManager, getManager } from 'typeorm';
 import Transaction from '../db/entity/Transaction';
-import SimpleTransaction from '../types/SimpleTransaction';
+import TransactionReq from '../types/TransactionReq';
 
 export default class TransactionService {
   EM: EntityManager;
@@ -15,7 +15,7 @@ export default class TransactionService {
     return transactions;
   }
 
-  async insertAtomicTransaction(transactions: SimpleTransaction[], parent: string) {
+  async insertAtomicTransaction(transactions: TransactionReq[], parent: string) {
     // console.log('FLAG 1', transactions);
     const transactionModel = this.EM.getRepository(Transaction);
     for (let i = 0; i < transactions.length; i++) {
@@ -23,7 +23,7 @@ export default class TransactionService {
       const untreated = transactions[i];
       const treated = new Transaction();
       // console.log('FLAG 3');
-      treated.fromSimpleTransaction(untreated, parent);
+      treated.fromTransactionReq(untreated, parent);
       // console.log('FLAG 4');
       await transactionModel.insert(treated);
       // console.log('FLAG 5');

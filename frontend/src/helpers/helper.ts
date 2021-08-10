@@ -34,7 +34,7 @@ export function toCompleteTransaction(t: TransactionReq) {
   const newOne: CompleteTransaction = {
     ...t,
     note: t.note ? new Uint8Array(Object.values(JSON.parse(t.note)) as any) : undefined,
-    group: t.group ? new Buffer(Object.values(JSON.parse(t.group)) as any) : undefined
+    group: t.group ? Buffer.from(JSON.parse(t.group).data) : undefined
   };
   return newOne;
 }

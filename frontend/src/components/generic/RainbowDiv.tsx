@@ -5,11 +5,7 @@ import 'reflect-metadata';
 const RainbowDiv: React.FC = (props) => {
   const classes = useStyles();
 
-  return (
-    <div className={'rainbow'}>
-      <div style={{ zIndex: 10, position: 'inherit', padding: '10px' }}>{props.children}</div>
-    </div>
-  );
+  return <div className={'rainbowGradient'}>{props.children}</div>;
 };
 
 const useStyles = makeStyles<Theme>((theme) => createStyles({}));

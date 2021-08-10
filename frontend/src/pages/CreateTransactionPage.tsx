@@ -80,7 +80,7 @@ function CreateTransactionPage() {
       ))}
       <GridCenter item xs={12} style={{ marginTop: 20 }}>
         <Button variant={'contained'} onClick={() => createAtomicTransaction()}>
-          CREATE ATOMIC TRANSACTION
+          LET'S GO!
         </Button>
       </GridCenter>
     </Grid>

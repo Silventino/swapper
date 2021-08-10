@@ -19,7 +19,7 @@ function App() {
       <div className={classes.appContent}>
         <Router>
           <Switch>
-            <Route path="/t/:id">
+            <Route path="/tx/:id">
               <SignTransactionPage />
             </Route>
             <Route path="/">
@@ -35,8 +35,7 @@ function App() {
 const useStyles = makeStyles<Theme>((theme) =>
   createStyles({
     appContent: {
-      padding: 25,
-      paddingTop: HEADER_HEIGHT + 25,
+      marginTop: HEADER_HEIGHT + 40,
       display: 'flex',
       justifyContent: 'center'
     },
