@@ -99,6 +99,7 @@ type PropsWalletContext = {
     getAssetInfo: (assetId: string | number) => Promise<AssetInfo>;
     optinAsset: (assetId: string | number) => Promise<void>;
     verifyGroup: (parentTx: string, transactions: CompleteTransaction[]) => Promise<boolean>;
+    logout: () => void;
   };
 };
 
@@ -127,6 +128,9 @@ const DEFAULT_VALUE = {
       return {} as any;
     },
     verifyGroup: async () => {
+      return {} as any;
+    },
+    logout: async () => {
       return {} as any;
     }
   }
@@ -391,6 +395,11 @@ const WalletContextProvider: React.FC = ({ children }) => {
     }
   };
 
+  const logout = () => {
+    setAccounts([]);
+    setSelectedAccount(null);
+  };
+
   useEffect(() => {
     if (selectedAccount) {
       getAllAssetInfo();
@@ -416,7 +425,8 @@ const WalletContextProvider: React.FC = ({ children }) => {
           sendTransactions,
           getAssetInfo,
           optinAsset,
-          verifyGroup
+          verifyGroup,
+          logout
         }
       }}
     >
