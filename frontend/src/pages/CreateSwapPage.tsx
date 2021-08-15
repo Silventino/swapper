@@ -11,11 +11,14 @@ import { showError, showNotification } from 'src/helpers/helper';
 import PartialTransaction from 'src/types/PartialTransaction';
 import { useHistory } from 'react-router-dom';
 import Loader from 'src/components/generic/Loader';
+import ModalTermsOfService from 'src/components/ModalTermsOfService';
 
 function CreateSwapPage() {
   const walletContext = useContext(WalletContext);
 
   const [loading, setLoading] = useState(false);
+  const [openTermsOfService, setOpenTermsOfService] = useState(false);
+
   const classes = useStyles();
 
   const history = useHistory();
@@ -102,6 +105,15 @@ function CreateSwapPage() {
 
   return (
     <Grid container spacing={4} className={classes.container}>
+      <ModalTermsOfService
+        open={openTermsOfService}
+        onAccept={() => createAtomicTransaction()}
+        onClose={() => {
+          showError(new Error('Could not continue.'));
+          setOpenTermsOfService(false);
+        }}
+      />
+
       <GridCenter key={`transaction${0}`} item xs={12} md={6} className={classes.swapGrid}>
         <TransactionForm
           title={"You'll Send"}
@@ -122,7 +134,7 @@ function CreateSwapPage() {
       </GridCenter>
 
       <GridCenter item xs={12} style={{ marginTop: 20 }}>
-        <Button variant={'contained'} onClick={() => createAtomicTransaction()}>
+        <Button variant={'contained'} onClick={() => setOpenTermsOfService(true)}>
           LET'S GO!
         </Button>
       </GridCenter>

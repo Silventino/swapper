@@ -1,20 +1,25 @@
 import { createStyles, makeStyles, Theme } from '@material-ui/core';
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
-import React from 'react';
+import React, { useContext } from 'react';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import 'reflect-metadata';
 import './App.css';
-import CreateSwapPage from './pages/CreateSwapPage';
-import RainbowDiv from './components/generic/RainbowDiv';
 import Header from './components/Header';
+import ModalConnect from './components/ModalConnect';
+import WalletContext from './components/WalletContextProvider';
 import { HEADER_HEIGHT } from './constants';
+import CreateSwapPage from './pages/CreateSwapPage';
 import SignTransactionPage from './pages/SignTransactionPage';
 import SuccessPage from './pages/SuccessPage';
 
 function App() {
   const classes = useStyles();
 
+  const walletContext = useContext(WalletContext);
+
   return (
     <div className="App">
+      <ModalConnect />
+
       <Header />
 
       <div className={classes.appContent}>

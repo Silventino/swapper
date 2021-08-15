@@ -8,31 +8,19 @@ import WalletContext from './WalletContextProvider';
 import MySelect from './generic/MySelect';
 import MySelectBase from './generic/MySelectBase';
 import { showError } from 'src/helpers/helper';
+import ConnectButton from './ConnectButton';
 
 const Header: React.FC = (props) => {
   const walletContext = useContext(WalletContext);
 
-  useEffect(() => {}, []);
   const classes = useStyles();
-
-  const connect = () => {
-    try {
-      walletContext.functions.connectMyAlgo();
-    } catch (err) {
-      showError(err);
-    }
-  };
 
   return (
     <div className={clsx(classes.header)}>
       {/* <h4 className={'pacifico'}>ROI</h4> */}
       <img src={logo} className={clsx(classes.logo, 'App-logo')} alt="logo" />
 
-      {!Boolean(walletContext.accounts.length) && (
-        <Button variant={'contained'} onClick={() => connect()}>
-          Connect
-        </Button>
-      )}
+      {!Boolean(walletContext.accounts.length) && <ConnectButton />}
 
       {Boolean(walletContext.accounts.length) && (
         <MySelectBase
