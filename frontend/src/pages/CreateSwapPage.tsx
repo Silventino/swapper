@@ -7,7 +7,7 @@ import GridCenter from '../components/generic/GridCenter';
 import TransactionForm from '../components/TransactionForm';
 import WalletContext from '../components/WalletContextProvider';
 import { HEADER_HEIGHT } from '../constants';
-import { showError } from 'src/helpers/helper';
+import { showError, showNotification } from 'src/helpers/helper';
 import PartialTransaction from 'src/types/PartialTransaction';
 import { useHistory } from 'react-router-dom';
 import Loader from 'src/components/generic/Loader';
@@ -85,6 +85,7 @@ function CreateSwapPage() {
     try {
       const tx = await walletContext.functions.createGroup(transactions);
       history.replace(`/tx/${tx}`);
+      showNotification('Atomic transaction created!');
     } catch (err) {
       showError(err);
     }

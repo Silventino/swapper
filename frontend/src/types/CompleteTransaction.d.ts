@@ -8,5 +8,10 @@ declare type CompleteTransaction = BaseTransaction & {
   amount: number;
   note?: Uint8Array;
   group?: Buffer;
+
+  parentTransaction?: string;
+  id?: number;
+  blob?: Uint8Array;
+  txID?: string;
 };
 export default CompleteTransaction;

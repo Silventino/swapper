@@ -1,45 +1,28 @@
-import AlgodClient from "algosdk/dist/types/src/client/v2/algod/algod";
+import AlgodClient from 'algosdk/dist/types/src/client/v2/algod/algod';
 
-export const waitForConfirmation = async function (
-  algodClient: AlgodClient,
-  txId: string,
-  timeout: number
-) {
-  if (algodClient == null || txId == null || timeout < 0) {
-    throw new Error("Bad arguments");
+export const waitForConfirmation = async function (algodClient: AlgodClient, txID: string, timeout: number) {
+  if (algodClient == null || txID == null || timeout < 0) {
+    throw new Error('Bad arguments');
   }
 
   const status = await algodClient.status().do();
   if (status === undefined) {
-    throw new Error("Unable to get node status");
+    throw new Error('Unable to get node status');
   }
 
-  const startround = status["last-round"] + 1;
+  const startround = status['last-round'] + 1;
   let currentround = startround;
 
   while (currentround < startround + timeout) {
-    const pendingInfo = await algodClient
-      .pendingTransactionInformation(txId)
-      .do();
+    const pendingInfo = await algodClient.pendingTransactionInformation(txID).do();
     if (pendingInfo !== undefined) {
-      if (
-        pendingInfo["confirmed-round"] !== null &&
-        pendingInfo["confirmed-round"] > 0
-      ) {
+      if (pendingInfo['confirmed-round'] !== null && pendingInfo['confirmed-round'] > 0) {
         //Got the completed Transaction
         return pendingInfo;
       } else {
-        if (
-          pendingInfo["pool-error"] != null &&
-          pendingInfo["pool-error"].length > 0
-        ) {
+        if (pendingInfo['pool-error'] != null && pendingInfo['pool-error'].length > 0) {
           // If there was a pool error, then the transaction has been rejected!
-          throw new Error(
-            "Transaction " +
-              txId +
-              " rejected - pool error: " +
-              pendingInfo["pool-error"]
-          );
+          throw new Error('Transaction ' + txID + ' rejected - pool error: ' + pendingInfo['pool-error']);
         }
       }
     }
@@ -47,7 +30,5 @@ export const waitForConfirmation = async function (
     currentround++;
   }
 
-  throw new Error(
-    "Transaction " + txId + " not confirmed after " + timeout + " rounds!"
-  );
+  throw new Error('Transaction ' + txID + ' not confirmed after ' + timeout + ' rounds!');
 };

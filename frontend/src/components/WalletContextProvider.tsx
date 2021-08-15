@@ -1,14 +1,13 @@
-import React, { createContext, useEffect, useState } from 'react';
-import MyAlgoClient, { SignedTx } from '@randlabs/myalgo-connect';
-import algosdk, { Algodv2, TransactionLike } from 'algosdk';
+import MyAlgoClient from '@randlabs/myalgo-connect';
+import algosdk, { TransactionLike } from 'algosdk';
 import axios from 'axios';
+import React, { createContext, useEffect, useState } from 'react';
+import transactionApi from 'src/api/transactionApi';
 import { ALGO_ASSET } from 'src/constants';
 import { waitForConfirmation } from 'src/helpers/algoHelper';
-import transactionApi from 'src/api/transactionApi';
-import { makeTestID } from 'src/helpers/helper';
 import BaseTransaction from 'src/types/BaseTransaction';
-import PartialTransaction from 'src/types/PartialTransaction';
 import CompleteTransaction from 'src/types/CompleteTransaction';
+import PartialTransaction from 'src/types/PartialTransaction';
 
 const token = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
 // "7f50af367cd44edf246d860db4eb5f65b9fcfe1171f2c16d105999c35f5e2f50";
@@ -69,6 +68,10 @@ type PropsWalletContext = {
     connectMyAlgo: () => Promise<void>;
     selectAccount: (addr: string) => Promise<void>;
     createGroup: (t: PartialTransaction[]) => Promise<string>;
+    signTransaction: (t: CompleteTransaction) => Promise<CompleteTransaction>;
+    sendTransactions: (blobs: Uint8Array[]) => Promise<string>;
+    getAssetInfo: (assetId: string | number) => Promise<AssetInfo>;
+    optinAsset: (assetId: string | number) => Promise<void>;
   };
 };
 
@@ -82,7 +85,21 @@ const DEFAULT_VALUE = {
   functions: {
     connectMyAlgo: async () => {},
     selectAccount: async (addr: string) => {},
-    createGroup: async (t: PartialTransaction[]) => ''
+    createGroup: async (t: PartialTransaction[]) => {
+      return '';
+    },
+    signTransaction: async (t: CompleteTransaction) => {
+      return {} as any;
+    },
+    sendTransactions: async (t: Uint8Array[]) => {
+      return {} as any;
+    },
+    getAssetInfo: async (t: string | number) => {
+      return {} as any;
+    },
+    optinAsset: async (t: string | number) => {
+      return {} as any;
+    }
   }
 };
 
@@ -103,8 +120,10 @@ const WalletContextProvider: React.FC = ({ children }) => {
 
   const connectMyAlgo = async () => {
     try {
+      // PRODUTION ///////
       // const res = await myAlgoClient.connect();
 
+      // DEV /////////////
       const res = [
         {
           address: '3ITIMVIPABPBKFT5K36NV2XYZU3YNNACSXLNGVBJ4SJVILZNVRWX2HESWQ',
@@ -115,6 +134,8 @@ const WalletContextProvider: React.FC = ({ children }) => {
           name: 'TipBot'
         }
       ];
+      //////////////////
+
       setAccounts(res);
       if (!selectedAccount && res.length) {
         selectAccount(res[0].address);
@@ -177,6 +198,37 @@ const WalletContextProvider: React.FC = ({ children }) => {
     return txn;
   };
 
+  const optinAsset = async (assetIndex: number | string) => {
+    try {
+      const baseTnx = await getBaseTransaction();
+
+      if (!assetIndex) {
+        throw new Error('Please, select a asset to transfer.');
+      }
+
+      const txn: CompleteTransaction = {
+        ...baseTnx,
+        fee: 1000,
+        flatFee: true,
+        type: 'axfer',
+        assetIndex: parseInt(assetIndex as string),
+        from: selectedAccount!.address,
+        to: selectedAccount!.address,
+        amount: 0
+      };
+
+      const signed = await signTransaction(txn);
+      const txID = await sendTransactions([signed.blob!]);
+      await waitForConfirmation(algodClient, txID, 10000);
+      await selectAccount(selectedAccount!.address);
+
+      // return txID;
+    } catch (err) {
+      console.log('err', err);
+      throw err;
+    }
+  };
+
   const createGroup = async (transactions: PartialTransaction[]) => {
     try {
       const baseTnx = await getBaseTransaction();
@@ -204,7 +256,6 @@ const WalletContextProvider: React.FC = ({ children }) => {
 
       // Group both transactions
       let txgroup = algosdk.assignGroupID(newTransactions as TransactionLike[]);
-      console.log('txgroup', txgroup);
 
       const groupID = txgroup[0].group;
       if (!groupID) {
@@ -214,6 +265,8 @@ const WalletContextProvider: React.FC = ({ children }) => {
       for (let i = 0; i < newTransactions.length; i++) {
         newTransactions[i].group = groupID;
       }
+
+      // return newTransactions;
 
       const txID = await saveGroup(groupID, newTransactions);
 
@@ -229,6 +282,8 @@ const WalletContextProvider: React.FC = ({ children }) => {
       return '';
     }
 
+    // const teste = transactions.map((item) => fromCompleteTransaction(item));
+
     // PRODUCTION ///////////
     const baseTnx = await getBaseTransaction();
     const txn: TransactionLike = {
@@ -241,6 +296,7 @@ const WalletContextProvider: React.FC = ({ children }) => {
       amount: 1,
       note: new Uint8Array(groupID)
     } as TransactionLike;
+
     let signedTxn = await myAlgoClient.signTransaction(txn as any);
 
     // TEST
@@ -250,31 +306,43 @@ const WalletContextProvider: React.FC = ({ children }) => {
 
     const txID = await sendTransactions([signedTxn.blob]);
 
-    if (!txID) {
-      throw new Error('Transaction incompleted.');
-    }
-    waitForConfirmation(algodClient, txID, 10000);
     //////////////////////////
 
     // DEV //////////////////
     // const txID = makeTestID(20);
     /////////////////////////
 
-    await transactionApi.insertAtomicTransaction(transactions, txID);
+    await transactionApi.insertAtomicTransaction(selectedAccount.address, transactions, txID);
 
     return txID;
+  };
+
+  const signTransaction = async (txn: CompleteTransaction) => {
+    try {
+      const signed = await myAlgoClient.signTransaction(txn as any);
+      txn.blob = signed.blob;
+      txn.txID = signed.txID;
+      return txn;
+    } catch (err) {
+      console.log('err', err);
+      throw err;
+    }
   };
 
   const sendTransactions = async (transactions: Uint8Array[]) => {
     try {
       const res: { txId: string } = await algodClient.sendRawTransaction(transactions).do();
+
+      if (!res.txId) {
+        throw new Error('Transaction incompleted.');
+      }
+      await waitForConfirmation(algodClient, res.txId, 10000);
       // const res = await axios.post(
       //   "https://testnet.algoexplorerapi.io/v2/transactions",
       //   signed[0]
       // );
       return res.txId;
     } catch (err) {
-      console.log('err', err);
       throw err;
     }
   };
@@ -297,7 +365,15 @@ const WalletContextProvider: React.FC = ({ children }) => {
         accounts,
         selectedAccount,
         assets,
-        functions: { connectMyAlgo, selectAccount, createGroup }
+        functions: {
+          connectMyAlgo,
+          selectAccount,
+          createGroup,
+          signTransaction,
+          sendTransactions,
+          getAssetInfo,
+          optinAsset
+        }
         // setState,
       }}
     >

@@ -1,38 +1,91 @@
-import { Button, createStyles, Grid, makeStyles, Theme, Typography } from '@material-ui/core';
+import { Button, createStyles, Grid, makeStyles, Theme } from '@material-ui/core';
 import clsx from 'clsx';
 import React, { useContext, useEffect, useState } from 'react';
 import 'reflect-metadata';
+import transactionApi from 'src/api/transactionApi';
 import { colors } from 'src/constants';
-import PartialTransaction from 'src/types/PartialTransaction';
+import { showError } from 'src/helpers/helper';
+import CompleteTransaction from 'src/types/CompleteTransaction';
 import '../App.css';
-import ConnectedWalletSelect from './generic/ConnectedWalletSelect';
 import GridCenter from './generic/GridCenter';
-import MyAddressInput from './generic/MyAddressInput';
+import Loader from './generic/Loader';
 import MyInput from './generic/MyInput';
-import MyNumberInput from './generic/MyNumberInput';
-import MySelect from './generic/MySelect';
 // // import RainbowDiv from './generic/RainbowDiv';
 import Title from './generic/Title';
 import WalletContext, { AssetInfo } from './WalletContextProvider';
 
 type Props = {
   index: number;
-  transaction: PartialTransaction;
-  setTransaction: (x: PartialTransaction) => void;
+  transaction: CompleteTransaction;
+  onSign: () => void;
 };
 
 const TransactionSign: React.FC<Props> = (props) => {
-  const { index, transaction, setTransaction } = props;
+  const { index, transaction, onSign } = props;
   const classes = useStyles();
 
   const [selectedAsset, setSelectedAsset] = useState<AssetInfo | null>(null);
+  const [optedIn, setOptedIn] = useState(false);
+  const [isParticipating, setIsParticipating] = useState(false);
+  const [isSigned, setIsSigned] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const walletContext = useContext(WalletContext);
 
+  const getAsset = async () => {
+    setLoading(true);
+    try {
+      const newAsset = await walletContext.functions.getAssetInfo(transaction.assetIndex as any);
+      setSelectedAsset(newAsset ?? null);
+    } catch (err) {
+      showError(err);
+    }
+    setLoading(false);
+  };
+
+  const signTransaction = async () => {
+    setLoading(true);
+    try {
+      if (!walletContext.selectedAccount) {
+        return;
+      }
+      const signed = await walletContext.functions.signTransaction(transaction);
+      await transactionApi.signTransaction(walletContext.selectedAccount.address, signed);
+      onSign();
+    } catch (err) {
+      showError(err);
+    }
+    setLoading(false);
+  };
+
+  const optinAsset = async () => {
+    setLoading(true);
+    try {
+      if (!walletContext.selectedAccount) {
+        return;
+      }
+      await walletContext.functions.optinAsset(transaction.assetIndex!);
+      onSign();
+    } catch (err) {
+      showError(err);
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
-    const newAsset = walletContext.assets.find((item) => item.id === transaction.assetIndex);
-    setSelectedAsset(newAsset ?? null);
+    const newOptedIn = walletContext.assets.some((item) => item.id === transaction.assetIndex);
+    setOptedIn(newOptedIn);
+
+    getAsset();
   }, [transaction.assetIndex, walletContext.assets]);
+
+  useEffect(() => {
+    const newIsPaticipating = walletContext.selectedAccount?.address === transaction.from;
+    setIsParticipating(newIsPaticipating);
+
+    const newIsSigned = Boolean(transaction.txID && transaction.blob);
+    setIsSigned(newIsSigned);
+  }, [walletContext.accounts, transaction]);
 
   if (!walletContext.selectedAccount) {
     return null;
@@ -66,6 +119,30 @@ const TransactionSign: React.FC<Props> = (props) => {
       <Grid item xs={12}>
         <MyInput label={'Amount'} fullWidth value={transaction.amount.toString()} onChange={(txt) => {}} disabled />
       </Grid>
+
+      {loading && (
+        <GridCenter item xs={12}>
+          <div className={classes.loaderDiv}>
+            <Loader size={20} />
+          </div>
+        </GridCenter>
+      )}
+
+      {!loading && optedIn && (
+        <GridCenter item xs={12}>
+          <Button variant={'contained'} onClick={signTransaction} disabled={!isParticipating || isSigned}>
+            {isSigned ? 'SIGNED!' : 'SIGN'}
+          </Button>
+        </GridCenter>
+      )}
+
+      {!loading && !optedIn && (
+        <GridCenter item xs={12}>
+          <Button variant={'contained'} onClick={optinAsset}>
+            OPT-IN
+          </Button>
+        </GridCenter>
+      )}
     </Grid>
   );
 };
@@ -84,7 +161,8 @@ const useStyles = makeStyles<Theme>((theme) =>
       height: 200,
       objectFit: 'contain',
       borderRadius: 7
-    }
+    },
+    loaderDiv: { width: '100%', height: 50, display: 'flex', alignItems: 'center', justifyContent: 'center' }
   })
 );
 

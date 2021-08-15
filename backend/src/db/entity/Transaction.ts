@@ -52,6 +52,9 @@ export default class Transaction {
   @Column({ default: null })
   blob?: string;
 
+  @Column({ default: '' })
+  txID?: string;
+
   fromTransactionReq(s: TransactionReq, parent?: string) {
     Object.assign(this, s);
     this.parentTransaction = parent ?? '';

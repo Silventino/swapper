@@ -10,6 +10,8 @@ declare type TransactionReq = BaseTransaction & {
   group?: string;
 
   parentTransaction?: string;
+  id?: number;
   blob?: string;
+  txID?: string;
 };
 export default TransactionReq;

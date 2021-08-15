@@ -11,5 +11,6 @@ declare type TransactionReq = BaseTransaction & {
 
   parentTransaction?: string;
   blob?: string;
+  txID?: string;
 };
 export default TransactionReq;

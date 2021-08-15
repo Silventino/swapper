@@ -2,10 +2,12 @@
 import React from 'react';
 import PacmanLoader from 'react-spinners/PacmanLoader';
 
-type Props = {};
+type Props = { size?: number };
 
 const Loader: React.FC<Props> = (props) => {
-  return <PacmanLoader color={'#fff'} size={30} />;
+  const { size } = props;
+
+  return <PacmanLoader color={'#fff'} size={size ?? 30} />;
 };
 
 // type StyleProps = {};
