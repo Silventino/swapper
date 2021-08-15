@@ -49,5 +49,9 @@ export function toCompleteTransaction(t: TransactionReq) {
     group: t.group ? Buffer.from(JSON.parse(t.group).data) : undefined,
     blob: t.blob ? new Uint8Array(Object.values(JSON.parse(t.blob)) as any) : undefined
   };
+
+  if (newOne.assetIndex === 0 || newOne.assetIndex === null) {
+    newOne.assetIndex = undefined;
+  }
   return newOne;
 }

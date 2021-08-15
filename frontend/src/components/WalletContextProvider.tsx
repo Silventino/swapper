@@ -41,6 +41,26 @@ type AccountDetailedInfo = {
   status: string;
 };
 
+type TransactionInfo = {
+  type: string;
+  tx: string;
+  from: string;
+  fee: number;
+  'first-round': number;
+  'last-round': number;
+  noteb64: string;
+  round: number;
+  fromrewards: number;
+  genesisID: string;
+  genesishashb64: string;
+  fromindex: number;
+  frombalance: number;
+  accumulatedfromrewards: number;
+  timestamp: number;
+  index: number;
+  payment: any;
+};
+
 export type AssetInfo = {
   creator: string;
   owner: null;
@@ -72,10 +92,10 @@ type PropsWalletContext = {
     sendTransactions: (blobs: Uint8Array[]) => Promise<string>;
     getAssetInfo: (assetId: string | number) => Promise<AssetInfo>;
     optinAsset: (assetId: string | number) => Promise<void>;
+    verifyGroup: (parentTx: string, transactions: CompleteTransaction[]) => Promise<boolean>;
   };
 };
 
-//Valor default do contexto
 const DEFAULT_VALUE = {
   accounts: [],
   selectedAccount: null,
@@ -88,28 +108,26 @@ const DEFAULT_VALUE = {
     createAtomicTransaction: async (t: PartialTransaction[]) => {
       return '';
     },
-    signTransaction: async (t: CompleteTransaction) => {
+    signTransaction: async () => {
       return {} as any;
     },
-    sendTransactions: async (t: Uint8Array[]) => {
+    sendTransactions: async () => {
       return {} as any;
     },
-    getAssetInfo: async (t: string | number) => {
+    getAssetInfo: async () => {
       return {} as any;
     },
-    optinAsset: async (t: string | number) => {
+    optinAsset: async () => {
+      return {} as any;
+    },
+    verifyGroup: async () => {
       return {} as any;
     }
   }
 };
 
-//criando nosso contexto WalletContext
 const WalletContext = createContext<PropsWalletContext>(DEFAULT_VALUE);
 
-/**
- * Função que irá conter o estado e função que irá alterar o estado 'setState'
- * quer irá prover o contexto para os componentes filhos da árvore
- */
 const WalletContextProvider: React.FC = ({ children }) => {
   const [accounts, setAccounts] = useState<AccountInfo[]>([]);
   const [assets, setAssets] = useState<AssetInfo[]>([]);
@@ -140,7 +158,6 @@ const WalletContextProvider: React.FC = ({ children }) => {
       if (!selectedAccount && res.length) {
         selectAccount(res[0].address);
       }
-      console.log('res', res);
     } catch (err) {
       console.log('err', err);
       throw err;
@@ -217,8 +234,6 @@ const WalletContextProvider: React.FC = ({ children }) => {
       const txID = await sendTransactions([signed.blob!]);
       await waitForConfirmation(algodClient, txID, 10000);
       await selectAccount(selectedAccount!.address);
-
-      // return txID;
     } catch (err) {
       console.log('err', err);
       throw err;
@@ -279,6 +294,28 @@ const WalletContextProvider: React.FC = ({ children }) => {
     }
   };
 
+  const verifyGroup = async (parentTx: string, transactions: CompleteTransaction[]) => {
+    let txgroup = algosdk.assignGroupID(transactions as TransactionLike[]);
+
+    const groupID = txgroup[0].group;
+    if (!groupID) {
+      throw new Error('Error while verifying the group ID.');
+    }
+
+    const res = await axios.get<TransactionInfo>(`https://testnet.algoexplorerapi.io/v1/transaction/${parentTx}`);
+
+    const note = atob(res.data.noteb64);
+    const registeredGroupID = Buffer.from(JSON.parse(note).data);
+
+    const verified = txgroup.every((item) => item.group?.compare(registeredGroupID) === 0);
+
+    if (!verified) {
+      throw new Error('Could not verify the swap. Please do not sign the transactions.');
+    }
+
+    return verified;
+  };
+
   const saveGroup = async (groupID: Buffer, transactions: CompleteTransaction[]) => {
     if (!selectedAccount) {
       return '';
@@ -293,9 +330,9 @@ const WalletContextProvider: React.FC = ({ children }) => {
       flatFee: true,
       type: 'pay' as any,
       from: selectedAccount.address,
-      to: 'DHMWJUWE5RSLI6Y7PU53UUT3VMN5U7NWP7DH2XLGYO3FRYJIUJUXBAXGLU',
+      to: 'VT7NZ62266IYHMEHWXLZXARZLA324BDTTKNJPYWXBNDO7TYMWJY27KC2XY',
       amount: 1,
-      note: new Uint8Array(groupID)
+      note: new Uint8Array(Buffer.from(JSON.stringify(groupID)))
     } as TransactionLike;
 
     let signedTxn = await myAlgoClient.signTransaction(txn as any);
@@ -336,13 +373,6 @@ const WalletContextProvider: React.FC = ({ children }) => {
     }
   };
 
-  //     console.log("signedTxn1", signedTxn1);
-  //     let signedTxn2 = await myAlgoClient.signTransaction(txn2);
-  //     console.log("signedTxn2", signedTxn2.txID);
-  //     const signed: any = [signedTxn1.blob, signedTxn2.blob];
-  // const res = await algodClient.sendRawTransaction(signed).do();
-  // await waitForConfirmation(algodClient, res.txId, 4000);
-
   useEffect(() => {
     getAllAssetInfo();
   }, [selectedAccount]);
@@ -361,9 +391,9 @@ const WalletContextProvider: React.FC = ({ children }) => {
           signTransaction,
           sendTransactions,
           getAssetInfo,
-          optinAsset
+          optinAsset,
+          verifyGroup
         }
-        // setState,
       }}
     >
       {children}

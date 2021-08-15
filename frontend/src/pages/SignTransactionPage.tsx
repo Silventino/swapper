@@ -30,6 +30,7 @@ function SignTransactionPage() {
         throw new Error('Please connect your wallet first.');
       }
       const res = await transactionApi.getAtomicTransaction(walletContext.selectedAccount.address, id);
+      await walletContext.functions.verifyGroup(id, res);
       setTransactions(res);
     } catch (err) {
       console.log(err);
@@ -71,7 +72,7 @@ function SignTransactionPage() {
     setAllSigned(newAllSigned);
   }, [transactions]);
 
-  if (!walletContext.selectedAccount) {
+  if (!walletContext.selectedAccount || !transactions.length) {
     return null;
   }
 
@@ -126,7 +127,7 @@ function SignTransactionPage() {
 const useStyles = makeStyles<Theme>((theme) =>
   createStyles({
     container: {
-      maxWidth: 'max(100vw, 1000px)',
+      maxWidth: 'min(100vw, 1000px)',
       paddingBottom: 20
     },
     swapGrid: { marginTop: 10 }
