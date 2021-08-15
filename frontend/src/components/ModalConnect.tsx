@@ -13,7 +13,7 @@ function ModalConnect() {
   const walletContext = useContext(WalletContext);
 
   return (
-    <MyModal open={!Boolean(walletContext.selectedAccount)} onClose={() => {}} hideClose>
+    <MyModal open={!Boolean(walletContext.accounts.length)} onClose={() => {}} hideClose>
       <Typography className={classes.medtxt}>Welcome to PacSwap!</Typography>
       <Typography className={classes.smalltxt}></Typography>
 

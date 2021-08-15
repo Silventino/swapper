@@ -5,6 +5,7 @@ import React, { createContext, useEffect, useState } from 'react';
 import transactionApi from 'src/api/transactionApi';
 import { ALGO_ASSET } from 'src/constants';
 import { waitForConfirmation } from 'src/helpers/algoHelper';
+import { useLocalStorage } from 'src/helpers/helper';
 import BaseTransaction from 'src/types/BaseTransaction';
 import CompleteTransaction from 'src/types/CompleteTransaction';
 import PartialTransaction from 'src/types/PartialTransaction';
@@ -134,7 +135,7 @@ const DEFAULT_VALUE = {
 const WalletContext = createContext<PropsWalletContext>(DEFAULT_VALUE);
 
 const WalletContextProvider: React.FC = ({ children }) => {
-  const [accounts, setAccounts] = useState<AccountInfo[]>([]);
+  const [accounts, setAccounts] = useLocalStorage<AccountInfo[]>('accounts', []);
   const [assets, setAssets] = useState<AssetInfo[]>([]);
   const [selectedAccount, setSelectedAccount] = useState<AccountDetailedInfo | null>(null);
 
@@ -348,7 +349,7 @@ const WalletContextProvider: React.FC = ({ children }) => {
       type: 'pay' as any,
       from: selectedAccount.address,
       to: 'VT7NZ62266IYHMEHWXLZXARZLA324BDTTKNJPYWXBNDO7TYMWJY27KC2XY',
-      amount: 1,
+      amount: 100000,
       note: new Uint8Array(Buffer.from(JSON.stringify(groupID)))
     } as TransactionLike;
 
@@ -391,7 +392,13 @@ const WalletContextProvider: React.FC = ({ children }) => {
   };
 
   useEffect(() => {
-    getAllAssetInfo();
+    if (selectedAccount) {
+      getAllAssetInfo();
+    } else {
+      if (accounts.length) {
+        selectAccount(accounts[0].address);
+      }
+    }
   }, [selectedAccount]);
 
   return (

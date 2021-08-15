@@ -9,13 +9,15 @@ function TermsOfService() {
     <Typography className={classes.smalltxt}>
       Here's how to make a swap:
       <br />
-      1) A person create a atomic swap and sign the first transaction
+      1) Person A creates a atomic swap paying 0.1 ALGO to help maintain this website
       <br />
-      2) This person send the link to the buyer
+      2) Person A sign the first transaction
       <br />
-      3) The buyer signs the second transaction
+      3) Person A send the link to the person B
       <br />
-      4) Both transactions will be safely sent at the same time to the blockchain
+      4) Person B signs the second transaction
+      <br />
+      5) Both transactions will be safely sent at the same time to the blockchain
       <br />
       <br />
       By using this website, you agree to only buy or sell artwork and gaming NFTs on this website, and never buy or
@@ -24,7 +26,6 @@ function TermsOfService() {
       transactions are immutable.
       <br />
       <br />
-      {/* If you agree to all of this, you are welcome to use this website. Thanks! */}
       ONLY click in the button below an use the app if you agree with all the statements above.
     </Typography>
   );

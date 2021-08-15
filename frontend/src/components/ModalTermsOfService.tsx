@@ -20,7 +20,7 @@ const ModalTermsOfService: React.FC<Props> = (props) => {
 
   return (
     <MyModal open={open} onClose={onClose}>
-      <Typography className={classes.medtxt}>Welcome to PacSwap!</Typography>
+      <Typography className={classes.medtxt}>Terms of Service</Typography>
       <TermsOfService />
 
       <DivCenter className={classes.divButtons}>

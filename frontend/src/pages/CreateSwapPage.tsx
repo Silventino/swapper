@@ -107,7 +107,10 @@ function CreateSwapPage() {
     <Grid container spacing={4} className={classes.container}>
       <ModalTermsOfService
         open={openTermsOfService}
-        onAccept={() => createAtomicTransaction()}
+        onAccept={() => {
+          createAtomicTransaction();
+          setOpenTermsOfService(false);
+        }}
         onClose={() => {
           showError(new Error('Could not continue.'));
           setOpenTermsOfService(false);
