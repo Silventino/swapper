@@ -9,10 +9,15 @@ import BaseTransaction from 'src/types/BaseTransaction';
 import CompleteTransaction from 'src/types/CompleteTransaction';
 import PartialTransaction from 'src/types/PartialTransaction';
 
-const token = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
-// "7f50af367cd44edf246d860db4eb5f65b9fcfe1171f2c16d105999c35f5e2f50";
-const server = 'http://127.0.0.1';
-const port = 4001;
+const TESTNET = false;
+
+const token_testnet = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+const server_testnet = 'http://127.0.0.1';
+const port_testnet = 4001;
+
+const token = { 'X-API-Key': 'aDo90XU8i07qRS8ze8KlFaqn7B2AkgFl6uJg04T2' };
+const server = 'https://mainnet-algorand.api.purestake.io/ps2';
+const port = 443;
 
 //Tipando os dados que quero para usuário
 export type AccountInfo = {
@@ -134,7 +139,11 @@ const WalletContextProvider: React.FC = ({ children }) => {
   const [selectedAccount, setSelectedAccount] = useState<AccountDetailedInfo | null>(null);
 
   const [myAlgoClient] = useState(new MyAlgoClient());
-  const [algodClient] = useState(new algosdk.Algodv2(token, server, port));
+  const [algodClient] = useState(
+    TESTNET
+      ? new algosdk.Algodv2(token_testnet, server_testnet, port_testnet)
+      : new algosdk.Algodv2(token, server, port)
+  );
 
   const connectMyAlgo = async () => {
     try {
@@ -166,7 +175,11 @@ const WalletContextProvider: React.FC = ({ children }) => {
 
   const selectAccount = async (address: string) => {
     try {
-      const res = await axios.get<AccountDetailedInfo>(`https://testnet.algoexplorerapi.io/v2/accounts/${address}`);
+      const res = await axios.get<AccountDetailedInfo>(
+        TESTNET
+          ? `https://testnet.algoexplorerapi.io/v2/accounts/${address}`
+          : `https://algoexplorerapi.io/v2/accounts/${address}`
+      );
       setSelectedAccount(res.data);
     } catch (err) {
       console.log('err', err);
@@ -176,7 +189,11 @@ const WalletContextProvider: React.FC = ({ children }) => {
 
   const getAssetInfo = async (assetId: string | number) => {
     try {
-      const res = await axios.get<AssetInfo>(`https://testnet.algoexplorerapi.io/v1/asset/${assetId}`);
+      const res = await axios.get<AssetInfo>(
+        TESTNET
+          ? `https://testnet.algoexplorerapi.io/v1/asset/${assetId}`
+          : `https://algoexplorerapi.io/v1/asset/${assetId}`
+      );
       return res.data;
     } catch (err) {
       console.log('err', err);
@@ -207,10 +224,6 @@ const WalletContextProvider: React.FC = ({ children }) => {
   };
 
   const getBaseTransaction = async () => {
-    // const res = await axios.get<TransactionDefaultParams>(
-    //   "https://testnet.algoexplorerapi.io/v2/transactions/params"
-    // );
-    // return res.data;
     let txn = (await algodClient.getTransactionParams().do()) as BaseTransaction;
     return txn;
   };
@@ -267,8 +280,8 @@ const WalletContextProvider: React.FC = ({ children }) => {
           assetIndex: transaction.assetIndex === ALGO_ASSET.id ? undefined : transaction.assetIndex,
           from: transaction.from,
           to: transaction.to,
-          amount: transaction.amount * Math.pow(10, assetInfo.decimals),
-          note: new Uint8Array(Buffer.from('Transaction made with the help of Atomic Ant'))
+          amount: transaction.amount * Math.pow(10, assetInfo.decimals)
+          // note: new Uint8Array(Buffer.from('Transaction made with the help of Atomic Ant'))
         };
         newTransactions.push(txn);
       }
@@ -302,7 +315,11 @@ const WalletContextProvider: React.FC = ({ children }) => {
       throw new Error('Error while verifying the group ID.');
     }
 
-    const res = await axios.get<TransactionInfo>(`https://testnet.algoexplorerapi.io/v1/transaction/${parentTx}`);
+    const res = await axios.get<TransactionInfo>(
+      TESTNET
+        ? `https://testnet.algoexplorerapi.io/v1/transaction/${parentTx}`
+        : `https://algoexplorerapi.io/v1/transaction/${parentTx}`
+    );
 
     const note = atob(res.data.noteb64);
     const registeredGroupID = Buffer.from(JSON.parse(note).data);

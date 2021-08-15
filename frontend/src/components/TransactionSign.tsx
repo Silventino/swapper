@@ -87,7 +87,7 @@ const TransactionSign: React.FC<Props> = (props) => {
   };
 
   useEffect(() => {
-    if (transaction.assetIndex === 0 || transaction.assetIndex === null) {
+    if (!transaction.assetIndex) {
       setOptedIn(true);
     } else {
       const newOptedIn = walletContext.assets.some((item) => item.id === transaction.assetIndex);

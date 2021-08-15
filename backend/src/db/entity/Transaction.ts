@@ -58,5 +58,6 @@ export default class Transaction {
   fromTransactionReq(s: TransactionReq, parent?: string) {
     Object.assign(this, s);
     this.parentTransaction = parent ?? '';
+    this.note = s.note ?? '';
   }
 }
