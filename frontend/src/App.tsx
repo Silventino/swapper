@@ -8,6 +8,7 @@ import RainbowDiv from './components/generic/RainbowDiv';
 import Header from './components/Header';
 import { HEADER_HEIGHT } from './constants';
 import SignTransactionPage from './pages/SignTransactionPage';
+import SuccessPage from './pages/SuccessPage';
 
 function App() {
   const classes = useStyles();
@@ -21,6 +22,9 @@ function App() {
           <Switch>
             <Route path="/tx/:id">
               <SignTransactionPage />
+            </Route>
+            <Route path="/success">
+              <SuccessPage />
             </Route>
             <Route path="/">
               <CreateSwapPage />

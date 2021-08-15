@@ -1,4 +1,3 @@
-import { TransactionLike } from 'algosdk';
 import { toast } from 'react-toastify';
 import CompleteTransaction from 'src/types/CompleteTransaction';
 import TransactionReq from 'src/types/TransactionReq';
@@ -8,6 +7,9 @@ export const showError = (err: Error | any) => {
     let message = err.response.body.message as string;
     if (message.search('overspend') !== -1) {
       message = 'Insufficient funds in one of the wallets.';
+    }
+    if (message.search('transaction already in ledger') !== -1) {
+      message = 'Transaction already completed.';
     }
 
     toast(message);

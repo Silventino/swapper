@@ -1,6 +1,6 @@
 import { Button, createStyles, Grid, makeStyles, Theme } from '@material-ui/core';
 import React, { useContext, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import 'reflect-metadata';
 import transactionApi from 'src/api/transactionApi';
 import Loader from 'src/components/generic/Loader';
@@ -20,6 +20,8 @@ function SignTransactionPage() {
   const classes = useStyles();
   const [transactions, setTransactions] = useState<CompleteTransaction[]>([]);
   const [allSigned, setAllSigned] = useState(false);
+
+  const history = useHistory();
 
   const getTransaction = async () => {
     setLoading(true);
@@ -50,6 +52,7 @@ function SignTransactionPage() {
       });
       await walletContext.functions.sendTransactions(signed);
       showNotification('Sucess! Swap completed.');
+      history.replace('/success');
     } catch (err) {
       console.log(err);
       showError(err);
@@ -82,6 +85,15 @@ function SignTransactionPage() {
         <Grid item xs={12}>
           <Alert severity="success">
             All transactions signed! Send the atomic transaction in the end of this page.
+          </Alert>
+        </Grid>
+      )}
+
+      {!allSigned && (
+        <Grid item xs={12}>
+          <Alert severity="info">
+            Share this page URL with the participants of this swap and you'll be able to complete it once all
+            transactions are signed.
           </Alert>
         </Grid>
       )}

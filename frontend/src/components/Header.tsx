@@ -1,7 +1,7 @@
 import { makeStyles, Theme, createStyles, Button } from '@material-ui/core';
 import React, { useContext, useEffect } from 'react';
 import { colors, HEADER_HEIGHT } from 'src/constants';
-import logo from '../logo.svg';
+import logo from '../assets/logo.svg';
 
 import clsx from 'clsx';
 import WalletContext from './WalletContextProvider';
