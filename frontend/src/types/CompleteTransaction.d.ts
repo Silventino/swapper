@@ -2,7 +2,7 @@ import BaseTransaction from './BaseTransaction';
 
 declare type CompleteTransaction = BaseTransaction & {
   type: string;
-  assetIndex?: number | null;
+  assetIndex?: number;
   from: string;
   to: string;
   amount: number;

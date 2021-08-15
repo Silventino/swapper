@@ -3,8 +3,8 @@ import clsx from 'clsx';
 import React, { useContext, useEffect, useState } from 'react';
 import 'reflect-metadata';
 import transactionApi from 'src/api/transactionApi';
-import { colors } from 'src/constants';
-import { showError } from 'src/helpers/helper';
+import { ALGO_ASSET, colors } from 'src/constants';
+import { showError, showNotification } from 'src/helpers/helper';
 import CompleteTransaction from 'src/types/CompleteTransaction';
 import '../App.css';
 import GridCenter from './generic/GridCenter';
@@ -26,7 +26,7 @@ const TransactionSign: React.FC<Props> = (props) => {
 
   const [selectedAsset, setSelectedAsset] = useState<AssetInfo | null>(null);
   const [optedIn, setOptedIn] = useState(false);
-  const [isParticipating, setIsParticipating] = useState(false);
+  const [isOwner, setIsOwner] = useState(false);
   const [isSigned, setIsSigned] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -35,7 +35,12 @@ const TransactionSign: React.FC<Props> = (props) => {
   const getAsset = async () => {
     setLoading(true);
     try {
-      const newAsset = await walletContext.functions.getAssetInfo(transaction.assetIndex as any);
+      let newAsset;
+      if (!transaction.assetIndex) {
+        newAsset = ALGO_ASSET;
+      } else {
+        newAsset = await walletContext.functions.getAssetInfo(transaction.assetIndex);
+      }
       setSelectedAsset(newAsset ?? null);
     } catch (err) {
       showError(err);
@@ -72,16 +77,28 @@ const TransactionSign: React.FC<Props> = (props) => {
     setLoading(false);
   };
 
-  useEffect(() => {
-    const newOptedIn = walletContext.assets.some((item) => item.id === transaction.assetIndex);
-    setOptedIn(newOptedIn);
+  const copyToClipboard = () => {
+    try {
+      navigator.clipboard.writeText(window.location.href);
+      showNotification('URL copied to clipboard!');
+    } catch (err) {
+      showError(err);
+    }
+  };
 
+  useEffect(() => {
+    if (transaction.assetIndex === 0 || transaction.assetIndex === null) {
+      setOptedIn(true);
+    } else {
+      const newOptedIn = walletContext.assets.some((item) => item.id === transaction.assetIndex);
+      setOptedIn(newOptedIn);
+    }
     getAsset();
   }, [transaction.assetIndex, walletContext.assets]);
 
   useEffect(() => {
     const newIsPaticipating = walletContext.selectedAccount?.address === transaction.from;
-    setIsParticipating(newIsPaticipating);
+    setIsOwner(newIsPaticipating);
 
     const newIsSigned = Boolean(transaction.txID && transaction.blob);
     setIsSigned(newIsSigned);
@@ -117,7 +134,13 @@ const TransactionSign: React.FC<Props> = (props) => {
       </Grid>
 
       <Grid item xs={12}>
-        <MyInput label={'Amount'} fullWidth value={transaction.amount.toString()} onChange={(txt) => {}} disabled />
+        <MyInput
+          label={'Amount'}
+          fullWidth
+          value={(transaction.amount / Math.pow(10, selectedAsset?.decimals ?? 0)).toString()}
+          onChange={(txt) => {}}
+          disabled
+        />
       </Grid>
 
       {loading && (
@@ -128,10 +151,26 @@ const TransactionSign: React.FC<Props> = (props) => {
         </GridCenter>
       )}
 
-      {!loading && optedIn && (
+      {!loading && !isOwner && !isSigned && (
         <GridCenter item xs={12}>
-          <Button variant={'contained'} onClick={signTransaction} disabled={!isParticipating || isSigned}>
-            {isSigned ? 'SIGNED!' : 'SIGN'}
+          <Button variant={'contained'} onClick={() => copyToClipboard()}>
+            SEND LINK TO THE OWNER OF {`${transaction.from.substring(0, 5)}...${transaction.from.substring(53)}`}
+          </Button>
+        </GridCenter>
+      )}
+
+      {!loading && optedIn && !isSigned && isOwner && (
+        <GridCenter item xs={12}>
+          <Button variant={'contained'} onClick={signTransaction} disabled={isSigned}>
+            SIGN
+          </Button>
+        </GridCenter>
+      )}
+
+      {!loading && optedIn && isSigned && (
+        <GridCenter item xs={12}>
+          <Button variant={'contained'} onClick={signTransaction} disabled={isSigned}>
+            SIGNED!
           </Button>
         </GridCenter>
       )}

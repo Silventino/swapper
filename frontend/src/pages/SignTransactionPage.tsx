@@ -48,7 +48,7 @@ function SignTransactionPage() {
         }
         return item.blob;
       });
-      const res = await walletContext.functions.sendTransactions(signed);
+      await walletContext.functions.sendTransactions(signed);
       showNotification('Sucess! Swap completed.');
     } catch (err) {
       console.log(err);
@@ -96,6 +96,14 @@ function SignTransactionPage() {
         <GridCenter item xs={12}>
           <Button variant={'contained'} onClick={() => finish()}>
             FINISH TRANSACTION
+          </Button>
+        </GridCenter>
+      )}
+
+      {!allSigned && (
+        <GridCenter item xs={12}>
+          <Button variant={'contained'} onClick={() => getTransaction()}>
+            REFRESH
           </Button>
         </GridCenter>
       )}

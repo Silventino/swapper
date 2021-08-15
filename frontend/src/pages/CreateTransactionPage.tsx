@@ -15,46 +15,46 @@ function CreateTransactionPage() {
   const classes = useStyles();
 
   // DEV //////////////
-  const [transactions, setTransactions] = useState<PartialTransaction[]>([
-    {
-      amount: 1,
-      assetIndex: 21889879,
-      from: '3ITIMVIPABPBKFT5K36NV2XYZU3YNNACSXLNGVBJ4SJVILZNVRWX2HESWQ',
-      to: 'DHMWJUWE5RSLI6Y7PU53UUT3VMN5U7NWP7DH2XLGYO3FRYJIUJUXBAXGLU',
-      type: ''
-    },
-    {
-      amount: 10,
-      assetIndex: 21033643,
-      from: 'DHMWJUWE5RSLI6Y7PU53UUT3VMN5U7NWP7DH2XLGYO3FRYJIUJUXBAXGLU',
-      to: '3ITIMVIPABPBKFT5K36NV2XYZU3YNNACSXLNGVBJ4SJVILZNVRWX2HESWQ',
-      type: ''
-    }
-  ]);
-  /////////////////////
-
-  // PRODUCTION /////////
   // const [transactions, setTransactions] = useState<PartialTransaction[]>([
   //   {
-  //     from: '',
-  //     to: '',
-  //     assetIndex: null,
-  //     amount: 0,
+  //     amount: 1,
+  //     assetIndex: 21889879,
+  //     from: '3ITIMVIPABPBKFT5K36NV2XYZU3YNNACSXLNGVBJ4SJVILZNVRWX2HESWQ',
+  //     to: 'DHMWJUWE5RSLI6Y7PU53UUT3VMN5U7NWP7DH2XLGYO3FRYJIUJUXBAXGLU',
   //     type: ''
   //   },
   //   {
-  //     from: '',
-  //     to: '',
-  //     assetIndex: null,
-  //     amount: 0,
+  //     amount: 10,
+  //     assetIndex: 21033643,
+  //     from: 'DHMWJUWE5RSLI6Y7PU53UUT3VMN5U7NWP7DH2XLGYO3FRYJIUJUXBAXGLU',
+  //     to: '3ITIMVIPABPBKFT5K36NV2XYZU3YNNACSXLNGVBJ4SJVILZNVRWX2HESWQ',
   //     type: ''
   //   }
   // ]);
+  /////////////////////
+
+  // PRODUCTION /////////
+  const [transactions, setTransactions] = useState<PartialTransaction[]>([
+    {
+      from: '',
+      to: '',
+      assetIndex: 0,
+      amount: 0,
+      type: ''
+    },
+    {
+      from: '',
+      to: '',
+      assetIndex: 0,
+      amount: 0,
+      type: ''
+    }
+  ]);
   //////////////////////
 
   const createAtomicTransaction = async () => {
     try {
-      await walletContext.functions.createGroup(transactions);
+      await walletContext.functions.createAtomicTransaction(transactions);
     } catch (err) {
       showError(err);
     }

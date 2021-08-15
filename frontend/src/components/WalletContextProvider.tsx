@@ -67,7 +67,7 @@ type PropsWalletContext = {
   functions: {
     connectMyAlgo: () => Promise<void>;
     selectAccount: (addr: string) => Promise<void>;
-    createGroup: (t: PartialTransaction[]) => Promise<string>;
+    createAtomicTransaction: (t: PartialTransaction[]) => Promise<string>;
     signTransaction: (t: CompleteTransaction) => Promise<CompleteTransaction>;
     sendTransactions: (blobs: Uint8Array[]) => Promise<string>;
     getAssetInfo: (assetId: string | number) => Promise<AssetInfo>;
@@ -85,7 +85,7 @@ const DEFAULT_VALUE = {
   functions: {
     connectMyAlgo: async () => {},
     selectAccount: async (addr: string) => {},
-    createGroup: async (t: PartialTransaction[]) => {
+    createAtomicTransaction: async (t: PartialTransaction[]) => {
       return '';
     },
     signTransaction: async (t: CompleteTransaction) => {
@@ -120,20 +120,20 @@ const WalletContextProvider: React.FC = ({ children }) => {
 
   const connectMyAlgo = async () => {
     try {
-      // PRODUTION ///////
-      // const res = await myAlgoClient.connect();
+      // PRODUCTION ///////
+      const res = await myAlgoClient.connect();
 
       // DEV /////////////
-      const res = [
-        {
-          address: '3ITIMVIPABPBKFT5K36NV2XYZU3YNNACSXLNGVBJ4SJVILZNVRWX2HESWQ',
-          name: 'MyAlgoWallet'
-        },
-        {
-          address: 'DHMWJUWE5RSLI6Y7PU53UUT3VMN5U7NWP7DH2XLGYO3FRYJIUJUXBAXGLU',
-          name: 'TipBot'
-        }
-      ];
+      // const res = [
+      //   {
+      //     address: '3ITIMVIPABPBKFT5K36NV2XYZU3YNNACSXLNGVBJ4SJVILZNVRWX2HESWQ',
+      //     name: 'MyAlgoWallet'
+      //   },
+      //   {
+      //     address: 'DHMWJUWE5RSLI6Y7PU53UUT3VMN5U7NWP7DH2XLGYO3FRYJIUJUXBAXGLU',
+      //     name: 'TipBot'
+      //   }
+      // ];
       //////////////////
 
       setAccounts(res);
@@ -202,10 +202,6 @@ const WalletContextProvider: React.FC = ({ children }) => {
     try {
       const baseTnx = await getBaseTransaction();
 
-      if (!assetIndex) {
-        throw new Error('Please, select a asset to transfer.');
-      }
-
       const txn: CompleteTransaction = {
         ...baseTnx,
         fee: 1000,
@@ -229,32 +225,40 @@ const WalletContextProvider: React.FC = ({ children }) => {
     }
   };
 
-  const createGroup = async (transactions: PartialTransaction[]) => {
+  const createAtomicTransaction = async (transactions: PartialTransaction[]) => {
     try {
       const baseTnx = await getBaseTransaction();
 
       const newTransactions: CompleteTransaction[] = [];
       for (let i = 0; i < transactions.length; i++) {
         const transaction = transactions[i];
+
+        let assetInfo;
         if (!transaction.assetIndex) {
-          throw new Error('Please, select a asset to transfer.');
+          assetInfo = ALGO_ASSET;
+        } else {
+          assetInfo = assets.find((item) => item.id === transaction.assetIndex);
+        }
+
+        if (!assetInfo) {
+          throw new Error('Asset not found.');
         }
 
         const txn: CompleteTransaction = {
           ...baseTnx,
           fee: 1000,
           flatFee: true,
-          type: transaction.assetIndex === ALGO_ASSET.id ? ('pay' as any) : ('axfer' as any),
-          assetIndex: transaction.assetIndex === ALGO_ASSET.id ? undefined : (transaction.assetIndex as any),
+          type: transaction.assetIndex === ALGO_ASSET.id ? 'pay' : 'axfer',
+          assetIndex: transaction.assetIndex === ALGO_ASSET.id ? undefined : transaction.assetIndex,
           from: transaction.from,
           to: transaction.to,
-          amount: transaction.amount,
+          amount: transaction.amount * Math.pow(10, assetInfo.decimals),
           note: new Uint8Array(Buffer.from('Transaction made with the help of Atomic Ant'))
         };
         newTransactions.push(txn);
       }
 
-      // Group both transactions
+      // Group transactions
       let txgroup = algosdk.assignGroupID(newTransactions as TransactionLike[]);
 
       const groupID = txgroup[0].group;
@@ -265,8 +269,6 @@ const WalletContextProvider: React.FC = ({ children }) => {
       for (let i = 0; i < newTransactions.length; i++) {
         newTransactions[i].group = groupID;
       }
-
-      // return newTransactions;
 
       const txID = await saveGroup(groupID, newTransactions);
 
@@ -284,7 +286,6 @@ const WalletContextProvider: React.FC = ({ children }) => {
 
     // const teste = transactions.map((item) => fromCompleteTransaction(item));
 
-    // PRODUCTION ///////////
     const baseTnx = await getBaseTransaction();
     const txn: TransactionLike = {
       ...baseTnx,
@@ -298,19 +299,7 @@ const WalletContextProvider: React.FC = ({ children }) => {
     } as TransactionLike;
 
     let signedTxn = await myAlgoClient.signTransaction(txn as any);
-
-    // TEST
-    // console.log('signedTxn.blob 1.', signedTxn.blob);
-    // signedTxn.blob = new Uint8Array(Object.values(JSON.parse(JSON.stringify(signedTxn.blob))) as any);
-    // console.log('signedTxn.blob 2', signedTxn.blob);
-
     const txID = await sendTransactions([signedTxn.blob]);
-
-    //////////////////////////
-
-    // DEV //////////////////
-    // const txID = makeTestID(20);
-    /////////////////////////
 
     await transactionApi.insertAtomicTransaction(selectedAccount.address, transactions, txID);
 
@@ -368,7 +357,7 @@ const WalletContextProvider: React.FC = ({ children }) => {
         functions: {
           connectMyAlgo,
           selectAccount,
-          createGroup,
+          createAtomicTransaction,
           signTransaction,
           sendTransactions,
           getAssetInfo,

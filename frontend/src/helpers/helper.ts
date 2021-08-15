@@ -4,8 +4,14 @@ import CompleteTransaction from 'src/types/CompleteTransaction';
 import TransactionReq from 'src/types/TransactionReq';
 
 export const showError = (err: Error | any) => {
-  if (err.response) {
-    throw new Error(err.response.body.message);
+  if (err.response?.body?.message) {
+    let message = err.response.body.message as string;
+    if (message.search('overspend') !== -1) {
+      message = 'Insufficient funds in one of the wallets.';
+    }
+
+    toast(message);
+    return;
   }
   toast(err.message);
 };

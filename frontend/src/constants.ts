@@ -6,7 +6,7 @@ export const ALGO_ASSET: AssetInfo = {
   creator: '',
   owner: null,
   total: 0,
-  decimals: 9,
+  decimals: 6,
   defaultfrozen: false,
   unitname: 'ALGO',
   assetname: 'ALGO',
