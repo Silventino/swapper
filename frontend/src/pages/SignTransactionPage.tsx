@@ -53,7 +53,7 @@ function SignTransactionPage() {
       });
       await walletContext.functions.sendTransactions(signed);
       showNotification('Sucess! Swap completed.');
-      history.replace('/success');
+      history.replace('/pacswap/success');
     } catch (err) {
       console.log(err);
       showError(err);

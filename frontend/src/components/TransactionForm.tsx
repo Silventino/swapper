@@ -1,4 +1,4 @@
-import { Button, createStyles, Grid, makeStyles, Theme, Typography } from '@material-ui/core';
+import { createStyles, Grid, makeStyles, Theme } from '@material-ui/core';
 import clsx from 'clsx';
 import React, { useContext, useEffect, useState } from 'react';
 import 'reflect-metadata';
@@ -7,12 +7,27 @@ import PartialTransaction from 'src/types/PartialTransaction';
 import '../App.css';
 import ConnectedWalletSelect from './generic/ConnectedWalletSelect';
 import GridCenter from './generic/GridCenter';
-import MyAddressInput from './generic/MyAddressInput';
+import MyInput from './generic/MyInput';
 import MyNumberInput from './generic/MyNumberInput';
 import MySelect from './generic/MySelect';
 // // import RainbowDiv from './generic/RainbowDiv';
 import Title from './generic/Title';
 import WalletContext, { AssetInfo } from './WalletContextProvider';
+
+const getAssetImage = (asset: AssetInfo | null) => {
+  if (!asset) {
+    return 'https://jsvasconcelos.pt/images/Icon/imageNotFound.png';
+  }
+
+  if (asset.url?.endsWith('.png') || asset.url?.endsWith('.jpg') || asset.url?.endsWith('.jpeg')) {
+    return asset.url;
+  }
+  if (asset.url?.startsWith('https://ipfs.io/')) {
+    return asset.url;
+  } else {
+    return `https://algoexplorer.io/images/assets/big/light/${asset.id}.png`;
+  }
+};
 
 type Props = {
   index: number;
@@ -48,18 +63,14 @@ const TransactionForm: React.FC<Props> = (props) => {
       </GridCenter>
 
       <GridCenter item xs={12}>
-        <img
-          src={selectedAsset?.url ?? 'https://jsvasconcelos.pt/images/Icon/imageNotFound.png'}
-          alt=""
-          className={classes.img}
-        />
+        <img src={getAssetImage(selectedAsset)} alt="" className={classes.img} />
       </GridCenter>
 
       <Grid item xs={12}>
         <MySelect<AssetInfo>
           label={'Asset'}
           options={walletContext.assets}
-          getOptionLabel={(item) => (item ? `${item.assetname}` : '')}
+          getOptionLabel={(item) => (item ? `${item.assetname} (${item.unitname})` : '')}
           // getOptionLabel={(item) => (item ? `${item.assetname} (ID ${item.id})` : '')}
           value={selectedAsset}
           onChange={(asset) => setTransaction({ ...transaction, assetIndex: asset.id })}
@@ -74,10 +85,11 @@ const TransactionForm: React.FC<Props> = (props) => {
             onChange={(txt) => setTransaction({ ...transaction, from: txt })}
           />
         ) : (
-          <MyAddressInput
+          <MyInput
             label={'From'}
             value={transaction.from}
             onChange={(txt) => setTransaction({ ...transaction, from: txt })}
+            multiline
           />
         )}
       </Grid>
@@ -89,10 +101,11 @@ const TransactionForm: React.FC<Props> = (props) => {
             onChange={(txt) => setTransaction({ ...transaction, to: txt })}
           />
         ) : (
-          <MyAddressInput
+          <MyInput
             label={'To'}
             value={transaction.to}
             onChange={(txt) => setTransaction({ ...transaction, to: txt })}
+            multiline
           />
         )}
       </Grid>

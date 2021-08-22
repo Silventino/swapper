@@ -8,10 +8,11 @@ type Props = {
   value: string;
   onChange: (x: string) => void;
   disabled?: boolean;
+  multiline?: boolean;
 };
 
 const MyInput: React.FC<Props> = (props) => {
-  const { label, fullWidth, endAdornment, value, onChange, disabled } = props;
+  const { label, fullWidth, endAdornment, value, onChange, ...rest } = props;
   // useEffect(() => {}, []);
 
   return (
@@ -22,7 +23,7 @@ const MyInput: React.FC<Props> = (props) => {
         endAdornment={endAdornment ? <InputAdornment position="end">{endAdornment}</InputAdornment> : undefined}
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        disabled={disabled}
+        {...rest}
       />
     </FormControl>
   );

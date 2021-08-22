@@ -17,7 +17,7 @@ export default (app: Router) => {
   route.post('/get', isAuth(), async (req: Request<{ parent: string }>, res: Response) => {
     try {
       const EM = getManager();
-      const transactionService = new TransactionService(EM);
+      const transactionService = new TransactionService(EM, req.body.wallet);
       const ret = await transactionService.getAtomicTransaction(req.body.parent);
       return res.json(ret).status(200);
     } catch (error) {
@@ -28,7 +28,7 @@ export default (app: Router) => {
   route.post('/insert', isAuth(), async (req: Request, res: Response) => {
     try {
       const ret = await getManager().transaction(async (EM) => {
-        const transactionService = new TransactionService(EM);
+        const transactionService = new TransactionService(EM, req.body.wallet);
         return await transactionService.insertAtomicTransaction(req.body.transactions, req.body.parent);
       });
       return res.json(ret).status(200);
@@ -40,7 +40,7 @@ export default (app: Router) => {
   route.post('/sign', isAuth(), async (req: Request, res: Response) => {
     try {
       const ret = await getManager().transaction(async (EM) => {
-        const transactionService = new TransactionService(EM);
+        const transactionService = new TransactionService(EM, req.body.wallet);
         return await transactionService.updateTransaction(req.body.id, req.body.update);
       });
       return res.json(ret).status(200);

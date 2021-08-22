@@ -28,7 +28,7 @@ function SuccessPage() {
           If this app helped you, please consider donating any amount to:
         </Typography>
 
-        <img src={qr} className={classes.qr} />
+        <img src={qr} className={classes.qr} alt={'qr-code'} />
 
         <Button variant="contained" onClick={copyToClipboard}>
           COPY ADDRESS

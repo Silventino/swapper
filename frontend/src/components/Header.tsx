@@ -1,15 +1,11 @@
-import { makeStyles, Theme, createStyles, Button, IconButton } from '@material-ui/core';
-import React, { useContext, useEffect } from 'react';
-import { colors, HEADER_HEIGHT } from 'src/constants';
-import logo from '../assets/logo.svg';
-
-import clsx from 'clsx';
-import WalletContext from './WalletContextProvider';
-import MySelect from './generic/MySelect';
-import MySelectBase from './generic/MySelectBase';
-import { showError } from 'src/helpers/helper';
-import ConnectButton from './ConnectButton';
+import { createStyles, IconButton, makeStyles, Theme } from '@material-ui/core';
 import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
+import clsx from 'clsx';
+import React, { useContext } from 'react';
+import { colors, HEADER_HEIGHT } from 'src/constants';
+import ConnectButton from './ConnectButton';
+import MySelectBase from './generic/MySelectBase';
+import WalletContext from './WalletContextProvider';
 
 const Header: React.FC = (props) => {
   const walletContext = useContext(WalletContext);
@@ -22,7 +18,9 @@ const Header: React.FC = (props) => {
 
   return (
     <div className={clsx(classes.header)}>
-      <h4 className={classes.pacifico}>PacSwap</h4>
+      <a href={'/pacswap'}>
+        <h4 className={classes.pacifico}>PacSwap</h4>
+      </a>
       {/* <img src={logo} className={clsx(classes.logo, 'App-logo')} alt="logo" /> */}
 
       {!Boolean(walletContext.accounts.length) && <ConnectButton />}

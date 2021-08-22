@@ -26,7 +26,7 @@ function TermsOfService() {
       transactions are immutable.
       <br />
       <br />
-      ONLY click in the button below an use the app if you agree with all the statements above.
+      ONLY click in the button below and use the app if you agree with all the statements above.
     </Typography>
   );
 }

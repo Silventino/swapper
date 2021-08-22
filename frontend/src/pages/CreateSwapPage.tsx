@@ -87,7 +87,7 @@ function CreateSwapPage() {
     setLoading(true);
     try {
       const tx = await walletContext.functions.createAtomicTransaction(transactions);
-      history.replace(`/tx/${tx}`);
+      history.replace(`/pacswap/tx/${tx}`);
       showNotification('Atomic transaction created!');
     } catch (err) {
       showError(err);

@@ -1,17 +1,24 @@
 import { EntityManager, getManager } from 'typeorm';
 import Transaction from '../db/entity/Transaction';
+import HttpError from '../etc/HttpError';
 import TransactionReq from '../types/TransactionReq';
 
 export default class TransactionService {
   EM: EntityManager;
+  connectedWallet: string;
 
-  constructor(EM: EntityManager) {
+  constructor(EM: EntityManager, connectedWallet: string) {
     this.EM = EM;
+    this.connectedWallet = connectedWallet;
   }
 
   async getAtomicTransaction(parent: string) {
     const transactionModel = this.EM.getRepository(Transaction);
     const transactions = await transactionModel.find({ where: { parentTransaction: parent } });
+    const canRead = transactions.some((item) => item.from === this.connectedWallet || item.to === this.connectedWallet);
+    if (!canRead) {
+      throw new HttpError(400, 'Your wallet is not participating in this swap.');
+    }
     return transactions;
   }
 
