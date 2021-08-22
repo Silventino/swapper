@@ -4,7 +4,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import 'reflect-metadata';
 import transactionApi from 'src/api/transactionApi';
 import { ALGO_ASSET, colors } from 'src/constants';
-import { showError, showNotification } from 'src/helpers/helper';
+import { getAssetImage, showError, showNotification } from 'src/helpers/helper';
 import CompleteTransaction from 'src/types/CompleteTransaction';
 import '../App.css';
 import GridCenter from './generic/GridCenter';
@@ -115,11 +115,7 @@ const TransactionSign: React.FC<Props> = (props) => {
       </GridCenter>
 
       <GridCenter item xs={12}>
-        <img
-          src={selectedAsset?.url ?? 'https://jsvasconcelos.pt/images/Icon/imageNotFound.png'}
-          alt=""
-          className={classes.img}
-        />
+        <img src={getAssetImage(selectedAsset)} alt="" className={classes.img} />
       </GridCenter>
 
       <Grid item xs={12}>

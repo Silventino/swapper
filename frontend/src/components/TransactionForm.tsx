@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import React, { useContext, useEffect, useState } from 'react';
 import 'reflect-metadata';
 import { colors } from 'src/constants';
+import { getAssetImage } from 'src/helpers/helper';
 import PartialTransaction from 'src/types/PartialTransaction';
 import '../App.css';
 import ConnectedWalletSelect from './generic/ConnectedWalletSelect';
@@ -13,21 +14,6 @@ import MySelect from './generic/MySelect';
 // // import RainbowDiv from './generic/RainbowDiv';
 import Title from './generic/Title';
 import WalletContext, { AssetInfo } from './WalletContextProvider';
-
-const getAssetImage = (asset: AssetInfo | null) => {
-  if (!asset) {
-    return 'https://jsvasconcelos.pt/images/Icon/imageNotFound.png';
-  }
-
-  if (asset.url?.endsWith('.png') || asset.url?.endsWith('.jpg') || asset.url?.endsWith('.jpeg')) {
-    return asset.url;
-  }
-  if (asset.url?.startsWith('https://ipfs.io/')) {
-    return asset.url;
-  } else {
-    return `https://algoexplorer.io/images/assets/big/light/${asset.id}.png`;
-  }
-};
 
 type Props = {
   index: number;
@@ -42,7 +28,6 @@ const TransactionForm: React.FC<Props> = (props) => {
   const { index, transaction, setTransaction, title, forceSenderConnected, forceReceiverConnected } = props;
   const classes = useStyles();
 
-  const [disabled, setDisabled] = useState(false);
   const [selectedAsset, setSelectedAsset] = useState<AssetInfo | null>(null);
 
   const walletContext = useContext(WalletContext);

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { toast } from 'react-toastify';
+import { AssetInfo } from 'src/components/WalletContextProvider';
 import CompleteTransaction from 'src/types/CompleteTransaction';
 import TransactionReq from 'src/types/TransactionReq';
 
@@ -90,3 +91,18 @@ export function useLocalStorage<T>(key: string, initialValue: T): [T, (obj: T) =
 
   return [storedValue, setValue];
 }
+
+export const getAssetImage = (asset: AssetInfo | null) => {
+  if (!asset) {
+    return 'https://jsvasconcelos.pt/images/Icon/imageNotFound.png';
+  }
+
+  if (asset.url?.endsWith('.png') || asset.url?.endsWith('.jpg') || asset.url?.endsWith('.jpeg')) {
+    return asset.url;
+  }
+  if (asset.url?.startsWith('https://ipfs.io/')) {
+    return asset.url;
+  } else {
+    return `https://algoexplorer.io/images/assets/big/light/${asset.id}.png`;
+  }
+};
