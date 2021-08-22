@@ -1,6 +1,6 @@
 import { Button, createStyles, Grid, makeStyles, Theme } from '@material-ui/core';
 import React, { useContext, useEffect, useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
 import 'reflect-metadata';
 import transactionApi from 'src/api/transactionApi';
 import Loader from 'src/components/generic/Loader';
@@ -21,10 +21,22 @@ function SignTransactionPage() {
   const [transactions, setTransactions] = useState<CompleteTransaction[]>([]);
   const [allSigned, setAllSigned] = useState(false);
 
+  const location = useLocation();
   const history = useHistory();
 
-  const getTransaction = async () => {
-    setLoading(true);
+  const copyToClipboard = () => {
+    try {
+      navigator.clipboard.writeText(window.location.href);
+      showNotification('URL copied to clipboard!');
+    } catch (err) {
+      showError(err);
+    }
+  };
+
+  const getTransaction = async (showLoader: boolean = true) => {
+    if (showLoader) {
+      setLoading(true);
+    }
     try {
       if (!walletContext.selectedAccount) {
         throw new Error('Please connect your wallet first.');
@@ -56,6 +68,14 @@ function SignTransactionPage() {
       history.replace('/pacswap/success');
     } catch (err) {
       console.log(err);
+
+      if (err.response?.body?.message) {
+        let message = err.response.body.message as string;
+        if (message.search('transaction already in ledger') !== -1) {
+          history.replace('/pacswap/success');
+        }
+      }
+
       showError(err);
     }
     setLoading(false);
@@ -64,6 +84,25 @@ function SignTransactionPage() {
   useEffect(() => {
     if (walletContext.selectedAccount) {
       getTransaction();
+    }
+  }, [walletContext.selectedAccount]);
+
+  const loop = () => {
+    setTimeout(() => {
+      console.log('Reloading!');
+
+      if (location.pathname?.search('success') !== -1) {
+        return;
+      }
+
+      getTransaction(false);
+      loop();
+    }, 20 * 1000);
+  };
+
+  useEffect(() => {
+    if (walletContext.selectedAccount) {
+      loop();
     }
   }, [walletContext.selectedAccount]);
 
@@ -85,14 +124,21 @@ function SignTransactionPage() {
       {allSigned && (
         <Grid item xs={12}>
           <Alert severity="success">
-            All transactions signed! Send the atomic transaction in the end of this page.
+            All transactions signed! Finish the atomic transaction in the end of this page.
           </Alert>
         </Grid>
       )}
 
       {!allSigned && (
         <Grid item xs={12}>
-          <Alert severity="info">
+          <Alert
+            severity="info"
+            action={
+              <Button variant="contained" size="small" onClick={() => copyToClipboard()}>
+                COPY URL
+              </Button>
+            }
+          >
             Share this page URL with the participants of this swap and you'll be able to complete it once all
             transactions are signed.
           </Alert>
@@ -106,7 +152,7 @@ function SignTransactionPage() {
       ))}
 
       {allSigned && (
-        <GridCenter item xs={12}>
+        <GridCenter item xs={12} className={classes.buttonDiv}>
           <Button variant={'contained'} onClick={() => finish()}>
             FINISH TRANSACTION
           </Button>
@@ -114,7 +160,7 @@ function SignTransactionPage() {
       )}
 
       {!allSigned && (
-        <GridCenter item xs={12}>
+        <GridCenter item xs={12} className={classes.buttonDiv}>
           <Button variant={'contained'} onClick={() => getTransaction()}>
             REFRESH
           </Button>
@@ -130,7 +176,8 @@ const useStyles = makeStyles<Theme>((theme) =>
       maxWidth: 'min(100vw, 1000px)',
       paddingBottom: 20
     },
-    swapGrid: { marginTop: 10 }
+    swapGrid: { marginTop: 10 },
+    buttonDiv: { marginTop: 10 }
   })
 );
 

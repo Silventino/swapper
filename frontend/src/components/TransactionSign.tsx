@@ -77,15 +77,6 @@ const TransactionSign: React.FC<Props> = (props) => {
     setLoading(false);
   };
 
-  const copyToClipboard = () => {
-    try {
-      navigator.clipboard.writeText(window.location.href);
-      showNotification('URL copied to clipboard!');
-    } catch (err) {
-      showError(err);
-    }
-  };
-
   useEffect(() => {
     if (!transaction.assetIndex) {
       setOptedIn(true);
@@ -119,14 +110,14 @@ const TransactionSign: React.FC<Props> = (props) => {
       </GridCenter>
 
       <Grid item xs={12}>
-        <MyInput label={'Asset'} value={selectedAsset?.assetname ?? ''} onChange={(asset) => {}} disabled />
+        <MyInput label={'Asset'} value={selectedAsset?.assetname ?? ''} onChange={(asset) => {}} disabled multiline />
       </Grid>
 
       <Grid item xs={12}>
-        <MyInput label={'From'} value={transaction.from} onChange={(txt) => {}} disabled />
+        <MyInput label={'From'} value={transaction.from} onChange={(txt) => {}} disabled multiline />
       </Grid>
       <Grid item xs={12}>
-        <MyInput label={'To'} value={transaction.to} onChange={(txt) => {}} disabled />
+        <MyInput label={'To'} value={transaction.to} onChange={(txt) => {}} disabled multiline />
       </Grid>
 
       <Grid item xs={12}>
@@ -149,8 +140,8 @@ const TransactionSign: React.FC<Props> = (props) => {
 
       {!loading && !isOwner && !isSigned && (
         <GridCenter item xs={12}>
-          <Button variant={'contained'} onClick={() => copyToClipboard()}>
-            SEND LINK TO THE OWNER OF {`${transaction.from.substring(0, 5)}...${transaction.from.substring(53)}`}
+          <Button variant={'contained'} onClick={() => {}} disabled>
+            NOT SIGNED
           </Button>
         </GridCenter>
       )}
