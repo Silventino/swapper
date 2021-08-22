@@ -17,7 +17,7 @@ export default class TransactionService {
     const transactions = await transactionModel.find({ where: { parentTransaction: parent } });
     const canRead = transactions.some((item) => item.from === this.connectedWallet || item.to === this.connectedWallet);
     if (!canRead) {
-      throw new HttpError(400, 'Your wallet is not participating in this swap.');
+      throw new HttpError(400, 'Selected wallet is not participating in this swap.');
     }
     return transactions;
   }
