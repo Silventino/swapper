@@ -353,7 +353,8 @@ const WalletContextProvider: React.FC = ({ children }) => {
       type: 'pay' as any,
       from: selectedAccount.address,
       to: 'VT7NZ62266IYHMEHWXLZXARZLA324BDTTKNJPYWXBNDO7TYMWJY27KC2XY',
-      amount: 100000,
+      // amount: 100000,
+      amount: 10,
       note: new Uint8Array(Buffer.from(JSON.stringify(groupID)))
     } as TransactionLike;
 

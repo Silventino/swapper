@@ -9,7 +9,8 @@ function TermsOfService() {
     <Typography className={classes.smalltxt}>
       Here's how to make a swap:
       <br />
-      1) Person A creates a atomic swap paying 0.1 ALGO to help maintain this website
+      1) Person A creates a atomic swap
+      {/* 1) Person A creates a atomic swap paying 0.1 ALGO to help maintain this website */}
       <br />
       2) Person A sign the first transaction
       <br />
