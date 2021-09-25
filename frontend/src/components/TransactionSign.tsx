@@ -2,7 +2,7 @@ import { Button, createStyles, Grid, makeStyles, Theme } from '@material-ui/core
 import clsx from 'clsx';
 import React, { useContext, useEffect, useState } from 'react';
 import 'reflect-metadata';
-import transactionApi from 'src/api/transactionApi';
+import swapApi from 'src/api/swapApi';
 import { ALGO_ASSET, colors } from 'src/constants';
 import { getAssetImage, showError, showNotification } from 'src/helpers/helper';
 import CompleteTransaction from 'src/types/CompleteTransaction';
@@ -55,7 +55,7 @@ const TransactionSign: React.FC<Props> = (props) => {
         return;
       }
       const signed = await walletContext.functions.signTransaction(transaction);
-      await transactionApi.signTransaction(walletContext.selectedAccount.address, signed);
+      await swapApi.signTransaction(walletContext.selectedAccount.address, signed);
       onSign();
     } catch (err) {
       showError(err);

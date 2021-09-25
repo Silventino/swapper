@@ -2,7 +2,7 @@ import MyAlgoClient from '@randlabs/myalgo-connect';
 import algosdk, { TransactionLike } from 'algosdk';
 import axios from 'axios';
 import React, { createContext, useEffect, useState } from 'react';
-import transactionApi from 'src/api/transactionApi';
+import swapApi from 'src/api/swapApi';
 import { ALGO_ASSET } from 'src/constants';
 import { waitForConfirmation } from 'src/helpers/algoHelper';
 import { useLocalStorage } from 'src/helpers/helper';
@@ -361,7 +361,7 @@ const WalletContextProvider: React.FC = ({ children }) => {
     let signedTxn = await myAlgoClient.signTransaction(txn as any);
     const txID = await sendTransactions([signedTxn.blob]);
 
-    await transactionApi.insertAtomicTransaction(selectedAccount.address, transactions, txID);
+    await swapApi.insertSwap(selectedAccount.address, transactions, txID);
 
     return txID;
   };

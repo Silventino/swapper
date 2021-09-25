@@ -1,14 +1,14 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { TextDecoder } from 'util';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import TransactionReq from '../../types/TransactionReq';
+import Swap from './Swap';
 
 @Entity()
 export default class Transaction {
   @PrimaryGeneratedColumn()
   id!: string;
 
-  @Column()
-  parentTransaction!: string;
+  @Column({ name: 'parentTransaction' })
+  parentTxID!: string;
 
   @Column()
   fee!: number;
@@ -55,9 +55,13 @@ export default class Transaction {
   @Column({ default: '' })
   txID?: string;
 
+  @ManyToOne(() => Swap)
+  @JoinColumn({ name: 'parentTransaction', referencedColumnName: 'txId' })
+  swap!: Swap;
+
   fromTransactionReq(s: TransactionReq, parent?: string) {
     Object.assign(this, s);
-    this.parentTransaction = parent ?? '';
+    this.parentTxID = parent ?? '';
     this.note = s.note ?? '';
   }
 }

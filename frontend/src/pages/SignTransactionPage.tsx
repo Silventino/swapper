@@ -1,27 +1,26 @@
 import { Button, createStyles, Grid, makeStyles, Theme } from '@material-ui/core';
+import Alert from '@material-ui/lab/Alert';
 import React, { useContext, useEffect, useState } from 'react';
-import { useHistory, useLocation, useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import 'reflect-metadata';
-import transactionApi from 'src/api/transactionApi';
+import swapApi from 'src/api/swapApi';
 import Loader from 'src/components/generic/Loader';
-import TransactionForm from 'src/components/TransactionForm';
 import TransactionSign from 'src/components/TransactionSign';
 import { showError, showNotification } from 'src/helpers/helper';
-import CompleteTransaction from 'src/types/CompleteTransaction';
+import Swap from 'src/types/Swap';
 import '../App.css';
 import GridCenter from '../components/generic/GridCenter';
 import WalletContext from '../components/WalletContextProvider';
-import Alert from '@material-ui/lab/Alert';
 
 function SignTransactionPage() {
   let { id } = useParams<{ id: string }>();
   const walletContext = useContext(WalletContext);
   const [loading, setLoading] = useState(true);
   const classes = useStyles();
-  const [transactions, setTransactions] = useState<CompleteTransaction[]>([]);
+
+  const [swap, setSwap] = useState<null | Swap>(null);
   const [allSigned, setAllSigned] = useState(false);
 
-  const location = useLocation();
   const history = useHistory();
 
   const copyToClipboard = () => {
@@ -41,29 +40,42 @@ function SignTransactionPage() {
       if (!walletContext.selectedAccount) {
         throw new Error('Please connect your wallet first.');
       }
-      const res = await transactionApi.getAtomicTransaction(walletContext.selectedAccount.address, id);
-      await walletContext.functions.verifyGroup(id, res);
-      setTransactions(res);
+      const newSwap = await swapApi.getSwap(walletContext.selectedAccount.address, id);
+
+      if (newSwap.completed) {
+        history.replace('/pacswap/success');
+        return true;
+      }
+
+      await walletContext.functions.verifyGroup(id, newSwap.transactions);
+      setSwap(newSwap);
     } catch (err) {
       console.log(err);
       showError(err);
     }
-    setLoading(false);
+    if (showLoader) {
+      setLoading(false);
+    }
   };
 
   const finish = async () => {
     setLoading(true);
     try {
+      if (!swap) {
+        throw new Error('Swap not found.');
+      }
       if (!walletContext.selectedAccount) {
         throw new Error('Please connect your wallet first.');
       }
-      const signed = transactions.map((item) => {
+      const signed = swap.transactions.map((item) => {
         if (!item.blob) {
           throw new Error('Unsigned transaction.');
         }
         return item.blob;
       });
+
       await walletContext.functions.sendTransactions(signed);
+      await swapApi.completeSwap(walletContext.selectedAccount.address, swap!.txId);
       showNotification('Sucess! Swap completed.');
       history.replace('/pacswap/success');
     } catch (err) {
@@ -87,17 +99,19 @@ function SignTransactionPage() {
     }
   }, [walletContext.selectedAccount]);
 
-  const loop = () => {
+  const loop = async () => {
+    if (window.location.href.search('success') !== -1) {
+      return;
+    }
+    console.log('Reloading!');
+
+    const completed = await getTransaction(false);
+    if (completed === true) {
+      return;
+    }
     setTimeout(() => {
-      console.log('Reloading!');
-
-      if (location.pathname?.search('success') !== -1) {
-        return;
-      }
-
-      getTransaction(false);
       loop();
-    }, 20 * 1000);
+    }, 5 * 1000);
   };
 
   useEffect(() => {
@@ -107,11 +121,15 @@ function SignTransactionPage() {
   }, [walletContext.selectedAccount]);
 
   useEffect(() => {
-    const newAllSigned = transactions.every((item) => Boolean(item.txID && item.blob));
-    setAllSigned(newAllSigned);
-  }, [transactions]);
+    if (swap) {
+      const newAllSigned = swap.transactions.every((item) => Boolean(item.txID && item.blob));
+      setAllSigned(newAllSigned);
+    } else {
+      setAllSigned(false);
+    }
+  }, [swap]);
 
-  if (!walletContext.selectedAccount || !transactions.length) {
+  if (!walletContext.selectedAccount || !swap || !swap.transactions.length) {
     return null;
   }
 
@@ -145,9 +163,9 @@ function SignTransactionPage() {
         </Grid>
       )}
 
-      {transactions.map((item, index) => (
+      {swap.transactions.map((item, index) => (
         <GridCenter key={`transaction${index}`} item xs={12} md={6} className={classes.swapGrid}>
-          <TransactionSign index={index} transaction={transactions[index]} onSign={() => getTransaction()} />
+          <TransactionSign index={index} transaction={swap.transactions[index]} onSign={() => getTransaction()} />
         </GridCenter>
       ))}
 

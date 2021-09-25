@@ -1,32 +1,40 @@
 import { fromCompleteTransaction, toCompleteTransaction } from 'src/helpers/helper';
 import CompleteTransaction from 'src/types/CompleteTransaction';
-import TransactionReq from 'src/types/TransactionReq';
+import Swap from 'src/types/Swap';
+import SwapReq from 'src/types/SwapReq';
 import myAxios from './myAxios';
 
 const PREFIX = 'api';
 const ROUTE = 'transaction';
 
-class TransactionApi {
-  async getAtomicTransaction(myWallet: string, parent: string) {
+class SwapApi {
+  async getSwap(myWallet: string, parent: string) {
     try {
       if (!myWallet) {
         throw new Error('Please, connect your wallet first.');
       }
-      const res = await myAxios.post<TransactionReq[]>(
+      const res = await myAxios.post<SwapReq>(
         `/${PREFIX}/${ROUTE}/get`,
         { parent },
         { headers: { Authorization: myWallet } }
       );
-      const data = res.data;
-      const ret = data.map((item) => toCompleteTransaction(item));
-      return ret;
+      const swapReq = res.data;
+
+      const swap: Swap = {
+        txId: swapReq.txId,
+        completed: swapReq.completed,
+        transactions: []
+      };
+      swap.transactions = swapReq.transactions.map((item) => toCompleteTransaction(item));
+
+      return swap;
     } catch (error) {
       console.log(error);
       throw error;
     }
   }
 
-  async insertAtomicTransaction(myWallet: string, transactions: CompleteTransaction[], parent: string) {
+  async insertSwap(myWallet: string, transactions: CompleteTransaction[], parent: string) {
     try {
       if (!myWallet) {
         throw new Error('Please, connect your wallet first.');
@@ -63,7 +71,22 @@ class TransactionApi {
       throw error;
     }
   }
+
+  async completeSwap(myWallet: string, txId: string) {
+    try {
+      if (!myWallet) {
+        throw new Error('Please, connect your wallet first.');
+      }
+
+      let res = await myAxios.post(`/${PREFIX}/${ROUTE}/complete`, { txId }, { headers: { Authorization: myWallet } });
+      let data = res.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
 }
 
-const transactionApi = new TransactionApi();
-export default transactionApi;
+const swapApi = new SwapApi();
+export default swapApi;

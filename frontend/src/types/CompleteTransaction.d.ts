@@ -9,7 +9,7 @@ declare type CompleteTransaction = BaseTransaction & {
   note?: Uint8Array;
   group?: Buffer;
 
-  parentTransaction?: string;
+  parentTxID?: string;
   id?: number;
   blob?: Uint8Array;
   txID?: string;

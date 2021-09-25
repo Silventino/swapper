@@ -9,7 +9,7 @@ declare type TransactionReq = BaseTransaction & {
   note?: string;
   group?: string;
 
-  parentTransaction?: string;
+  parentTxID?: string;
   blob?: string;
   txID?: string;
 };
