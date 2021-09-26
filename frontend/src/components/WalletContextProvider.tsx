@@ -89,6 +89,7 @@ type PropsWalletContext = {
   accounts: AccountInfo[];
   selectedAccount: AccountDetailedInfo | null;
   assets: AssetInfo[];
+  loadingAccount: boolean;
   myAlgoClient: MyAlgoClient;
   functions: {
     connectMyAlgo: () => Promise<void>;
@@ -107,7 +108,7 @@ const DEFAULT_VALUE = {
   accounts: [],
   selectedAccount: null,
   assets: [],
-  // setState: () => {}, //função de inicialização
+  loadingAccount: false,
   myAlgoClient: new MyAlgoClient(),
   functions: {
     connectMyAlgo: async () => {},
@@ -142,6 +143,7 @@ const WalletContextProvider: React.FC = ({ children }) => {
   const [accounts, setAccounts] = useLocalStorage<AccountInfo[]>('accounts', []);
   const [assets, setAssets] = useState<AssetInfo[]>([]);
   const [selectedAccount, setSelectedAccount] = useState<AccountDetailedInfo | null>(null);
+  const [loadingAccount, setLoadingAccount] = useState(false);
 
   const [myAlgoClient] = useState(new MyAlgoClient());
   const [algodClient] = useState(
@@ -179,17 +181,36 @@ const WalletContextProvider: React.FC = ({ children }) => {
   };
 
   const selectAccount = async (address: string) => {
+    setLoadingAccount(true);
     try {
       const res = await axios.get<AccountDetailedInfo>(
         TESTNET
           ? `https://testnet.algoexplorerapi.io/v2/accounts/${address}`
           : `https://algoexplorerapi.io/v2/accounts/${address}`
       );
-      setSelectedAccount(res.data);
+      const newSelectedAccount = res.data;
+
+      const newAssets: AssetInfo[] = [ALGO_ASSET];
+      for (let i = 0; i < newSelectedAccount.assets.length; i++) {
+        const asset = newSelectedAccount.assets[i];
+        const knownAsset = assets.find((item) => item.id === asset['asset-id']);
+        if (knownAsset) {
+          newAssets.push(knownAsset);
+        } else {
+          const res = await getAssetInfo(asset['asset-id']);
+          if (res) {
+            newAssets.push(res);
+          }
+        }
+      }
+
+      setAssets(newAssets);
+      setSelectedAccount(newSelectedAccount);
     } catch (err) {
       console.log('err', err);
       throw err;
     }
+    setLoadingAccount(false);
   };
 
   const getAssetInfo = async (assetId: string | number) => {
@@ -206,27 +227,27 @@ const WalletContextProvider: React.FC = ({ children }) => {
     }
   };
 
-  const getAllAssetInfo = async () => {
-    try {
-      if (!selectedAccount) {
-        return;
-      }
+  // const getAllAssetInfo = async () => {
+  //   try {
+  //     if (!selectedAccount) {
+  //       return;
+  //     }
 
-      const newAssets: AssetInfo[] = [ALGO_ASSET];
-      for (let i = 0; i < selectedAccount.assets.length; i++) {
-        const item = selectedAccount.assets[i];
-        const res = await getAssetInfo(item['asset-id']);
-        if (res) {
-          newAssets.push(res);
-        }
-      }
+  //     const newAssets: AssetInfo[] = [ALGO_ASSET];
+  //     for (let i = 0; i < selectedAccount.assets.length; i++) {
+  //       const item = selectedAccount.assets[i];
+  //       const res = await getAssetInfo(item['asset-id']);
+  //       if (res) {
+  //         newAssets.push(res);
+  //       }
+  //     }
 
-      setAssets(newAssets);
-    } catch (err) {
-      console.log('err', err);
-      throw err;
-    }
-  };
+  //     setAssets(newAssets);
+  //   } catch (err) {
+  //     console.log('err', err);
+  //     throw err;
+  //   }
+  // };
 
   const getBaseTransaction = async () => {
     let txn = (await algodClient.getTransactionParams().do()) as BaseTransaction;
@@ -286,7 +307,6 @@ const WalletContextProvider: React.FC = ({ children }) => {
           from: transaction.from,
           to: transaction.to,
           amount: transaction.amount * Math.pow(10, assetInfo.decimals)
-          // note: new Uint8Array(Buffer.from('Transaction made with the help of Atomic Ant'))
         };
         newTransactions.push(txn);
       }
@@ -402,14 +422,10 @@ const WalletContextProvider: React.FC = ({ children }) => {
   };
 
   useEffect(() => {
-    if (selectedAccount) {
-      getAllAssetInfo();
-    } else {
-      if (accounts.length) {
-        selectAccount(accounts[0].address);
-      }
+    if (!selectedAccount && accounts.length) {
+      selectAccount(accounts[0].address);
     }
-  }, [selectedAccount]);
+  }, [selectedAccount, accounts]);
 
   return (
     <WalletContext.Provider
@@ -418,6 +434,7 @@ const WalletContextProvider: React.FC = ({ children }) => {
         accounts,
         selectedAccount,
         assets,
+        loadingAccount,
         functions: {
           connectMyAlgo,
           selectAccount,

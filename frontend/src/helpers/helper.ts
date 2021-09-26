@@ -13,6 +13,9 @@ export const showError = (err: Error | any) => {
     if (message.search('transaction already in ledger') !== -1) {
       message = 'Transaction already completed.';
     }
+    if (message.search('txn dead') !== -1) {
+      message = 'This swap is not valid anymore because you took too long to complete it 😔 Please create a new one.';
+    }
 
     toast(message);
     return;

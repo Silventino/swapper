@@ -4,6 +4,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import 'reflect-metadata';
 import swapApi from 'src/api/swapApi';
+import AssetOptIn from 'src/components/AssetOptIn';
 import Loader from 'src/components/generic/Loader';
 import TransactionSign from 'src/components/TransactionSign';
 import { showError, showNotification } from 'src/helpers/helper';
@@ -19,7 +20,11 @@ function SignTransactionPage() {
   const classes = useStyles();
 
   const [swap, setSwap] = useState<null | Swap>(null);
+
   const [allSigned, setAllSigned] = useState(false);
+  const [allMineSigned, setAllMineSigned] = useState(false);
+
+  const [notOptedInAssets, setNotOptedInAssets] = useState<number[]>([]);
 
   const history = useHistory();
 
@@ -114,6 +119,30 @@ function SignTransactionPage() {
     }, 5 * 1000);
   };
 
+  const verifySteps = () => {
+    if (swap) {
+      const newAllSigned = swap.transactions.every((item) => Boolean(item.txID && item.blob));
+
+      const myTransactions = swap.transactions.filter((item) =>
+        Boolean(walletContext.selectedAccount && item.from === walletContext.selectedAccount.address)
+      );
+      const newAllMineSigned = myTransactions.every((item) => Boolean(item.txID && item.blob));
+
+      const newNotOptedInAssets: number[] = [];
+      for (let i = 0; i < swap.transactions.length; i++) {
+        const transaction = swap.transactions[i];
+        const opted = walletContext.assets.some((asset) => asset.id === transaction.assetIndex);
+        if (!opted && transaction.assetIndex) {
+          newNotOptedInAssets.push(transaction.assetIndex);
+        }
+      }
+
+      setNotOptedInAssets(newNotOptedInAssets);
+      setAllSigned(newAllSigned);
+      setAllMineSigned(newAllMineSigned);
+    }
+  };
+
   useEffect(() => {
     if (walletContext.selectedAccount) {
       loop();
@@ -121,12 +150,7 @@ function SignTransactionPage() {
   }, [walletContext.selectedAccount]);
 
   useEffect(() => {
-    if (swap) {
-      const newAllSigned = swap.transactions.every((item) => Boolean(item.txID && item.blob));
-      setAllSigned(newAllSigned);
-    } else {
-      setAllSigned(false);
-    }
+    verifySteps();
   }, [swap]);
 
   if (!walletContext.selectedAccount || !swap || !swap.transactions.length) {
@@ -137,8 +161,25 @@ function SignTransactionPage() {
     return <Loader />;
   }
 
+  if (notOptedInAssets.length > 0) {
+    // step 0: opt-in
+    return (
+      <Grid container spacing={4} justifyContent={'center'} className={classes.container}>
+        <Grid item xs={12}>
+          <Alert severity="info">You need to opt-in these assets before continuing.</Alert>
+        </Grid>
+
+        {notOptedInAssets.map((assetIndex, index) => (
+          <GridCenter key={`transaction${index}`} item xs={12} md={6} className={classes.swapGrid}>
+            <AssetOptIn assetIndex={assetIndex} onOptIn={() => {}} />
+          </GridCenter>
+        ))}
+      </Grid>
+    );
+  }
+
   return (
-    <Grid container spacing={4} className={classes.container}>
+    <Grid container spacing={4} justifyContent={'center'} className={classes.container}>
       {allSigned && (
         <Grid item xs={12}>
           <Alert severity="success">
@@ -147,7 +188,16 @@ function SignTransactionPage() {
         </Grid>
       )}
 
-      {!allSigned && (
+      {!allSigned && !allMineSigned && (
+        <Grid item xs={12}>
+          <Alert severity="info">
+            First, sign all transactions that have the "Sign" button available. Don't worry, none of the assets will
+            leave your wallet untill everything is complete.
+          </Alert>
+        </Grid>
+      )}
+
+      {!allSigned && allMineSigned && (
         <Grid item xs={12}>
           <Alert
             severity="info"
@@ -157,7 +207,7 @@ function SignTransactionPage() {
               </Button>
             }
           >
-            Share this page URL with the participants of this swap and you'll be able to complete it once all
+            Share this page URL with the other participant of this swap and you'll be able to complete it once all
             transactions are signed.
           </Alert>
         </Grid>

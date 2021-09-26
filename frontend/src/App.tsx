@@ -5,6 +5,7 @@ import 'reflect-metadata';
 import './App.css';
 import Header from './components/Header';
 import ModalConnect from './components/ModalConnect';
+import ModalLoading from './components/ModalLoading';
 import WalletContext from './components/WalletContextProvider';
 import { HEADER_HEIGHT } from './constants';
 import CreateSwapPage from './pages/CreateSwapPage';
@@ -19,6 +20,7 @@ function App() {
   return (
     <div className="App">
       <ModalConnect />
+      <ModalLoading loading={walletContext.loadingAccount} />
 
       <Header />
 
