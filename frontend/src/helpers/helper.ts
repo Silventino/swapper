@@ -103,7 +103,7 @@ export const getAssetImage = (asset: AssetInfo | null) => {
   if (asset.url?.endsWith('.png') || asset.url?.endsWith('.jpg') || asset.url?.endsWith('.jpeg')) {
     return asset.url;
   }
-  if (asset.url?.startsWith('https://ipfs.io/')) {
+  if (asset.url?.startsWith('https://ipfs.io/') || asset.url?.startsWith('https://gateway.pinata.cloud/ipfs/')) {
     return asset.url;
   } else {
     return `https://algoexplorer.io/images/assets/big/light/${asset.id}.png`;
