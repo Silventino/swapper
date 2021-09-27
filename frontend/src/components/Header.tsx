@@ -6,6 +6,7 @@ import { colors, HEADER_HEIGHT } from 'src/constants';
 import ConnectButton from './ConnectButton';
 import MySelectBase from './generic/MySelectBase';
 import WalletContext from './WalletContextProvider';
+import icon from '../assets/icon.png';
 
 const Header: React.FC = (props) => {
   const walletContext = useContext(WalletContext);
@@ -18,8 +19,10 @@ const Header: React.FC = (props) => {
 
   return (
     <div className={clsx(classes.header)}>
-      <a href={'/pacswap'}>
-        <h4 className={classes.pacifico}>PacSwap</h4>
+      <a href={'/saturnswap'} className={classes.title}>
+        <h4 className={classes.pacifico}>Saturn</h4>
+        <img src={icon} alt="logo" className={classes.logo} />
+        <h4 className={classes.pacifico}>Swap</h4>
       </a>
       {/* <img src={logo} className={clsx(classes.logo, 'App-logo')} alt="logo" /> */}
 
@@ -33,7 +36,7 @@ const Header: React.FC = (props) => {
             value={walletContext.selectedAccount?.address}
             onChange={(x) => (x ? walletContext.functions.selectAccount(x) : null)}
           />
-          <IconButton onClick={() => logout()}>
+          <IconButton onClick={() => logout()} className={classes.logoutButton}>
             <MeetingRoomIcon />
           </IconButton>
         </div>
@@ -44,7 +47,6 @@ const Header: React.FC = (props) => {
 
 const useStyles = makeStyles<Theme>((theme) =>
   createStyles({
-    logo: { height: HEADER_HEIGHT - 25 },
     header: {
       width: '100vw',
       backgroundColor: colors.background,
@@ -55,18 +57,34 @@ const useStyles = makeStyles<Theme>((theme) =>
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
-      paddingRight: 20,
-      paddingLeft: 20
+      paddingRight: 10,
+      paddingLeft: 10
       // borderBottomWidth: 0.01,
       // borderBottom: 'solid white'
     },
     title: {
-      color: 'white'
+      display: 'flex',
+      flexDirection: 'row'
+    },
+    logo: {
+      width: 35,
+      height: 35,
+      marginLeft: 5,
+      marginRight: 5
     },
     pacifico: {
       fontFamily: "'Pacifico', cursive",
       color: 'white',
+      fontSize: 22
+    },
+    roboto: {
+      fontFamily: 'Roboto',
+      color: 'white',
       fontSize: 25
+    },
+    logoutButton: {
+      width: 35,
+      height: 35
     }
   })
 );

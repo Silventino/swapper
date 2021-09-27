@@ -27,13 +27,13 @@ function App() {
       <div className={classes.appContent}>
         <Router>
           <Switch>
-            <Route path="/pacswap/tx/:id">
+            <Route path="/saturnswap/tx/:id">
               <SignTransactionPage />
             </Route>
-            <Route path="/pacswap/success">
+            <Route path="/saturnswap/success">
               <SuccessPage />
             </Route>
-            <Route path="/pacswap/">
+            <Route path="/saturnswap/">
               <CreateSwapPage />
             </Route>
           </Switch>

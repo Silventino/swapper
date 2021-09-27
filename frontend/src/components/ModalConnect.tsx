@@ -14,7 +14,7 @@ function ModalConnect() {
 
   return (
     <MyModal open={!Boolean(walletContext.accounts.length)} onClose={() => {}} hideClose>
-      <Typography className={classes.medtxt}>Welcome to PacSwap!</Typography>
+      <Typography className={classes.medtxt}>Welcome to SaturnSwap!</Typography>
       <Typography className={classes.smalltxt}></Typography>
 
       <TermsOfService />

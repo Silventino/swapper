@@ -11,8 +11,8 @@ comando = input("Deseja prosseguir? [s/n]")
 if(comando != 's'):
   exit(0)
 
-buildPath = "../pacswap-build"
-novoBuildPath = input("Qual o caminho para salvar a build? Padrão: '../pacswap-build'")
+buildPath = "../saturnswap-build"
+novoBuildPath = input("Qual o caminho para salvar a build? Padrão: '../saturnswap-build'")
 if (novoBuildPath != ''):
   buildPath = novoBuildPath
 

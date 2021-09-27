@@ -48,7 +48,7 @@ function SignTransactionPage() {
       const newSwap = await swapApi.getSwap(walletContext.selectedAccount.address, id);
 
       if (newSwap.completed) {
-        history.replace('/pacswap/success');
+        history.replace('/saturnswap/success');
         return true;
       }
 
@@ -82,14 +82,14 @@ function SignTransactionPage() {
       await walletContext.functions.sendTransactions(signed);
       await swapApi.completeSwap(walletContext.selectedAccount.address, swap!.txId);
       showNotification('Sucess! Swap completed.');
-      history.replace('/pacswap/success');
+      history.replace('/saturnswap/success');
     } catch (err) {
       console.log(err);
 
       if (err.response?.body?.message) {
         let message = err.response.body.message as string;
         if (message.search('transaction already in ledger') !== -1) {
-          history.replace('/pacswap/success');
+          history.replace('/saturnswap/success');
         }
       }
 
