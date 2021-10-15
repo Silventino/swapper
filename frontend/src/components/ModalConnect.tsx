@@ -16,9 +16,26 @@ function ModalConnect() {
     <MyModal open={!Boolean(walletContext.accounts.length)} onClose={() => {}} hideClose>
       <Typography className={classes.medtxt}>Welcome to Swapper Tools!</Typography>
       <br />
-
+      Here's how to make a swap:
+      <br />
+      1) Person A creates the swap
+      <br />
+      2) Person A signs the first transaction
+      <br />
+      3) Person A sends the link to the person B
+      <br />
+      4) Person B signs the second transaction
+      <br />
+      5) Both transactions will be safely sent at the same time to the blockchain
+      <br />
+      <br />
+      To make this tool safe we are using the atomic transfer feature of Algorand, you can read more about it{' '}
+      <a href="https://developer.algorand.org/docs/get-details/atomic_transfers/" target="_blank">
+        clicking here
+      </a>
+      .
+      <br />
       <TermsOfService />
-
       <DivCenter>
         <ConnectButton title={'Accept and Connect'} />
       </DivCenter>
