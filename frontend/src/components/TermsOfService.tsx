@@ -9,21 +9,26 @@ function TermsOfService() {
     <Typography className={classes.smalltxt}>
       Here's how to make a swap:
       <br />
-      1) Person A creates a atomic swap
-      {/* 1) Person A creates a atomic swap paying 0.1 ALGO to help maintain this website */}
+      1) Person A creates the swap
       <br />
-      2) Person A sign the first transaction
+      2) Person A signs the first transaction
       <br />
-      3) Person A send the link to the person B
+      3) Person A sends the link to the person B
       <br />
       4) Person B signs the second transaction
       <br />
       5) Both transactions will be safely sent at the same time to the blockchain
       <br />
       <br />
-      By using this website, you agree to only buy or sell artwork and gaming NFTs on this website, and never buy or
-      sell investments or securities on this website. Listings are the responsibility of the seller. Due diligence is
-      the responsibility of the buyer - check the ASA ID. And of course, all swaps are final, since your Algorand
+      To make this tool safe we are using the atomic transfer feature of Algorand, you can read more about it{' '}
+      <a href="https://developer.algorand.org/docs/get-details/atomic_transfers/" target="_blank">
+        clicking here
+      </a>
+      .
+      <br />
+      By using this website, you agree to only buy or sell artwork and gaming NFTs when using this tool, and never buy
+      or sell investments or securities here. Listings are the responsibility of the seller. Due diligence is the
+      responsibility of the buyer - check the ASA ID. And of course, all swaps are final, since your Algorand
       transactions are immutable.
       <br />
       <br />

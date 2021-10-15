@@ -11,8 +11,8 @@ comando = input("Deseja prosseguir? [s/n]")
 if(comando != 's'):
   exit(0)
 
-buildPath = "../saturnswap-build"
-novoBuildPath = input("Qual o caminho para salvar a build? Padrão: '../saturnswap-build'")
+buildPath = "../swapper-build"
+novoBuildPath = input("Qual o caminho para salvar a build? Padrão: '../swapper-build'")
 if (novoBuildPath != ''):
   buildPath = novoBuildPath
 

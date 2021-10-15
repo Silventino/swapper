@@ -32,6 +32,10 @@
   }
 }
 
+a {
+  color: inherit;
+}
+
 /*animate the background gradient position, use vh so that start/end syncs up viewport horizontal*/
 /* .rainbow {
   height: 100%;

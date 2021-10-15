@@ -7,6 +7,7 @@ import ConnectButton from './ConnectButton';
 import MySelectBase from './generic/MySelectBase';
 import WalletContext from './WalletContextProvider';
 import icon from '../assets/icon.png';
+import logo_full from '../assets/logo_full.png';
 
 const Header: React.FC = (props) => {
   const walletContext = useContext(WalletContext);
@@ -19,12 +20,10 @@ const Header: React.FC = (props) => {
 
   return (
     <div className={clsx(classes.header)}>
-      <a href={'/saturnswap'} className={classes.title}>
-        <h4 className={classes.pacifico}>Saturn</h4>
-        <img src={icon} alt="logo" className={classes.logo} />
-        <h4 className={classes.pacifico}>Swap</h4>
+      <a href={'/swapper'} className={classes.title}>
+        <img src={logo_full} alt="logo" className={classes.logo} />
+        {/* <img src={icon} alt="logo" className={classes.logo} /> */}
       </a>
-      {/* <img src={logo} className={clsx(classes.logo, 'App-logo')} alt="logo" /> */}
 
       {!Boolean(walletContext.accounts.length) && <ConnectButton />}
 
@@ -67,10 +66,10 @@ const useStyles = makeStyles<Theme>((theme) =>
       flexDirection: 'row'
     },
     logo: {
-      width: 35,
-      height: 35,
+      // width: 35,
+      height: 42,
       marginLeft: 5,
-      marginRight: 5
+      marginRight: 2
     },
     pacifico: {
       fontFamily: "'Pacifico', cursive",
