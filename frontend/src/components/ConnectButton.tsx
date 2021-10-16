@@ -11,9 +11,9 @@ type Props = {
 const ConnectButton: React.FC<Props> = (props) => {
   const walletContext = useContext(WalletContext);
 
-  const connect = () => {
+  const connect = async () => {
     try {
-      walletContext.functions.connectMyAlgo();
+      await walletContext.functions.connectMyAlgo();
     } catch (err) {
       showError(err);
     }
