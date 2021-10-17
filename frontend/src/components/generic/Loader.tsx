@@ -9,7 +9,7 @@ const Loader: React.FC<Props> = (props) => {
   const { size } = props;
 
   return (
-    <object type="image/svg+xml" data={InfinityLoader} style={{ color: '#fff' }}>
+    <object type="image/svg+xml" data={InfinityLoader} style={{ color: '#fff', width: 100 }}>
       svg-animation
     </object>
   );

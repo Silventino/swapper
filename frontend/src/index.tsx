@@ -1,56 +1,41 @@
 import 'reflect-metadata';
 import React from 'react';
 import ReactDOM from 'react-dom';
-// import "./index.css";
+
+import './App.css';
 import App from './App';
 // import reportWebVitals from "./reportWebVitals";
 
 import { createTheme, ThemeProvider, Theme, StyledEngineProvider, adaptV4Theme } from '@material-ui/core/styles';
 
-import { createGlobalStyle } from 'styled-components';
 import { WalletContextProvider } from './components/WalletContextProvider';
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import createPalette from '@material-ui/core/styles/createPalette';
+import { colors } from './constants';
 
-const GlobalStyle = createGlobalStyle`
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
+const darkTheme = createTheme(
+  adaptV4Theme({
+    palette: {
+      mode: 'dark',
+      primary: { main: '#61dafb' },
 
-  html {
-    max-width: 100vw;
-    overflow-x: hidden;
-  }
+      background: { default: colors.background }
+    }
+  })
+);
 
-  body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-      sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-
-  code {
-    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-      monospace;
-  }
-
-`;
-
-const darkTheme = createTheme(adaptV4Theme({
-  palette: {
-    mode: 'dark',
-    primary: { main: '#61dafb' }
-  }
-}));
+// const darkTheme = createTheme({
+//   palette: {
+//     mode: 'dark',
+//     primary: { main: '#61dafb' }
+//     // background: { default: colors.background }
+//   }
+// });
 
 ReactDOM.render(
   <React.StrictMode>
-    <GlobalStyle />
     <ToastContainer
       position="top-right"
       autoClose={5000}

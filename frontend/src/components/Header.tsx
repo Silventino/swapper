@@ -1,16 +1,16 @@
-import { Drawer, IconButton, Theme } from '@material-ui/core';
+import { IconButton, Theme } from '@material-ui/core';
 import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
+import MenuIcon from '@mui/icons-material/Menu';
 import clsx from 'clsx';
 import React, { useContext, useState } from 'react';
 import { colors, HEADER_HEIGHT } from 'src/constants';
+import logo_full from '../assets/logo_full.png';
 import ConnectButton from './ConnectButton';
+import Drawer from './Drawer';
 import MySelectBase from './generic/MySelectBase';
 import WalletContext from './WalletContextProvider';
-import icon from '../assets/icon.png';
-import logo_full from '../assets/logo_full.png';
-import MenuIcon from '@mui/icons-material/Menu';
 
 const Header: React.FC = (props) => {
   const walletContext = useContext(WalletContext);
@@ -30,9 +30,7 @@ const Header: React.FC = (props) => {
           <MenuIcon />
         </IconButton>
 
-        <Drawer anchor={'left'} open={open} onClose={() => setOpen(false)}>
-          Testeeeeeeee
-        </Drawer>
+        <Drawer open={open} setOpen={setOpen} />
 
         <a href={'/swapper'} className={classes.title}>
           <img src={logo_full} alt="logo" className={classes.logo} />
@@ -89,7 +87,8 @@ const useStyles = makeStyles<Theme>((theme) =>
       // width: 35,
       height: 35,
       marginLeft: 5,
-      marginRight: 2
+      marginRight: 2,
+      objectFit: 'contain'
     },
     pacifico: {
       fontFamily: "'Pacifico', cursive",
@@ -104,6 +103,15 @@ const useStyles = makeStyles<Theme>((theme) =>
     headerButton: {
       width: 35,
       height: 35
+    },
+    drawer: {
+      paddingTop: 20,
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center'
+    },
+    drawerItem: {
+      paddingRight: 35
     }
   })
 );
