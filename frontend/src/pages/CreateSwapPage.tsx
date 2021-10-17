@@ -1,4 +1,6 @@
-import { Button, createStyles, Grid, makeStyles, Theme } from '@material-ui/core';
+import { Button, Grid, Theme } from '@material-ui/core';
+import createStyles from '@material-ui/styles/createStyles';
+import makeStyles from '@material-ui/styles/makeStyles';
 import React, { useContext, useState } from 'react';
 import 'reflect-metadata';
 import '../App.css';

@@ -1,4 +1,6 @@
-import { createStyles, FormControl, Input, InputAdornment, InputLabel, makeStyles, Theme } from '@material-ui/core';
+import { FormControl, Input, InputAdornment, InputLabel, Theme } from '@material-ui/core';
+import createStyles from '@material-ui/styles/createStyles';
+import makeStyles from '@material-ui/styles/makeStyles';
 import React, { ReactNode } from 'react';
 
 type Props = {

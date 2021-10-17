@@ -1,4 +1,6 @@
-import { makeStyles, Theme, createStyles, FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
+import { Theme, FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
+import makeStyles from '@material-ui/styles/makeStyles';
+import createStyles from '@material-ui/styles/createStyles';
 import React, { useEffect } from 'react';
 
 import MySelectBase from './MySelectBase';

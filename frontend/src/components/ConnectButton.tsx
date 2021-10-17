@@ -1,4 +1,6 @@
-import { Button, createStyles, makeStyles, Theme } from '@material-ui/core';
+import { Button, Theme } from '@material-ui/core';
+import createStyles from '@material-ui/styles/createStyles';
+import makeStyles from '@material-ui/styles/makeStyles';
 import React, { useContext } from 'react';
 import { colors, HEADER_HEIGHT } from 'src/constants';
 import { showError } from 'src/helpers/helper';

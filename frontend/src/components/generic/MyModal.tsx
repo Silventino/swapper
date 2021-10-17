@@ -1,7 +1,7 @@
 import { IconButton, Modal, Paper } from '@material-ui/core';
 import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
-import CloseIcon from '@material-ui/icons/Close';
+import CloseIcon from '@mui/icons-material/Close';
 import React from 'react';
 
 type Props = {
@@ -71,6 +71,7 @@ const MyModal: React.FC<Props> = (props) => {
                 top: 0,
                 right: 0
               }}
+              size="large"
             >
               <CloseIcon />
             </IconButton>

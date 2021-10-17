@@ -1,4 +1,6 @@
-import { createStyles, makeStyles, Theme, Typography } from '@material-ui/core';
+import { Theme, Typography } from '@material-ui/core';
+import createStyles from '@material-ui/styles/createStyles';
+import makeStyles from '@material-ui/styles/makeStyles';
 import React, { useContext } from 'react';
 import ConnectButton from './ConnectButton';
 import MyModal from './generic/MyModal';

@@ -1,5 +1,7 @@
-import { Button, createStyles, Grid, makeStyles, Theme } from '@material-ui/core';
-import Alert from '@material-ui/lab/Alert';
+import { Button, Grid, Theme } from '@material-ui/core';
+import createStyles from '@material-ui/styles/createStyles';
+import makeStyles from '@material-ui/styles/makeStyles';
+import Alert from '@material-ui/core/Alert';
 import React, { useContext, useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import 'reflect-metadata';

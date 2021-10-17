@@ -1,4 +1,6 @@
-import { createStyles, makeStyles, MenuItem, Select, Theme } from '@material-ui/core';
+import { MenuItem, Select, Theme } from '@material-ui/core';
+import createStyles from '@material-ui/styles/createStyles';
+import makeStyles from '@material-ui/styles/makeStyles';
 import React, { useEffect } from 'react';
 
 type Props<T> = {
@@ -6,6 +8,7 @@ type Props<T> = {
   getOptionLabel: (x: T | null) => string;
   value: T | null;
   onChange: (x: T) => void;
+  style?: any;
 };
 
 function MySelectBase<T>(props: Props<T>) {
@@ -15,6 +18,7 @@ function MySelectBase<T>(props: Props<T>) {
 
   return (
     <Select
+      style={props.style}
       value={getOptionLabel(value)}
       onChange={(event, x) => {
         const newStr = event.target.value;

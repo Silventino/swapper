@@ -1,4 +1,6 @@
-import { createStyles, makeStyles, Theme } from '@material-ui/core';
+import { Theme } from '@material-ui/core';
+import createStyles from '@material-ui/styles/createStyles';
+import makeStyles from '@material-ui/styles/makeStyles';
 import React, { useContext, useEffect, useState } from 'react';
 import WalletContext, { AccountInfo } from '../WalletContextProvider';
 import MySelect from './MySelect';

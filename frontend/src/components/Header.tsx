@@ -1,16 +1,21 @@
-import { createStyles, IconButton, makeStyles, Theme } from '@material-ui/core';
-import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
+import { Drawer, IconButton, Theme } from '@material-ui/core';
+import createStyles from '@material-ui/styles/createStyles';
+import makeStyles from '@material-ui/styles/makeStyles';
+import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 import clsx from 'clsx';
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { colors, HEADER_HEIGHT } from 'src/constants';
 import ConnectButton from './ConnectButton';
 import MySelectBase from './generic/MySelectBase';
 import WalletContext from './WalletContextProvider';
 import icon from '../assets/icon.png';
 import logo_full from '../assets/logo_full.png';
+import MenuIcon from '@mui/icons-material/Menu';
 
 const Header: React.FC = (props) => {
   const walletContext = useContext(WalletContext);
+
+  const [open, setOpen] = useState(false);
 
   const classes = useStyles();
 
@@ -20,10 +25,20 @@ const Header: React.FC = (props) => {
 
   return (
     <div className={clsx(classes.header)}>
-      <a href={'/swapper'} className={classes.title}>
-        <img src={logo_full} alt="logo" className={classes.logo} />
-        {/* <img src={icon} alt="logo" className={classes.logo} /> */}
-      </a>
+      <div className={classes.row}>
+        <IconButton className={classes.headerButton} onClick={() => setOpen(!open)}>
+          <MenuIcon />
+        </IconButton>
+
+        <Drawer anchor={'left'} open={open} onClose={() => setOpen(false)}>
+          Testeeeeeeee
+        </Drawer>
+
+        <a href={'/swapper'} className={classes.title}>
+          <img src={logo_full} alt="logo" className={classes.logo} />
+          {/* <img src={icon} alt="logo" className={classes.logo} /> */}
+        </a>
+      </div>
 
       {!Boolean(walletContext.accounts.length) && <ConnectButton />}
 
@@ -34,8 +49,9 @@ const Header: React.FC = (props) => {
             getOptionLabel={(x) => `${x?.substring(0, 5)}...${x?.substring(53)}`}
             value={walletContext.selectedAccount?.address}
             onChange={(x) => (x ? walletContext.functions.selectAccount(x) : null)}
+            style={{ paddingTop: 5, paddingBottom: 5 }}
           />
-          <IconButton onClick={() => logout()} className={classes.logoutButton}>
+          <IconButton onClick={() => logout()} className={classes.headerButton} size="medium">
             <MeetingRoomIcon />
           </IconButton>
         </div>
@@ -61,13 +77,17 @@ const useStyles = makeStyles<Theme>((theme) =>
       // borderBottomWidth: 0.01,
       // borderBottom: 'solid white'
     },
+    row: {
+      display: 'flex',
+      flexDirection: 'row'
+    },
     title: {
       display: 'flex',
       flexDirection: 'row'
     },
     logo: {
       // width: 35,
-      height: 42,
+      height: 35,
       marginLeft: 5,
       marginRight: 2
     },
@@ -81,7 +101,7 @@ const useStyles = makeStyles<Theme>((theme) =>
       color: 'white',
       fontSize: 25
     },
-    logoutButton: {
+    headerButton: {
       width: 35,
       height: 35
     }

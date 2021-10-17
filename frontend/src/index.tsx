@@ -5,7 +5,7 @@ import ReactDOM from 'react-dom';
 import App from './App';
 // import reportWebVitals from "./reportWebVitals";
 
-import { createTheme, MuiThemeProvider } from '@material-ui/core/styles';
+import { createTheme, ThemeProvider, Theme, StyledEngineProvider, adaptV4Theme } from '@material-ui/core/styles';
 
 import { createGlobalStyle } from 'styled-components';
 import { WalletContextProvider } from './components/WalletContextProvider';
@@ -41,12 +41,12 @@ const GlobalStyle = createGlobalStyle`
 
 `;
 
-const darkTheme = createTheme({
+const darkTheme = createTheme(adaptV4Theme({
   palette: {
-    type: 'dark',
+    mode: 'dark',
     primary: { main: '#61dafb' }
   }
-});
+}));
 
 ReactDOM.render(
   <React.StrictMode>
@@ -62,11 +62,13 @@ ReactDOM.render(
       draggable
       pauseOnHover
     />
-    <MuiThemeProvider theme={darkTheme}>
-      <WalletContextProvider>
-        <App />
-      </WalletContextProvider>
-    </MuiThemeProvider>
+    <StyledEngineProvider injectFirst>
+      <ThemeProvider theme={darkTheme}>
+        <WalletContextProvider>
+          <App />
+        </WalletContextProvider>
+      </ThemeProvider>
+    </StyledEngineProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );

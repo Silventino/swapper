@@ -1,8 +1,10 @@
-import { createStyles, IconButton, makeStyles, Menu, MenuItem, Theme } from '@material-ui/core';
-import Visibility from '@material-ui/icons/Visibility';
+import { IconButton, Menu, MenuItem, Theme } from '@material-ui/core';
+import createStyles from '@material-ui/styles/createStyles';
+import makeStyles from '@material-ui/styles/makeStyles';
+import Visibility from '@mui/icons-material/Visibility';
 import React, { useContext } from 'react';
 import MyInput from './MyInput';
-import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import WalletContext from '../WalletContextProvider';
 
 type Props = {
@@ -36,7 +38,7 @@ const MyAddressInput: React.FC<Props> = (props) => {
       <MyInput
         {...rest}
         endAdornment={
-          <IconButton onClick={handleClick}>
+          <IconButton onClick={handleClick} size="large">
             <AccountBalanceWalletIcon />
           </IconButton>
         }
