@@ -25,7 +25,7 @@ function MySelect<T>(props: Props<T>) {
       fullWidth={fullWidth === false ? false : true}
     >
       <InputLabel>{label}</InputLabel>
-      <MySelectBase options={options} getOptionLabel={getOptionLabel} value={value} onChange={onChange} />
+      <MySelectBase label={label} options={options} getOptionLabel={getOptionLabel} value={value} onChange={onChange} />
     </FormControl>
   );
 }

@@ -4,6 +4,7 @@ import makeStyles from '@material-ui/styles/makeStyles';
 import React, { useEffect } from 'react';
 
 type Props<T> = {
+  label?: string;
   options: T[];
   getOptionLabel: (x: T | null) => string;
   value: T | null;
@@ -12,13 +13,14 @@ type Props<T> = {
 };
 
 function MySelectBase<T>(props: Props<T>) {
-  const { options, getOptionLabel, value, onChange } = props;
+  const { options, getOptionLabel, value, onChange, label, style } = props;
 
   useEffect(() => {}, []);
 
   return (
     <Select
-      style={props.style}
+      label={label}
+      style={style}
       value={getOptionLabel(value)}
       onChange={(event, x) => {
         const newStr = event.target.value;

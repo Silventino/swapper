@@ -6,7 +6,7 @@ import 'reflect-metadata';
 import '../App.css';
 
 import GridCenter from '../components/generic/GridCenter';
-import TransactionForm from '../components/TransactionForm';
+import TransactionFormV2 from '../components/TransactionFormV2';
 import WalletContext from '../components/WalletContextProvider';
 import { HEADER_HEIGHT } from '../constants';
 import { showError, showNotification } from 'src/helpers/helper';
@@ -14,8 +14,9 @@ import PartialTransaction from 'src/types/PartialTransaction';
 import { useHistory } from 'react-router-dom';
 import Loader from 'src/components/generic/Loader';
 import ModalTermsOfService from 'src/components/ModalTermsOfService';
+import AddressForm from 'src/components/AddressForm';
 
-function CreateSwapPage() {
+function CreateSwapPageV2() {
   const walletContext = useContext(WalletContext);
 
   const [loading, setLoading] = useState(false);
@@ -106,7 +107,7 @@ function CreateSwapPage() {
   }
 
   return (
-    <Grid container spacing={4} className={classes.container}>
+    <>
       <ModalTermsOfService
         open={openTermsOfService}
         onAccept={() => {
@@ -118,32 +119,35 @@ function CreateSwapPage() {
           setOpenTermsOfService(false);
         }}
       />
+      <Grid container spacing={4} className={classes.container}>
+        <Grid item xs={12} className={classes.swapGrid}>
+          <AddressForm address1={''} setAddress1={() => {}} address2={''} setAddress2={() => {}} />
+        </Grid>
 
-      <GridCenter key={`transaction${0}`} item xs={12} md={6} className={classes.swapGrid}>
-        <TransactionForm
-          title={"You'll Send"}
-          index={0}
-          transaction={transactions[0]}
-          setTransaction={(t) => updateTransaction(t, 0)}
-          forceSenderConnected
-        />
-      </GridCenter>
-      <GridCenter key={`transaction${1}`} item xs={12} md={6} className={classes.swapGrid}>
-        <TransactionForm
-          title={"You'll Receive"}
-          index={1}
-          transaction={transactions[1]}
-          setTransaction={(t) => updateTransaction(t, 1)}
-          forceReceiverConnected
-        />
-      </GridCenter>
+        <Grid item xs={12} md={6}>
+          <TransactionFormV2
+            title={"You'll Send"}
+            index={0}
+            transaction={transactions[0]}
+            setTransaction={(t) => updateTransaction(t, 0)}
+          />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <TransactionFormV2
+            title={"You'll Receive"}
+            index={1}
+            transaction={transactions[1]}
+            setTransaction={(t) => updateTransaction(t, 1)}
+          />
+        </Grid>
 
-      <GridCenter item xs={12} style={{ marginTop: 20 }}>
-        <Button variant={'contained'} onClick={() => setOpenTermsOfService(true)}>
-          LET'S GO!
-        </Button>
-      </GridCenter>
-    </Grid>
+        <GridCenter item xs={12} style={{ marginTop: 20 }}>
+          <Button variant={'contained'} onClick={() => setOpenTermsOfService(true)}>
+            LET'S GO!
+          </Button>
+        </GridCenter>
+      </Grid>
+    </>
   );
 }
 
@@ -156,4 +160,4 @@ const useStyles = makeStyles<Theme>((theme) =>
   })
 );
 
-export default CreateSwapPage;
+export default CreateSwapPageV2;

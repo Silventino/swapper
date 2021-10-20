@@ -1,8 +1,8 @@
-import { Theme, Grid, GridProps } from "@material-ui/core";
+import { Theme, Grid, GridProps } from '@material-ui/core';
 import makeStyles from '@material-ui/styles/makeStyles';
 import createStyles from '@material-ui/styles/createStyles';
-import clsx from "clsx";
-import React, { useEffect } from "react";
+import clsx from 'clsx';
+import React, { useEffect } from 'react';
 
 type Props = GridProps;
 
@@ -20,10 +20,10 @@ const GridCenter: React.FC<Props> = (props) => {
 const useStyles = makeStyles<Theme>((theme) =>
   createStyles({
     gridCenter: {
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-    },
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center'
+    }
   })
 );
 

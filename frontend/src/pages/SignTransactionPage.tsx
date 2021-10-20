@@ -34,7 +34,7 @@ function SignTransactionPage() {
     try {
       navigator.clipboard.writeText(window.location.href);
       showNotification('URL copied to clipboard!');
-    } catch (err) {
+    } catch (err: any) {
       showError(err);
     }
   };
@@ -50,13 +50,13 @@ function SignTransactionPage() {
       const newSwap = await swapApi.getSwap(walletContext.selectedAccount.address, id);
 
       if (newSwap.completed) {
-        history.replace('/swapper/success');
+        history.replace('/success');
         return true;
       }
 
       await walletContext.functions.verifyGroup(id, newSwap.transactions);
       setSwap(newSwap);
-    } catch (err) {
+    } catch (err: any) {
       console.log(err);
       showError(err);
     }
@@ -84,14 +84,14 @@ function SignTransactionPage() {
       await walletContext.functions.sendTransactions(signed);
       await swapApi.completeSwap(walletContext.selectedAccount.address, swap!.txId);
       showNotification('Sucess! Swap completed.');
-      history.replace('/swapper/success');
-    } catch (err) {
+      history.replace('/success');
+    } catch (err: any) {
       console.log(err);
 
       if (err.response?.body?.message) {
         let message = err.response.body.message as string;
         if (message.search('transaction already in ledger') !== -1) {
-          history.replace('/swapper/success');
+          history.replace('/success');
         }
       }
 

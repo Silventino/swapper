@@ -11,6 +11,7 @@ import ModalLoading from './components/ModalLoading';
 import WalletContext from './components/WalletContextProvider';
 import { HEADER_HEIGHT } from './constants';
 import CreateSwapPage from './pages/CreateSwapPage';
+import CreateSwapPageV2 from './pages/CreateSwapPageV2';
 import SignTransactionPage from './pages/SignTransactionPage';
 import SuccessPage from './pages/SuccessPage';
 
@@ -29,14 +30,14 @@ function App() {
       <div className={classes.appContent}>
         <Router>
           <Switch>
-            <Route path="/swapper/tx/:id">
+            <Route path="/tx/:id">
               <SignTransactionPage />
             </Route>
-            <Route path="/swapper/success">
+            <Route path="/success">
               <SuccessPage />
             </Route>
-            <Route path="/swapper/">
-              <CreateSwapPage />
+            <Route path="/">
+              <CreateSwapPageV2 />
             </Route>
           </Switch>
         </Router>

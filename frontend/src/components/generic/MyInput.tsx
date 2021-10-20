@@ -1,4 +1,4 @@
-import { FormControl, Input, InputAdornment, InputLabel, Theme } from '@material-ui/core';
+import { FormControl, OutlinedInput, InputAdornment, InputLabel, Theme } from '@material-ui/core';
 import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
 import React, { ReactNode } from 'react';
@@ -11,17 +11,18 @@ type Props = {
   onChange: (x: string) => void;
   disabled?: boolean;
   multiline?: boolean;
+  className?: string;
 };
 
 const MyInput: React.FC<Props> = (props) => {
-  const { label, fullWidth, endAdornment, value, onChange, ...rest } = props;
-  // useEffect(() => {}, []);
+  const { label, fullWidth, endAdornment, value, onChange, className, ...rest } = props;
 
   return (
-    <FormControl fullWidth>
+    <FormControl fullWidth className={className}>
       <InputLabel>{label}</InputLabel>
-      <Input
+      <OutlinedInput
         fullWidth={fullWidth}
+        label={label}
         endAdornment={endAdornment ? <InputAdornment position="end">{endAdornment}</InputAdornment> : undefined}
         value={value}
         onChange={(event) => onChange(event.target.value)}

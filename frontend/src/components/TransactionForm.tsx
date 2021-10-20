@@ -44,7 +44,7 @@ const TransactionForm: React.FC<Props> = (props) => {
   }
 
   return (
-    <Grid container className={clsx(classes.container, 'rainbow-box')} spacing={4}>
+    <Grid container className={classes.container} rowSpacing={{ md: 3 }}>
       <GridCenter item xs={12}>
         <Title variant={'h4'}>{title ?? `Transaction #${index + 1}`}</Title>
       </GridCenter>
@@ -115,6 +115,7 @@ const useStyles = makeStyles<Theme>((theme) =>
     container: {
       backgroundColor: colors.background,
       maxWidth: 400,
+      padding: '0px 20px 20px 20px',
       borderRadius: '5px',
       display: 'flex',
       alignItems: 'center'
