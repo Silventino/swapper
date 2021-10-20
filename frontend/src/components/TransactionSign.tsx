@@ -102,76 +102,78 @@ const TransactionSign: React.FC<Props> = (props) => {
   }
 
   return (
-    <Grid container className={clsx(classes.container, 'rainbow-box')} spacing={4}>
-      <GridCenter item xs={12}>
-        <Title variant={'h4'}>{`Transaction #${index + 1}`}</Title>
-      </GridCenter>
+    <div className={clsx(classes.container)}>
+      <Grid container spacing={4}>
+        <GridCenter item xs={12}>
+          <Title variant={'h4'}>{`Transaction #${index + 1}`}</Title>
+        </GridCenter>
 
-      <GridCenter item xs={12}>
-        <img src={getAssetImage(selectedAsset)} alt="" className={classes.img} />
-      </GridCenter>
+        <GridCenter item xs={12}>
+          <img src={getAssetImage(selectedAsset)} alt="" className={classes.img} />
+        </GridCenter>
 
-      <Grid item xs={12}>
-        <MyInput label={'Asset'} value={selectedAsset?.assetname ?? ''} onChange={(asset) => {}} disabled multiline />
+        <Grid item xs={12}>
+          <MyInput label={'Asset'} value={selectedAsset?.assetname ?? ''} onChange={(asset) => {}} disabled multiline />
+        </Grid>
+
+        <Grid item xs={12}>
+          <MyInput label={'From'} value={transaction.from} onChange={(txt) => {}} disabled multiline />
+        </Grid>
+        <Grid item xs={12}>
+          <MyInput label={'To'} value={transaction.to} onChange={(txt) => {}} disabled multiline />
+        </Grid>
+
+        <Grid item xs={12}>
+          <MyInput
+            label={'Amount'}
+            fullWidth
+            value={(transaction.amount / Math.pow(10, selectedAsset?.decimals ?? 0)).toString()}
+            onChange={(txt) => {}}
+            disabled
+          />
+        </Grid>
+
+        {loading && (
+          <GridCenter item xs={12}>
+            <div className={classes.loaderDiv}>
+              <Loader size={20} />
+            </div>
+          </GridCenter>
+        )}
+
+        {!loading && !isOwner && !isSigned && (
+          <GridCenter item xs={12}>
+            <Button variant={'contained'} onClick={() => {}} disabled>
+              NOT SIGNED
+            </Button>
+          </GridCenter>
+        )}
+
+        {!loading && optedIn && !isSigned && isOwner && (
+          <GridCenter item xs={12}>
+            <Button variant={'contained'} onClick={signTransaction} disabled={isSigned}>
+              SIGN
+            </Button>
+          </GridCenter>
+        )}
+
+        {!loading && optedIn && isSigned && (
+          <GridCenter item xs={12}>
+            <Button variant={'contained'} onClick={signTransaction} disabled={isSigned}>
+              SIGNED!
+            </Button>
+          </GridCenter>
+        )}
+
+        {!loading && !optedIn && (
+          <GridCenter item xs={12}>
+            <Button variant={'contained'} onClick={optinAsset}>
+              OPT-IN
+            </Button>
+          </GridCenter>
+        )}
       </Grid>
-
-      <Grid item xs={12}>
-        <MyInput label={'From'} value={transaction.from} onChange={(txt) => {}} disabled multiline />
-      </Grid>
-      <Grid item xs={12}>
-        <MyInput label={'To'} value={transaction.to} onChange={(txt) => {}} disabled multiline />
-      </Grid>
-
-      <Grid item xs={12}>
-        <MyInput
-          label={'Amount'}
-          fullWidth
-          value={(transaction.amount / Math.pow(10, selectedAsset?.decimals ?? 0)).toString()}
-          onChange={(txt) => {}}
-          disabled
-        />
-      </Grid>
-
-      {loading && (
-        <GridCenter item xs={12}>
-          <div className={classes.loaderDiv}>
-            <Loader size={20} />
-          </div>
-        </GridCenter>
-      )}
-
-      {!loading && !isOwner && !isSigned && (
-        <GridCenter item xs={12}>
-          <Button variant={'contained'} onClick={() => {}} disabled>
-            NOT SIGNED
-          </Button>
-        </GridCenter>
-      )}
-
-      {!loading && optedIn && !isSigned && isOwner && (
-        <GridCenter item xs={12}>
-          <Button variant={'contained'} onClick={signTransaction} disabled={isSigned}>
-            SIGN
-          </Button>
-        </GridCenter>
-      )}
-
-      {!loading && optedIn && isSigned && (
-        <GridCenter item xs={12}>
-          <Button variant={'contained'} onClick={signTransaction} disabled={isSigned}>
-            SIGNED!
-          </Button>
-        </GridCenter>
-      )}
-
-      {!loading && !optedIn && (
-        <GridCenter item xs={12}>
-          <Button variant={'contained'} onClick={optinAsset}>
-            OPT-IN
-          </Button>
-        </GridCenter>
-      )}
-    </Grid>
+    </div>
   );
 };
 
@@ -179,10 +181,8 @@ const useStyles = makeStyles<Theme>((theme) =>
   createStyles({
     container: {
       backgroundColor: colors.background,
-      maxWidth: 400,
       borderRadius: '5px',
-      display: 'flex',
-      alignItems: 'center'
+      padding: 20
     },
     img: {
       width: 200,

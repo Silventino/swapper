@@ -181,7 +181,7 @@ function SignTransactionPage() {
   }
 
   return (
-    <Grid container spacing={4} justifyContent={'center'} className={classes.container}>
+    <Grid container spacing={2} justifyContent={'center'} className={classes.container}>
       {allSigned && (
         <Grid item xs={12}>
           <Alert severity="success">
@@ -216,9 +216,9 @@ function SignTransactionPage() {
       )}
 
       {swap.transactions.map((item, index) => (
-        <GridCenter key={`transaction${index}`} item xs={12} md={6} className={classes.swapGrid}>
+        <Grid key={`transaction${index}`} item xs={12} md={6} className={classes.swapGrid}>
           <TransactionSign index={index} transaction={swap.transactions[index]} onSign={() => getTransaction()} />
-        </GridCenter>
+        </Grid>
       ))}
 
       {allSigned && (
