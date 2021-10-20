@@ -13,14 +13,14 @@ import Title from './generic/Title';
 import { AssetInfo } from './WalletContextProvider';
 
 type Props = {
-  address1: string;
-  setAddress1: (x: string) => void;
-  address2: string;
-  setAddress2: (x: string) => void;
+  addressA: string;
+  setAddressA: (x: string) => void;
+  addressB: string;
+  setAddressB: (x: string) => void;
 };
 
 const AddressForm: React.FC<Props> = (props) => {
-  const { address1, setAddress1, address2, setAddress2 } = props;
+  const { addressA, setAddressA, addressB, setAddressB } = props;
   const classes = useStyles();
 
   return (
@@ -31,7 +31,7 @@ const AddressForm: React.FC<Props> = (props) => {
         </GridCenter>
 
         <Grid item xs={12} md={6}>
-          <ConnectedWalletSelect label={'You'} value={address1} onChange={(txt) => setAddress1(txt)} />
+          <ConnectedWalletSelect label={'You'} value={addressA} onChange={(txt) => setAddressA(txt)} />
         </Grid>
 
         <Grid item xs={12} md={6}>
@@ -39,8 +39,8 @@ const AddressForm: React.FC<Props> = (props) => {
             className={classes.input}
             label={'Other'}
             fullWidth
-            value={address2}
-            onChange={(txt) => setAddress2(txt)}
+            value={addressB}
+            onChange={(txt) => setAddressB(txt)}
           />
         </Grid>
       </Grid>

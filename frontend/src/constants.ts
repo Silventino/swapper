@@ -24,3 +24,11 @@ export const colors = {
   backgroundDark: '#151320',
   background: '#1f2229'
 };
+
+export const EMPTY_PARTIAL_TRANSACTION = {
+  from: '',
+  to: '',
+  assetIndex: 0,
+  amount: 0,
+  type: ''
+};

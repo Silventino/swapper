@@ -32,7 +32,7 @@ const Header: React.FC = (props) => {
 
         <Drawer open={open} setOpen={setOpen} />
 
-        <a href={'/swapper'} className={classes.title}>
+        <a href={'/'} className={classes.title}>
           <img src={logo_full} alt="logo" className={classes.logo} />
           {/* <img src={icon} alt="logo" className={classes.logo} /> */}
         </a>

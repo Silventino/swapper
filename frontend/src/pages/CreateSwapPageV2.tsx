@@ -8,7 +8,7 @@ import '../App.css';
 import GridCenter from '../components/generic/GridCenter';
 import TransactionFormV2 from '../components/TransactionFormV2';
 import WalletContext from '../components/WalletContextProvider';
-import { HEADER_HEIGHT } from '../constants';
+import { EMPTY_PARTIAL_TRANSACTION, HEADER_HEIGHT } from '../constants';
 import { showError, showNotification } from 'src/helpers/helper';
 import PartialTransaction from 'src/types/PartialTransaction';
 import { useHistory } from 'react-router-dom';
@@ -26,70 +26,29 @@ function CreateSwapPageV2() {
 
   const history = useHistory();
 
-  // DEV /////////////
-  // const [transactions, setTransactions] = useState<PartialTransaction[]>([
-  //   {
-  //     amount: 1,
-  //     assetIndex: 21889879,
-  //     from: '3ITIMVIPABPBKFT5K36NV2XYZU3YNNACSXLNGVBJ4SJVILZNVRWX2HESWQ',
-  //     to: 'DHMWJUWE5RSLI6Y7PU53UUT3VMN5U7NWP7DH2XLGYO3FRYJIUJUXBAXGLU',
-  //     type: ''
-  //   },
-  //   {
-  //     amount: 10,
-  //     assetIndex: 21033643,
-  //     from: 'DHMWJUWE5RSLI6Y7PU53UUT3VMN5U7NWP7DH2XLGYO3FRYJIUJUXBAXGLU',
-  //     to: '3ITIMVIPABPBKFT5K36NV2XYZU3YNNACSXLNGVBJ4SJVILZNVRWX2HESWQ',
-  //     type: ''
-  //   }
-  // ]);
-  ////////////////////
+  const [addressA, setAddressA] = useState('');
+  const [addressB, setAddressB] = useState('');
 
-  // PRODUCTION //////////
-  const [transactions, setTransactions] = useState<PartialTransaction[]>([
-    {
-      from: '',
-      to: '',
-      assetIndex: 0,
-      amount: 0,
-      type: ''
-    },
-    {
-      from: '',
-      to: '',
-      assetIndex: 0,
-      amount: 0,
-      type: ''
-    }
-  ]);
-  ///////////////////////
+  const [transactionsA, setTransactionsA] = useState<PartialTransaction[]>([{ ...EMPTY_PARTIAL_TRANSACTION }]);
 
-  const updateTransaction = (newTransaction: PartialTransaction, index: number) => {
-    transactions[index] = newTransaction;
-
-    if (index === 0) {
-      if (transactions[1].from !== newTransaction.to) {
-        transactions[1].from = newTransaction.to;
-      }
-      if (transactions[1].to !== newTransaction.from) {
-        transactions[1].to = newTransaction.from;
-      }
-    } else {
-      if (transactions[0].from !== newTransaction.to) {
-        transactions[0].from = newTransaction.to;
-      }
-      if (transactions[0].to !== newTransaction.from) {
-        transactions[0].to = newTransaction.from;
-      }
-    }
-
-    setTransactions([...transactions]);
-  };
+  const [transactionsB, setTransactionsB] = useState<PartialTransaction[]>([{ ...EMPTY_PARTIAL_TRANSACTION }]);
 
   const createAtomicTransaction = async () => {
     setLoading(true);
     try {
-      const tx = await walletContext.functions.createAtomicTransaction(transactions);
+      const newTransactionsA = transactionsA.map((item) => {
+        item.from = addressA;
+        item.to = addressB;
+        return item;
+      });
+      const newTransactionsB = transactionsB.map((item) => {
+        item.from = addressB;
+        item.to = addressA;
+        return item;
+      });
+      const allTransactions = newTransactionsA.concat(newTransactionsB);
+
+      const tx = await walletContext.functions.createAtomicTransaction(allTransactions);
       history.replace(`/tx/${tx}`);
       showNotification('Atomic transaction created!');
     } catch (err) {
@@ -121,23 +80,21 @@ function CreateSwapPageV2() {
       />
       <Grid container spacing={4} className={classes.container}>
         <Grid item xs={12} className={classes.swapGrid}>
-          <AddressForm address1={''} setAddress1={() => {}} address2={''} setAddress2={() => {}} />
+          <AddressForm addressA={addressA} setAddressA={setAddressA} addressB={addressB} setAddressB={setAddressB} />
         </Grid>
 
         <Grid item xs={12} md={6}>
           <TransactionFormV2
             title={"You'll Send"}
-            index={0}
-            transaction={transactions[0]}
-            setTransaction={(t) => updateTransaction(t, 0)}
+            transactions={transactionsA}
+            setTransactions={(t) => setTransactionsA([...t])}
           />
         </Grid>
         <Grid item xs={12} md={6}>
           <TransactionFormV2
             title={"You'll Receive"}
-            index={1}
-            transaction={transactions[1]}
-            setTransaction={(t) => updateTransaction(t, 1)}
+            transactions={transactionsB}
+            setTransactions={(t) => setTransactionsB([...t])}
           />
         </Grid>
 
