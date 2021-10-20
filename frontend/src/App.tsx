@@ -25,10 +25,9 @@ function App() {
       <ModalConnect />
       <ModalLoading loading={walletContext.loadingAccount} />
 
-      <Header />
-
       <div className={classes.appContent}>
         <Router>
+          <Header />
           <Switch>
             <Route path="/tx/:id">
               <SignTransactionPage />

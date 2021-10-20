@@ -10,6 +10,8 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import React from 'react';
 import logo_full from '../assets/logo_full.png';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { useHistory } from 'react-router';
 
 type Props = {
   open: boolean;
@@ -20,34 +22,50 @@ const MyDrawer: React.FC<Props> = (props) => {
   const { open, setOpen } = props;
   const classes = useStyles();
 
+  const history = useHistory();
+
   return (
     <Drawer anchor={'left'} variant="temporary" open={open} onClose={() => setOpen(false)}>
       <div className={classes.drawer}>
         <img src={logo_full} alt="logo" className={classes.logo} />
         <List>
-          <ListItem button onClick={() => alert('Coming soon...')} className={classes.drawerItem} key={'New Swap'}>
+          <ListItem
+            button
+            onClick={() => {
+              history.replace('/');
+              setOpen(false);
+            }}
+            className={classes.drawerItem}
+            key={'New Swap'}
+          >
             <ListItemIcon>
               <SwapIcon />
             </ListItemIcon>
             <ListItemText primary={'New Swap'} />
           </ListItem>
-          <ListItem button onClick={() => alert('Coming soon...')} className={classes.drawerItem} key={'Swap History'}>
+          <ListItem button onClick={() => {}} className={classes.drawerItem} key={'Swap History'} disabled>
             <ListItemIcon>
               <HistoryIcon />
             </ListItemIcon>
-            <ListItemText primary={'Swap History'} />
+            <ListItemText primary={'Swap History - SOON'} />
           </ListItem>
-          <ListItem button onClick={() => alert('Coming soon...')} className={classes.drawerItem} key={'NFT Gallery'}>
+          <ListItem button onClick={() => {}} className={classes.drawerItem} key={'NFT Gallery'} disabled>
             <ListItemIcon>
               <ImageIcon />
             </ListItemIcon>
-            <ListItemText primary={'NFT Gallery'} />
+            <ListItemText primary={'NFT Gallery - SOON'} />
           </ListItem>
-          <ListItem button onClick={() => alert('Coming soon...')} className={classes.drawerItem} key={'FAQ'}>
+          <ListItem button onClick={() => {}} className={classes.drawerItem} key={'FAQ'} disabled>
+            <ListItemIcon>
+              <DeleteIcon />
+            </ListItemIcon>
+            <ListItemText primary={'Asset Opt-Out - SOON'} />
+          </ListItem>
+          <ListItem button onClick={() => {}} className={classes.drawerItem} key={'FAQ'} disabled>
             <ListItemIcon>
               <FaqIcon />
             </ListItemIcon>
-            <ListItemText primary={'FAQ'} />
+            <ListItemText primary={'FAQ - SOON'} />
           </ListItem>
         </List>
       </div>
