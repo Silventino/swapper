@@ -63,35 +63,37 @@ const AssetOptIn: React.FC<Props> = (props) => {
   }
 
   return (
-    <Grid container className={clsx(classes.container, 'rainbow-box')} spacing={4}>
-      <GridCenter item xs={12}>
-        <Title variant={'h4'}>{`Asset #${assetIndex}`}</Title>
-      </GridCenter>
+    <div className={classes.container}>
+      <Grid container spacing={4}>
+        <GridCenter item xs={12}>
+          <Title variant={'h4'}>{`Asset #${assetIndex}`}</Title>
+        </GridCenter>
 
-      <GridCenter item xs={12}>
-        <img src={getAssetImage(selectedAsset)} alt="" className={classes.img} />
-      </GridCenter>
+        <GridCenter item xs={12}>
+          <img src={getAssetImage(selectedAsset)} alt="" className={classes.img} />
+        </GridCenter>
 
-      <Grid item xs={12}>
-        <MyInput label={'Asset'} value={selectedAsset?.assetname ?? ''} onChange={(asset) => {}} disabled multiline />
+        <Grid item xs={12}>
+          <MyInput label={'Asset'} value={selectedAsset?.assetname ?? ''} onChange={(asset) => {}} disabled multiline />
+        </Grid>
+
+        {!loading && (
+          <GridCenter item xs={12}>
+            <Button variant={'contained'} onClick={optinAsset}>
+              OPT-IN
+            </Button>
+          </GridCenter>
+        )}
+
+        {loading && (
+          <GridCenter item xs={12}>
+            <div className={classes.loaderDiv}>
+              <Loader size={20} />
+            </div>
+          </GridCenter>
+        )}
       </Grid>
-
-      {!loading && (
-        <GridCenter item xs={12}>
-          <Button variant={'contained'} onClick={optinAsset}>
-            OPT-IN
-          </Button>
-        </GridCenter>
-      )}
-
-      {loading && (
-        <GridCenter item xs={12}>
-          <div className={classes.loaderDiv}>
-            <Loader size={20} />
-          </div>
-        </GridCenter>
-      )}
-    </Grid>
+    </div>
   );
 };
 
@@ -101,8 +103,7 @@ const useStyles = makeStyles<Theme>((theme) =>
       backgroundColor: colors.background,
       maxWidth: 400,
       borderRadius: '5px',
-      display: 'flex',
-      alignItems: 'center'
+      padding: 20
     },
     img: {
       width: 200,

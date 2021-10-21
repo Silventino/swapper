@@ -12,6 +12,7 @@ import React from 'react';
 import logo_full from '../assets/logo_full.png';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useHistory } from 'react-router';
+import AddIcon from '@mui/icons-material/Add';
 
 type Props = {
   open: boolean;
@@ -36,32 +37,37 @@ const MyDrawer: React.FC<Props> = (props) => {
               setOpen(false);
             }}
             className={classes.drawerItem}
-            key={'New Swap'}
           >
             <ListItemIcon>
               <SwapIcon />
             </ListItemIcon>
             <ListItemText primary={'New Swap'} />
           </ListItem>
-          <ListItem button onClick={() => {}} className={classes.drawerItem} key={'Swap History'} disabled>
+          <ListItem button onClick={() => {}} className={classes.drawerItem} disabled>
             <ListItemIcon>
               <HistoryIcon />
             </ListItemIcon>
             <ListItemText primary={'Swap History - SOON'} />
           </ListItem>
-          <ListItem button onClick={() => {}} className={classes.drawerItem} key={'NFT Gallery'} disabled>
+          <ListItem button onClick={() => {}} className={classes.drawerItem} disabled>
             <ListItemIcon>
               <ImageIcon />
             </ListItemIcon>
             <ListItemText primary={'NFT Gallery - SOON'} />
           </ListItem>
-          <ListItem button onClick={() => {}} className={classes.drawerItem} key={'FAQ'} disabled>
+          <ListItem button onClick={() => {}} className={classes.drawerItem} disabled>
+            <ListItemIcon>
+              <AddIcon />
+            </ListItemIcon>
+            <ListItemText primary={'Asset Opt-In - SOON'} />
+          </ListItem>
+          <ListItem button onClick={() => {}} className={classes.drawerItem} disabled>
             <ListItemIcon>
               <DeleteIcon />
             </ListItemIcon>
             <ListItemText primary={'Asset Opt-Out - SOON'} />
           </ListItem>
-          <ListItem button onClick={() => {}} className={classes.drawerItem} key={'FAQ'} disabled>
+          <ListItem button onClick={() => {}} className={classes.drawerItem} disabled>
             <ListItemIcon>
               <FaqIcon />
             </ListItemIcon>

@@ -15,6 +15,7 @@ import { useHistory } from 'react-router-dom';
 import Loader from 'src/components/generic/Loader';
 import ModalTermsOfService from 'src/components/ModalTermsOfService';
 import AddressForm from 'src/components/AddressForm';
+import { setTimeout } from 'timers';
 
 function CreateSwapPageV2() {
   const walletContext = useContext(WalletContext);
@@ -49,12 +50,15 @@ function CreateSwapPageV2() {
       const allTransactions = newTransactionsA.concat(newTransactionsB);
 
       const tx = await walletContext.functions.createAtomicTransaction(allTransactions);
-      history.replace(`/tx/${tx}`);
-      showNotification('Atomic transaction created!');
+      setTimeout(() => {
+        history.replace(`/tx/${tx}`);
+        showNotification('Swap created!');
+        setLoading(false);
+      }, 1500);
     } catch (err) {
       showError(err);
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   if (!walletContext.selectedAccount) {

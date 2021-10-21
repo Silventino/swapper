@@ -145,6 +145,8 @@ const WalletContext = createContext<PropsWalletContext>(DEFAULT_VALUE);
 
 const WalletContextProvider: React.FC = ({ children }) => {
   const [accounts, setAccounts] = useLocalStorage<AccountInfo[]>('accounts', []);
+  const [assetDict, setAssetDict] = useLocalStorage<AssetInfo[]>('assets', []);
+
   const [assets, setAssets] = useState<AssetInfo[]>([]);
   const [selectedAccount, setSelectedAccount] = useState<AccountDetailedInfo | null>(null);
   const [loadingAccount, setLoadingAccount] = useState(false);
@@ -197,17 +199,19 @@ const WalletContextProvider: React.FC = ({ children }) => {
       const newAssets: AssetInfo[] = [ALGO_ASSET];
       for (let i = 0; i < newSelectedAccount.assets.length; i++) {
         const asset = newSelectedAccount.assets[i];
-        const knownAsset = assets.find((item) => item.id === asset['asset-id']);
+        const knownAsset = assetDict[asset['asset-id']];
         if (knownAsset) {
           newAssets.push(knownAsset);
         } else {
           const res = await getAssetInfo(asset['asset-id']);
           if (res) {
             newAssets.push(res);
+            assetDict[asset['asset-id']] = res;
           }
         }
       }
 
+      setAssetDict({ ...assetDict });
       setAssets(newAssets);
       setSelectedAccount(newSelectedAccount);
     } catch (err) {

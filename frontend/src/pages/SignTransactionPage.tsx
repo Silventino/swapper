@@ -224,8 +224,8 @@ function SignTransactionPage() {
       {!allSigned && !allMineSigned && (
         <Grid item xs={12}>
           <Alert severity="info">
-            First, sign all transactions that have the "Sign" button available. Don't worry, none of the assets will
-            leave your wallet untill everything is complete.
+            Sign all transactions that have the "SIGN" button available or click "SIGN ALL". Don't worry, none of the
+            assets will leave your wallet untill everything is complete.
           </Alert>
         </Grid>
       )}
