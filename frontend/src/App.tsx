@@ -10,10 +10,10 @@ import ModalConnect from './components/ModalConnect';
 import ModalLoading from './components/ModalLoading';
 import WalletContext from './components/WalletContextProvider';
 import { HEADER_HEIGHT } from './constants';
-import CreateSwapPage from './pages/CreateSwapPage';
 import CreateSwapPageV2 from './pages/CreateSwapPageV2';
 import SignTransactionPage from './pages/SignTransactionPage';
 import SuccessPage from './pages/SuccessPage';
+import FailPage from './pages/FailPage';
 
 function App() {
   const classes = useStyles();
@@ -34,6 +34,9 @@ function App() {
             </Route>
             <Route path="/success">
               <SuccessPage />
+            </Route>
+            <Route path="/fail">
+              <FailPage />
             </Route>
             <Route path="/">
               <CreateSwapPageV2 />

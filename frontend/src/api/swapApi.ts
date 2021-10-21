@@ -22,7 +22,7 @@ class SwapApi {
 
       const swap: Swap = {
         txId: swapReq.txId,
-        completed: swapReq.completed,
+        status: swapReq.status,
         transactions: []
       };
       swap.transactions = swapReq.transactions.map((item) => toCompleteTransaction(item));
@@ -77,8 +77,21 @@ class SwapApi {
       if (!myWallet) {
         throw new Error('Please, connect your wallet first.');
       }
-
       let res = await myAxios.post(`/${PREFIX}/${ROUTE}/complete`, { txId }, { headers: { Authorization: myWallet } });
+      let data = res.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+
+  async killSwap(myWallet: string, txId: string) {
+    try {
+      if (!myWallet) {
+        throw new Error('Please, connect your wallet first.');
+      }
+      let res = await myAxios.post(`/${PREFIX}/${ROUTE}/kill`, { txId }, { headers: { Authorization: myWallet } });
       let data = res.data;
       return data;
     } catch (error) {

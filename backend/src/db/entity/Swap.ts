@@ -7,7 +7,7 @@ export default class Swap {
   txId!: string;
 
   @Column()
-  completed!: boolean;
+  status!: number;
 
   @OneToMany(() => Transaction, (tx: Transaction) => tx.swap)
   transactions!: Transaction[];

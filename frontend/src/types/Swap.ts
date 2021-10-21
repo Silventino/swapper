@@ -3,7 +3,7 @@ import TransactionReq from './TransactionReq';
 
 declare type Swap = {
   txId: string;
-  completed: boolean;
+  status: number;
   transactions: CompleteTransaction[];
 };
 export default Swap;

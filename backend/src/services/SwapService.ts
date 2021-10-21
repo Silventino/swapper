@@ -1,4 +1,5 @@
 import { EntityManager, getManager } from 'typeorm';
+import { STATUS_COMPLETED, STATUS_DEAD } from '../constants';
 import Swap from '../db/entity/Swap';
 import Transaction from '../db/entity/Transaction';
 import HttpError from '../etc/HttpError';
@@ -52,6 +53,11 @@ export default class TransactionService {
 
   async completeSwap(txId: number) {
     const swapModel = this.EM.getRepository(Swap);
-    await swapModel.update(txId, { completed: true });
+    await swapModel.update(txId, { status: STATUS_COMPLETED });
+  }
+
+  async killSwap(txId: number) {
+    const swapModel = this.EM.getRepository(Swap);
+    await swapModel.update(txId, { status: STATUS_DEAD });
   }
 }

@@ -14,6 +14,8 @@ import Swap from 'src/types/Swap';
 import '../App.css';
 import GridCenter from '../components/generic/GridCenter';
 import WalletContext from '../components/WalletContextProvider';
+import CompleteTransaction from 'src/types/CompleteTransaction';
+import { STATUS_COMPLETED, STATUS_DEAD } from 'src/constants';
 
 function SignTransactionPage() {
   let { id } = useParams<{ id: string }>();
@@ -25,6 +27,7 @@ function SignTransactionPage() {
 
   const [allSigned, setAllSigned] = useState(false);
   const [allMineSigned, setAllMineSigned] = useState(false);
+  const [myUnsignedTransactions, setMyUnsignedTransactions] = useState<CompleteTransaction[]>([]);
 
   const [notOptedInAssets, setNotOptedInAssets] = useState<number[]>([]);
 
@@ -49,8 +52,13 @@ function SignTransactionPage() {
       }
       const newSwap = await swapApi.getSwap(walletContext.selectedAccount.address, id);
 
-      if (newSwap.completed) {
+      if (newSwap.status === STATUS_COMPLETED) {
         history.replace('/success');
+        return true;
+      }
+
+      if (newSwap.status === STATUS_DEAD) {
+        history.replace('/fail');
         return true;
       }
 
@@ -63,6 +71,23 @@ function SignTransactionPage() {
     if (showLoader) {
       setLoading(false);
     }
+  };
+
+  const signAll = async () => {
+    setLoading(true);
+    try {
+      if (!walletContext.selectedAccount) {
+        return;
+      }
+      const signeds = await walletContext.functions.signTransactions(myUnsignedTransactions);
+      for (let i = 0; i < signeds.length; i++) {
+        const signed = signeds[i];
+        await swapApi.signTransaction(walletContext.selectedAccount.address, signed);
+      }
+    } catch (err) {
+      showError(err);
+    }
+    setLoading(false);
   };
 
   const finish = async () => {
@@ -92,6 +117,10 @@ function SignTransactionPage() {
         let message = err.response.body.message as string;
         if (message.search('transaction already in ledger') !== -1) {
           history.replace('/success');
+        }
+        if (message.search('txn dead') !== -1) {
+          swapApi.killSwap(walletContext.selectedAccount!.address, swap!.txId).catch(() => {});
+          history.replace('/fail');
         }
       }
 
@@ -128,6 +157,7 @@ function SignTransactionPage() {
       const myTransactions = swap.transactions.filter((item) =>
         Boolean(walletContext.selectedAccount && item.from === walletContext.selectedAccount.address)
       );
+      const newMyUnsignedTransactions = myTransactions.filter((item) => Boolean(!item.txID && !item.blob));
       const newAllMineSigned = myTransactions.every((item) => Boolean(item.txID && item.blob));
 
       const newNotOptedInAssets: number[] = [];
@@ -139,6 +169,7 @@ function SignTransactionPage() {
         }
       }
 
+      setMyUnsignedTransactions(newMyUnsignedTransactions);
       setNotOptedInAssets(newNotOptedInAssets);
       setAllSigned(newAllSigned);
       setAllMineSigned(newAllMineSigned);
@@ -185,7 +216,7 @@ function SignTransactionPage() {
       {allSigned && (
         <Grid item xs={12}>
           <Alert severity="success">
-            All transactions signed! Finish the atomic transaction in the end of this page.
+            All transactions signed! Finish the swap by clicking the button at the end of this page.
           </Alert>
         </Grid>
       )}
@@ -215,6 +246,14 @@ function SignTransactionPage() {
         </Grid>
       )}
 
+      {myUnsignedTransactions.length > 0 && (
+        <GridCenter item xs={12} className={classes.buttonDiv}>
+          <Button variant={'contained'} onClick={() => signAll()}>
+            SIGN ALL
+          </Button>
+        </GridCenter>
+      )}
+
       {swap.transactions.map((item, index) => (
         <Grid key={`transaction${index}`} item xs={12} md={6} className={classes.swapGrid}>
           <TransactionSign index={index} transaction={swap.transactions[index]} onSign={() => getTransaction()} />
@@ -229,13 +268,15 @@ function SignTransactionPage() {
         </GridCenter>
       )}
 
-      {!allSigned && (
-        <GridCenter item xs={12} className={classes.buttonDiv}>
-          <Button variant={'contained'} onClick={() => getTransaction()}>
-            REFRESH
-          </Button>
-        </GridCenter>
-      )}
+      {
+        // !allSigned && (
+        // <GridCenter item xs={12} className={classes.buttonDiv}>
+        //   <Button variant={'contained'} onClick={() => getTransaction()}>
+        //     REFRESH
+        //   </Button>
+        // </GridCenter>
+        // )
+      }
     </Grid>
   );
 }
