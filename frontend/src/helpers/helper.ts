@@ -99,6 +99,10 @@ export const getAssetImage = (asset: AssetInfo | null) => {
   if (!asset) {
     return 'https://jsvasconcelos.pt/images/Icon/imageNotFound.png';
   }
+  if (asset.url?.startsWith('ipfs://')) {
+    const code = asset.url.replace('ipfs://', '');
+    return `https://ipfs.io/ipfs/${code}`;
+  }
 
   if (asset.url?.endsWith('.png') || asset.url?.endsWith('.jpg') || asset.url?.endsWith('.jpeg')) {
     return asset.url;

@@ -1,6 +1,8 @@
-import { Button, Divider, Grid, Theme } from '@material-ui/core';
+import { Button, Divider, Grid, IconButton, Theme } from '@material-ui/core';
 import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
+import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
 import React, { useContext, useEffect, useState } from 'react';
 import 'reflect-metadata';
 import { colors, EMPTY_PARTIAL_TRANSACTION } from 'src/constants';
@@ -13,7 +15,6 @@ import MySelect from './generic/MySelect';
 // // import RainbowDiv from './generic/RainbowDiv';
 import Title from './generic/Title';
 import WalletContext, { AssetInfo } from './WalletContextProvider';
-import AddIcon from '@mui/icons-material/Add';
 
 type Props = {
   title: string;
@@ -32,6 +33,12 @@ const TransactionFormV2: React.FC<Props> = (props) => {
     setTransactions([...transactions]);
   };
 
+  const removeTransaction = (index: number) => {
+    let newTransactions = [...transactions];
+    newTransactions.splice(index, 1);
+    setTransactions(newTransactions);
+  };
+
   if (!walletContext.selectedAccount) {
     return null;
   }
@@ -44,8 +51,13 @@ const TransactionFormV2: React.FC<Props> = (props) => {
         </GridCenter>
 
         {transactions.map((item, i) => (
-          <Grid item xs={12}>
-            <SingleTransaction transaction={item} setTransaction={(t) => updateTransaction(t, i)} />
+          <Grid item xs={12} key={`${title}-${i}`}>
+            <SingleTransaction
+              transaction={item}
+              setTransaction={(t) => updateTransaction(t, i)}
+              canDelete={transactions.length > 1}
+              onDelete={() => removeTransaction(i)}
+            />
           </Grid>
         ))}
 
@@ -66,10 +78,12 @@ const TransactionFormV2: React.FC<Props> = (props) => {
 type PropsSingle = {
   transaction: PartialTransaction;
   setTransaction: (x: PartialTransaction) => void;
+  canDelete: boolean;
+  onDelete: () => void;
 };
 
 const SingleTransaction: React.FC<PropsSingle> = (props) => {
-  const { transaction, setTransaction } = props;
+  const { transaction, setTransaction, canDelete, onDelete } = props;
   const classes = useStyles();
 
   const [selectedAsset, setSelectedAsset] = useState<AssetInfo | null>(null);
@@ -88,7 +102,18 @@ const SingleTransaction: React.FC<PropsSingle> = (props) => {
   return (
     <Grid container spacing={3}>
       <GridCenter item xs={12}>
-        <img src={getAssetImage(selectedAsset)} alt="" className={classes.img} />
+        {canDelete ? (
+          <div className={classes.divWithRemove}>
+            <div style={{ width: 40, height: 40 }} />
+            <img src={getAssetImage(selectedAsset)} alt="" className={classes.img} />
+
+            <IconButton onClick={() => onDelete()}>
+              <DeleteIcon />
+            </IconButton>
+          </div>
+        ) : (
+          <img src={getAssetImage(selectedAsset)} alt="" className={classes.img} />
+        )}
       </GridCenter>
 
       <Grid item xs={12}>
@@ -131,6 +156,13 @@ const useStyles = makeStyles<Theme>((theme) =>
       height: 200,
       objectFit: 'contain',
       borderRadius: 7
+    },
+    divWithRemove: {
+      width: '100%',
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      justifyContent: 'space-between'
     }
   })
 );

@@ -18,7 +18,7 @@ function ModalLoading(props: Props) {
   return (
     <MyModal open={loading} onClose={() => {}} hideClose>
       <DivCenter className={classes.divButtons}>
-        <Typography className={classes.smalltxt}>Loading Account Info...</Typography>
+        <Typography className={classes.smalltxt}>Loading Assets Info...</Typography>
         <Loader />
       </DivCenter>
     </MyModal>
