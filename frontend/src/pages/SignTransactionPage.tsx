@@ -84,6 +84,8 @@ function SignTransactionPage() {
         const signed = signeds[i];
         await swapApi.signTransaction(walletContext.selectedAccount.address, signed);
       }
+      showNotification('Sucess! All transactions from your wallet were signed.');
+      await getTransaction();
     } catch (err) {
       showError(err);
     }

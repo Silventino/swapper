@@ -113,3 +113,14 @@ export const getAssetImage = (asset: AssetInfo | null) => {
     return `https://algoexplorer.io/images/assets/big/light/${asset.id}.png`;
   }
 };
+
+export const getAssetLabel = (item: AssetInfo) => {
+  if (!item) {
+    return '';
+  }
+  if (item.id === 0) {
+    return item.assetname;
+  }
+
+  return `${item.assetname} (${item.unitname} - ${item.id})`;
+};

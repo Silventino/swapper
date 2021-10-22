@@ -1,4 +1,4 @@
-import { Button, Divider, Grid, IconButton, Theme } from '@material-ui/core';
+import { Button, Divider, Grid, IconButton, TextField, Theme } from '@material-ui/core';
 import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
 import AddIcon from '@mui/icons-material/Add';
@@ -6,7 +6,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import React, { useContext, useEffect, useState } from 'react';
 import 'reflect-metadata';
 import { colors, EMPTY_PARTIAL_TRANSACTION } from 'src/constants';
-import { getAssetImage } from 'src/helpers/helper';
+import { getAssetImage, getAssetLabel } from 'src/helpers/helper';
 import PartialTransaction from 'src/types/PartialTransaction';
 import '../App.css';
 import GridCenter from './generic/GridCenter';
@@ -15,6 +15,7 @@ import MySelect from './generic/MySelect';
 // // import RainbowDiv from './generic/RainbowDiv';
 import Title from './generic/Title';
 import WalletContext, { AssetInfo } from './WalletContextProvider';
+import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
 
 type Props = {
   title: string;
@@ -90,6 +91,10 @@ const SingleTransaction: React.FC<PropsSingle> = (props) => {
 
   const walletContext = useContext(WalletContext);
 
+  const filterOptions = createFilterOptions({
+    limit: 10
+  });
+
   useEffect(() => {
     const newAsset = walletContext.assets.find((item) => item.id === transaction.assetIndex);
     setSelectedAsset(newAsset ?? null);
@@ -117,13 +122,17 @@ const SingleTransaction: React.FC<PropsSingle> = (props) => {
       </GridCenter>
 
       <Grid item xs={12}>
-        <MySelect<AssetInfo>
-          label={'Asset'}
+        <Autocomplete
+          disablePortal
           options={walletContext.assets}
-          getOptionLabel={(item) => (item ? `${item.assetname} (${item.unitname})` : '')}
-          // getOptionLabel={(item) => (item ? `${item.assetname} (ID ${item.id})` : '')}
+          getOptionLabel={getAssetLabel}
           value={selectedAsset}
-          onChange={(asset) => setTransaction({ ...transaction, assetIndex: asset.id })}
+          onChange={(e, asset: AssetInfo | null) =>
+            setTransaction({ ...transaction, assetIndex: asset ? asset.id : 0 })
+          }
+          renderInput={(params) => <TextField {...params} label="Asset" helperText="Start typing to filter assets" />}
+          filterOptions={filterOptions as any}
+          autoSelect
         />
       </Grid>
 
