@@ -10,7 +10,7 @@ export const ALGO_ASSET: AssetInfo = {
   defaultfrozen: false,
   unitname: 'ALGO',
   assetname: 'ALGO',
-  url: 'https://pbs.twimg.com/profile_images/1377008414287654913/ShEGMZ0c_400x400.jpg',
+  url: 'https://icodrops.com/wp-content/uploads/2018/03/Algorand-logo.jpg',
   // url: '',
   managerkey: '',
   reserveaddr: '',

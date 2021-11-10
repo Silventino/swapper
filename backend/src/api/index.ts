@@ -1,9 +1,11 @@
 import { Router } from 'express';
-import transactionRoute from './routes/transactionRoute';
+import assetRoute from './routes/assetRoute';
+import swapRoute from './routes/swapRoute';
 
 export default () => {
   const app = Router();
-  transactionRoute(app);
+  swapRoute(app);
+  assetRoute(app);
 
   return app;
 };

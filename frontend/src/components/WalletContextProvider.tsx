@@ -3,6 +3,7 @@ import algosdk, { TransactionLike } from 'algosdk';
 import axios from 'axios';
 import React, { createContext, useEffect, useState } from 'react';
 import swapApi from 'src/api/swapApi';
+import assetApi from 'src/api/assetApi';
 import { ALGO_ASSET } from 'src/constants';
 import { waitForConfirmation } from 'src/helpers/algoHelper';
 import { useLocalStorage } from 'src/helpers/helper';
@@ -100,6 +101,7 @@ type PropsWalletContext = {
     sendTransactions: (blobs: Uint8Array[]) => Promise<string>;
     getAssetInfo: (assetId: string | number) => Promise<AssetInfo>;
     optinAsset: (assetId: string | number) => Promise<void>;
+    optoutAsset: (assetIds: string[] | number[]) => Promise<void>;
     verifyGroup: (parentTx: string, transactions: CompleteTransaction[]) => Promise<boolean>;
     logout: () => void;
   };
@@ -130,6 +132,9 @@ const DEFAULT_VALUE = {
       return {} as any;
     },
     optinAsset: async () => {
+      return {} as any;
+    },
+    optoutAsset: async () => {
       return {} as any;
     },
     verifyGroup: async () => {
@@ -196,20 +201,26 @@ const WalletContextProvider: React.FC = ({ children }) => {
       );
       const newSelectedAccount = res.data;
 
-      const newAssets: AssetInfo[] = [ALGO_ASSET];
+      const assetsNotFound = [];
+      let newAssets: AssetInfo[] = [];
       for (let i = 0; i < newSelectedAccount.assets.length; i++) {
         const asset = newSelectedAccount.assets[i];
         const knownAsset = assetDict[asset['asset-id']];
         if (knownAsset) {
           newAssets.push(knownAsset);
         } else {
-          const res = await getAssetInfo(asset['asset-id']);
-          if (res) {
-            newAssets.push(res);
-            assetDict[asset['asset-id']] = res;
-          }
+          assetsNotFound.push(asset['asset-id']);
         }
       }
+
+      const otherAssets = await getManyAssetInfo(assetsNotFound);
+      for (let i = 0; i < otherAssets.length; i++) {
+        const asset = otherAssets[i];
+        assetDict[asset.id] = asset;
+      }
+
+      newAssets = newAssets.concat(otherAssets);
+      newAssets.push(ALGO_ASSET);
 
       setAssetDict({ ...assetDict });
       setAssets(newAssets);
@@ -223,12 +234,21 @@ const WalletContextProvider: React.FC = ({ children }) => {
 
   const getAssetInfo = async (assetId: string | number) => {
     try {
-      const res = await axios.get<AssetInfo>(
-        TESTNET
-          ? `https://testnet.algoexplorerapi.io/v1/asset/${assetId}`
-          : `https://algoexplorerapi.io/v1/asset/${assetId}`
-      );
-      return res.data;
+      const data = await assetApi.getAsset([assetId] as any);
+      if (data.length === 0) {
+        throw new Error('Asset not found.');
+      }
+      return data[0];
+    } catch (err) {
+      console.log('err', err);
+      throw err;
+    }
+  };
+
+  const getManyAssetInfo = async (assetIds: string[] | number[]) => {
+    try {
+      const data = await assetApi.getAsset(assetIds);
+      return data;
     } catch (err) {
       console.log('err', err);
       throw err;
@@ -279,6 +299,38 @@ const WalletContextProvider: React.FC = ({ children }) => {
 
       const signed = await signTransaction(txn);
       const txID = await sendTransactions([signed.blob!]);
+      await waitForConfirmation(algodClient, txID, 10000);
+      await selectAccount(selectedAccount!.address);
+    } catch (err) {
+      console.log('err', err);
+      throw err;
+    }
+  };
+
+  const optoutAsset = async (assetIndexes: number[] | string[]) => {
+    try {
+      const baseTnx = await getBaseTransaction();
+
+      const txns = [];
+
+      for (let i = 0; i < assetIndexes.length; i++) {
+        const assetIndex = assetIndexes[i];
+        const txn: CompleteTransaction = {
+          ...baseTnx,
+          fee: 1000,
+          flatFee: true,
+          type: 'aclose',
+          assetIndex: parseInt(assetIndex as string),
+          from: selectedAccount!.address,
+          to: selectedAccount!.address,
+          amount: 0
+        };
+        txns.push(txn);
+      }
+
+      const signed = await signTransactions(txns);
+      const blobs = signed.map((item) => item.blob!);
+      const txID = await sendTransactions(blobs);
       await waitForConfirmation(algodClient, txID, 10000);
       await selectAccount(selectedAccount!.address);
     } catch (err) {
@@ -468,6 +520,7 @@ const WalletContextProvider: React.FC = ({ children }) => {
           sendTransactions,
           getAssetInfo,
           optinAsset,
+          optoutAsset,
           verifyGroup,
           logout
         }

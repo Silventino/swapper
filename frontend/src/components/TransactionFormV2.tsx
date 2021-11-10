@@ -92,7 +92,7 @@ const SingleTransaction: React.FC<PropsSingle> = (props) => {
   const walletContext = useContext(WalletContext);
 
   const filterOptions = createFilterOptions({
-    limit: 10
+    limit: 40
   });
 
   useEffect(() => {
