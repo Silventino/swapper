@@ -14,6 +14,7 @@ import CreateSwapPageV2 from './pages/CreateSwapPageV2';
 import SignTransactionPage from './pages/SignTransactionPage';
 import SuccessPage from './pages/SuccessPage';
 import FailPage from './pages/FailPage';
+import OptoutPage from './pages/OptoutPage';
 
 function App() {
   const classes = useStyles();
@@ -37,6 +38,9 @@ function App() {
             </Route>
             <Route path="/fail">
               <FailPage />
+            </Route>
+            <Route path="/optout">
+              <OptoutPage />
             </Route>
             <Route path="/">
               <CreateSwapPageV2 />

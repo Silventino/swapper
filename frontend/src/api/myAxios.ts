@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const SERVER_URL = 'http://localhost:3002';
-// const SERVER_URL = 'https://api.silventino.dev';
+// const SERVER_URL = 'https://api.swapper.tools';
 
 const myAxios = axios.create({
   baseURL: SERVER_URL
