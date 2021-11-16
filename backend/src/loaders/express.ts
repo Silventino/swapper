@@ -1,17 +1,16 @@
-import bodyParser from "body-parser";
-import cors from "cors";
-import express, { NextFunction, Request, Response } from "express";
-import routes from "../api";
-import HttpError from "../etc/HttpError";
+import bodyParser from 'body-parser';
+import cors from 'cors';
+import express from 'express';
+import routes from '../api/index';
 
 const expressLoader = () => {
   const app = express();
 
-  app.get("/status", (req, res) => {
+  app.get('/status', (req, res) => {
     res.status(200).end();
   });
 
-  app.head("/status", (req, res) => {
+  app.head('/status', (req, res) => {
     res.status(200).end();
   });
 
@@ -22,11 +21,11 @@ const expressLoader = () => {
   app.use(bodyParser.json());
 
   // Load API routes
-  app.use("/api", routes());
+  app.use('/api', routes());
 
   /// catch 404 and forward to error handler
   app.use((req, res, next) => {
-    const err = new Error("Not Found");
+    const err = new Error('Not Found');
     res.status(404);
     next(err);
   });

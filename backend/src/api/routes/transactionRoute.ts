@@ -6,7 +6,7 @@ import isAuth from '../middlewares/isAuth';
 const route = Router();
 
 export default (app: Router) => {
-  app.use('/swap', route);
+  app.use('/transaction', route);
 
   route.post('/get', isAuth(), async (req: Request<{ parent: string }>, res: Response) => {
     try {

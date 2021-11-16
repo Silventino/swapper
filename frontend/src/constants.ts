@@ -29,7 +29,7 @@ export const EMPTY_PARTIAL_TRANSACTION = {
   from: '',
   to: '',
   assetIndex: 0,
-  amount: 0,
+  amount: 1,
   type: ''
 };
 

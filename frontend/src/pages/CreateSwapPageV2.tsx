@@ -35,6 +35,13 @@ function CreateSwapPageV2() {
   const [transactionsB, setTransactionsB] = useState<PartialTransaction[]>([{ ...EMPTY_PARTIAL_TRANSACTION }]);
 
   const createAtomicTransaction = async () => {
+    const hasZeroTransactionsA = transactionsA.some((item) => item.amount <= 0);
+    const hasZeroTransactionsB = transactionsB.some((item) => item.amount <= 0);
+    if (hasZeroTransactionsA || hasZeroTransactionsB) {
+      showNotification('Transactions with 0 amount are not allowed.');
+      return;
+    }
+
     setLoading(true);
     try {
       const newTransactionsA = transactionsA.map((item) => {

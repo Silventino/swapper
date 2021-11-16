@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const SERVER_URL = 'http://localhost:3002';
-// const SERVER_URL = 'https://api.swapper.tools';
+// const SERVER_URL = 'http://localhost:3002';
+const SERVER_URL = 'https://api.swapper.tools';
 
 const myAxios = axios.create({
   baseURL: SERVER_URL
@@ -13,7 +13,7 @@ myAxios.interceptors.response.use(
   },
   function (error) {
     if (!error.response) {
-      // console.log('Não foi possível conectar com servidor.');
+      console.log('error', error);
       return Promise.reject(new Error("Couldn't connect to the server."));
     }
 
