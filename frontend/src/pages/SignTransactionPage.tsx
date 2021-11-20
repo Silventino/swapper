@@ -13,7 +13,7 @@ import { showError, showNotification } from 'src/helpers/helper';
 import Swap from 'src/types/Swap';
 import '../App.css';
 import GridCenter from '../components/generic/GridCenter';
-import WalletContext from '../components/WalletContextProvider';
+import WalletContext from '../providers/WalletContextProvider';
 import CompleteTransaction from 'src/types/CompleteTransaction';
 import { STATUS_COMPLETED, STATUS_DEAD } from 'src/constants';
 
@@ -226,8 +226,8 @@ function SignTransactionPage() {
       {!allSigned && !allMineSigned && (
         <Grid item xs={12}>
           <Alert severity="info">
-            Sign all transactions that have the "SIGN" button available or click "SIGN ALL". Don't worry, none of the
-            assets will leave your wallet untill everything is complete.
+            <b>Verify all assets and amounts</b>, then sign all transactions that have the "SIGN" button available or
+            click "SIGN ALL". Don't worry, none of the assets will leave your wallet untill everything is complete.
           </Alert>
         </Grid>
       )}

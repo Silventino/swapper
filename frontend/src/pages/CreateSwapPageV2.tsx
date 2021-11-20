@@ -7,7 +7,7 @@ import '../App.css';
 
 import GridCenter from '../components/generic/GridCenter';
 import TransactionFormV2 from '../components/TransactionFormV2';
-import WalletContext from '../components/WalletContextProvider';
+import WalletContext from '../providers/WalletContextProvider';
 import { EMPTY_PARTIAL_TRANSACTION, HEADER_HEIGHT } from '../constants';
 import { showError, showNotification } from 'src/helpers/helper';
 import PartialTransaction from 'src/types/PartialTransaction';

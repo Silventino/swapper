@@ -21,7 +21,6 @@ const token = { 'X-API-Key': 'aDo90XU8i07qRS8ze8KlFaqn7B2AkgFl6uJg04T2' };
 const server = 'https://mainnet-algorand.api.purestake.io/ps2';
 const port = 443;
 
-//Tipando os dados que quero para usuário
 export type AccountInfo = {
   name: string;
   address: string;
@@ -90,6 +89,7 @@ type PropsWalletContext = {
   accounts: AccountInfo[];
   selectedAccount: AccountDetailedInfo | null;
   assets: AssetInfo[];
+  secondaryAssets: AssetInfo[];
   loadingAccount: boolean;
   myAlgoClient: MyAlgoClient;
   functions: {
@@ -107,10 +107,11 @@ type PropsWalletContext = {
   };
 };
 
-const DEFAULT_VALUE = {
+const DEFAULT_WALLET_CONTEXT_VALUE = {
   accounts: [],
   selectedAccount: null,
   assets: [],
+  secondaryAssets: [],
   loadingAccount: false,
   myAlgoClient: new MyAlgoClient(),
   functions: {
@@ -146,7 +147,7 @@ const DEFAULT_VALUE = {
   }
 };
 
-const WalletContext = createContext<PropsWalletContext>(DEFAULT_VALUE);
+const WalletContext = createContext<PropsWalletContext>(DEFAULT_WALLET_CONTEXT_VALUE);
 
 const WalletContextProvider: React.FC = ({ children }) => {
   const [accounts, setAccounts] = useLocalStorage<AccountInfo[]>('accounts', []);
@@ -254,28 +255,6 @@ const WalletContextProvider: React.FC = ({ children }) => {
       throw err;
     }
   };
-
-  // const getAllAssetInfo = async () => {
-  //   try {
-  //     if (!selectedAccount) {
-  //       return;
-  //     }
-
-  //     const newAssets: AssetInfo[] = [ALGO_ASSET];
-  //     for (let i = 0; i < selectedAccount.assets.length; i++) {
-  //       const item = selectedAccount.assets[i];
-  //       const res = await getAssetInfo(item['asset-id']);
-  //       if (res) {
-  //         newAssets.push(res);
-  //       }
-  //     }
-
-  //     setAssets(newAssets);
-  //   } catch (err) {
-  //     console.log('err', err);
-  //     throw err;
-  //   }
-  // };
 
   const getBaseTransaction = async () => {
     let txn = (await algodClient.getTransactionParams().do()) as BaseTransaction;
@@ -510,6 +489,7 @@ const WalletContextProvider: React.FC = ({ children }) => {
         accounts,
         selectedAccount,
         assets,
+        secondaryAssets: [],
         loadingAccount,
         functions: {
           connectMyAlgo,

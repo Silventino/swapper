@@ -8,7 +8,7 @@ import './App.css';
 import Header from './components/Header';
 import ModalConnect from './components/ModalConnect';
 import ModalLoading from './components/ModalLoading';
-import WalletContext from './components/WalletContextProvider';
+import WalletContext from './providers/WalletContextProvider';
 import { HEADER_HEIGHT } from './constants';
 import CreateSwapPageV2 from './pages/CreateSwapPageV2';
 import SignTransactionPage from './pages/SignTransactionPage';

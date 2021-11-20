@@ -1,4 +1,4 @@
-import { AssetInfo } from './components/WalletContextProvider';
+import { AssetInfo } from './providers/WalletContextProvider';
 
 export const HEADER_HEIGHT = 60;
 

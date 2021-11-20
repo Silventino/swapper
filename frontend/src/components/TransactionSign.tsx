@@ -14,7 +14,7 @@ import Loader from './generic/Loader';
 import MyInput from './generic/MyInput';
 // // import RainbowDiv from './generic/RainbowDiv';
 import Title from './generic/Title';
-import WalletContext, { AssetInfo } from './WalletContextProvider';
+import WalletContext, { AssetInfo } from '../providers/WalletContextProvider';
 
 type Props = {
   index: number;

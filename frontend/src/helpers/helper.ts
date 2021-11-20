@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { toast } from 'react-toastify';
-import { AssetInfo } from 'src/components/WalletContextProvider';
+import { AssetInfo } from 'src/providers/WalletContextProvider';
 import CompleteTransaction from 'src/types/CompleteTransaction';
 import TransactionReq from 'src/types/TransactionReq';
 

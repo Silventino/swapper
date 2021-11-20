@@ -12,7 +12,7 @@ import MyInput from './generic/MyInput';
 // // import RainbowDiv from './generic/RainbowDiv';
 import Title from './generic/Title';
 import Loader from './generic/Loader';
-import WalletContext, { AssetInfo } from './WalletContextProvider';
+import WalletContext, { AssetInfo } from '../providers/WalletContextProvider';
 
 type Props = {
   assetIndex: number;

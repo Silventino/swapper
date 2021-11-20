@@ -4,7 +4,7 @@ import makeStyles from '@material-ui/styles/makeStyles';
 import React, { useContext } from 'react';
 import { colors, HEADER_HEIGHT } from 'src/constants';
 import { showError } from 'src/helpers/helper';
-import WalletContext from './WalletContextProvider';
+import WalletContext from '../providers/WalletContextProvider';
 
 type Props = {
   title?: string;

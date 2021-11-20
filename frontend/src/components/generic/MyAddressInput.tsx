@@ -5,7 +5,7 @@ import Visibility from '@mui/icons-material/Visibility';
 import React, { useContext } from 'react';
 import MyInput from './MyInput';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
-import WalletContext from '../WalletContextProvider';
+import WalletContext from '../../providers/WalletContextProvider';
 
 type Props = {
   label: string;

@@ -12,6 +12,7 @@ type Props = {
   disabled?: boolean;
   multiline?: boolean;
   className?: string;
+  maxLength?: number;
 };
 
 const MyInput: React.FC<Props> = (props) => {

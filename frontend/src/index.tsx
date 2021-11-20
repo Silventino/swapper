@@ -8,7 +8,7 @@ import App from './App';
 
 import { createTheme, ThemeProvider, Theme, StyledEngineProvider, adaptV4Theme } from '@material-ui/core/styles';
 
-import { WalletContextProvider } from './components/WalletContextProvider';
+import { WalletContextProvider } from './providers/WalletContextProvider';
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';

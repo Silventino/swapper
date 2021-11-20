@@ -10,7 +10,7 @@ import logo_full from '../assets/logo_full.png';
 import ConnectButton from './ConnectButton';
 import Drawer from './Drawer';
 import MySelectBase from './generic/MySelectBase';
-import WalletContext from './WalletContextProvider';
+import WalletContext from '../providers/WalletContextProvider';
 
 const Header: React.FC = (props) => {
   const walletContext = useContext(WalletContext);

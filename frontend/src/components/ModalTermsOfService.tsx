@@ -3,7 +3,7 @@ import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
 import React, { useContext } from 'react';
 import MyModal from './generic/MyModal';
-import WalletContext from './WalletContextProvider';
+import WalletContext from '../providers/WalletContextProvider';
 import { HEADER_HEIGHT } from '../constants';
 import DivCenter from './generic/DivCenter';
 import TermsOfService from './TermsOfService';
