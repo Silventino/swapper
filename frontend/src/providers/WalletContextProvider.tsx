@@ -103,6 +103,8 @@ type PropsWalletContext = {
     optinAsset: (assetId: string | number) => Promise<void>;
     optoutAsset: (assetIds: string[] | number[]) => Promise<void>;
     verifyGroup: (parentTx: string, transactions: CompleteTransaction[]) => Promise<boolean>;
+    loadSecondaryAssets: (address: string) => Promise<void>;
+    clearSecondaryAssets: () => void;
     logout: () => void;
   };
 };
@@ -143,6 +145,12 @@ const DEFAULT_WALLET_CONTEXT_VALUE = {
     },
     logout: async () => {
       return {} as any;
+    },
+    loadSecondaryAssets: async () => {
+      return {} as any;
+    },
+    clearSecondaryAssets: () => {
+      return {} as any;
     }
   }
 };
@@ -153,6 +161,7 @@ const WalletContextProvider: React.FC = ({ children }) => {
   const [accounts, setAccounts] = useLocalStorage<AccountInfo[]>('accounts', []);
   const [assetDict, setAssetDict] = useLocalStorage<AssetInfo[]>('assets', []);
 
+  const [secondaryAssets, setSecondaryAssets] = useState<AssetInfo[]>([]);
   const [assets, setAssets] = useState<AssetInfo[]>([]);
   const [selectedAccount, setSelectedAccount] = useState<AccountDetailedInfo | null>(null);
   const [loadingAccount, setLoadingAccount] = useState(false);
@@ -192,36 +201,41 @@ const WalletContextProvider: React.FC = ({ children }) => {
     }
   };
 
+  const loadInfoFromAddress = async (address: string): Promise<[x: AccountDetailedInfo, y: AssetInfo[]]> => {
+    const res = await axios.get<AccountDetailedInfo>(
+      TESTNET
+        ? `https://testnet.algoexplorerapi.io/v2/accounts/${address}`
+        : `https://algoexplorerapi.io/v2/accounts/${address}`
+    );
+    const newSelectedAccount = res.data;
+
+    const assetsNotFound = [];
+    let newAssets: AssetInfo[] = [];
+    for (let i = 0; i < newSelectedAccount.assets.length; i++) {
+      const asset = newSelectedAccount.assets[i];
+      const knownAsset = assetDict[asset['asset-id']];
+      if (knownAsset) {
+        newAssets.push(knownAsset);
+      } else {
+        assetsNotFound.push(asset['asset-id']);
+      }
+    }
+
+    const otherAssets = await getManyAssetInfo(assetsNotFound);
+    for (let i = 0; i < otherAssets.length; i++) {
+      const asset = otherAssets[i];
+      assetDict[asset.id] = asset;
+    }
+
+    newAssets = newAssets.concat(otherAssets);
+    newAssets.push(ALGO_ASSET);
+    return [newSelectedAccount, newAssets];
+  };
+
   const selectAccount = async (address: string) => {
     setLoadingAccount(true);
     try {
-      const res = await axios.get<AccountDetailedInfo>(
-        TESTNET
-          ? `https://testnet.algoexplorerapi.io/v2/accounts/${address}`
-          : `https://algoexplorerapi.io/v2/accounts/${address}`
-      );
-      const newSelectedAccount = res.data;
-
-      const assetsNotFound = [];
-      let newAssets: AssetInfo[] = [];
-      for (let i = 0; i < newSelectedAccount.assets.length; i++) {
-        const asset = newSelectedAccount.assets[i];
-        const knownAsset = assetDict[asset['asset-id']];
-        if (knownAsset) {
-          newAssets.push(knownAsset);
-        } else {
-          assetsNotFound.push(asset['asset-id']);
-        }
-      }
-
-      const otherAssets = await getManyAssetInfo(assetsNotFound);
-      for (let i = 0; i < otherAssets.length; i++) {
-        const asset = otherAssets[i];
-        assetDict[asset.id] = asset;
-      }
-
-      newAssets = newAssets.concat(otherAssets);
-      newAssets.push(ALGO_ASSET);
+      const [newSelectedAccount, newAssets] = await loadInfoFromAddress(address);
 
       setAssetDict({ ...assetDict });
       setAssets(newAssets);
@@ -461,14 +475,26 @@ const WalletContextProvider: React.FC = ({ children }) => {
         throw new Error('Transaction incomplete.');
       }
       await waitForConfirmation(algodClient, res.txId, 10000);
-      // const res = await axios.post(
-      //   "https://testnet.algoexplorerapi.io/v2/transactions",
-      //   signed[0]
-      // );
       return res.txId;
     } catch (err) {
       throw err;
     }
+  };
+
+  const loadSecondaryAssets = async (address: string) => {
+    setLoadingAccount(true);
+    try {
+      const [newSelectedAccount, newAssets] = await loadInfoFromAddress(address);
+      setSecondaryAssets(newAssets);
+    } catch (err) {
+      setLoadingAccount(false);
+      throw err;
+    }
+    setLoadingAccount(false);
+  };
+
+  const clearSecondaryAssets = () => {
+    setSecondaryAssets([]);
   };
 
   const logout = () => {
@@ -489,7 +515,7 @@ const WalletContextProvider: React.FC = ({ children }) => {
         accounts,
         selectedAccount,
         assets,
-        secondaryAssets: [],
+        secondaryAssets,
         loadingAccount,
         functions: {
           connectMyAlgo,
@@ -502,6 +528,8 @@ const WalletContextProvider: React.FC = ({ children }) => {
           optinAsset,
           optoutAsset,
           verifyGroup,
+          loadSecondaryAssets,
+          clearSecondaryAssets,
           logout
         }
       }}

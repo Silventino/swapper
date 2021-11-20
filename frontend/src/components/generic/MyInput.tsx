@@ -13,6 +13,7 @@ type Props = {
   multiline?: boolean;
   className?: string;
   maxLength?: number;
+  helperText?: string;
 };
 
 const MyInput: React.FC<Props> = (props) => {

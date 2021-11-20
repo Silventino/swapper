@@ -21,10 +21,11 @@ type Props = {
   title: string;
   transactions: PartialTransaction[];
   setTransactions: (x: PartialTransaction[]) => void;
+  secondaryAssets?: boolean;
 };
 
 const TransactionFormV2: React.FC<Props> = (props) => {
-  const { transactions, setTransactions, title } = props;
+  const { transactions, setTransactions, title, secondaryAssets } = props;
   const classes = useStyles();
 
   const walletContext = useContext(WalletContext);
@@ -58,6 +59,7 @@ const TransactionFormV2: React.FC<Props> = (props) => {
               setTransaction={(t) => updateTransaction(t, i)}
               canDelete={transactions.length > 1}
               onDelete={() => removeTransaction(i)}
+              secondaryAssets={secondaryAssets}
             />
           </Grid>
         ))}
@@ -81,24 +83,59 @@ type PropsSingle = {
   setTransaction: (x: PartialTransaction) => void;
   canDelete: boolean;
   onDelete: () => void;
+  secondaryAssets?: boolean;
 };
 
 const SingleTransaction: React.FC<PropsSingle> = (props) => {
-  const { transaction, setTransaction, canDelete, onDelete } = props;
+  const { transaction, setTransaction, canDelete, onDelete, secondaryAssets } = props;
+  const walletContext = useContext(WalletContext);
   const classes = useStyles();
 
   const [selectedAsset, setSelectedAsset] = useState<AssetInfo | null>(null);
+  // const [extraAsset, setExtraAsset] = useState<AssetInfo | null>(null);
 
-  const walletContext = useContext(WalletContext);
+  const [loading, setLoading] = useState(false);
+
+  const loadAsset = async (assetId: string) => {
+    assetId = assetId.replace(/\D/g, '');
+    if (assetId.length !== 9) {
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const asset = await walletContext.functions.getAssetInfo(assetId);
+      if (asset) {
+        setSelectedAsset(asset);
+      }
+      console.log('asset', asset);
+    } catch (err) {
+      // TODO
+    }
+    setLoading(false);
+  };
+
+  const loadAssetFromTransaction = async () => {
+    console.log('transaction.assetIndex', transaction.assetIndex);
+    try {
+      let newAsset = walletContext.assets.find((item) => item.id === transaction.assetIndex);
+      if (!newAsset) {
+        newAsset = await walletContext.functions.getAssetInfo(transaction.assetIndex);
+      }
+      setSelectedAsset(newAsset ?? null);
+    } catch (err) {
+      console.log(err);
+      setSelectedAsset(null);
+    }
+  };
+
+  useEffect(() => {
+    loadAssetFromTransaction();
+  }, [transaction.assetIndex, walletContext.assets]);
 
   const filterOptions = createFilterOptions({
     limit: 40
   });
-
-  useEffect(() => {
-    const newAsset = walletContext.assets.find((item) => item.id === transaction.assetIndex);
-    setSelectedAsset(newAsset ?? null);
-  }, [transaction.assetIndex, walletContext.assets]);
 
   if (!walletContext.selectedAccount) {
     return null;
@@ -124,13 +161,32 @@ const SingleTransaction: React.FC<PropsSingle> = (props) => {
       <Grid item xs={12}>
         <Autocomplete
           disablePortal
-          options={walletContext.assets}
+          options={
+            secondaryAssets && walletContext.secondaryAssets.length > 0
+              ? walletContext.secondaryAssets
+              : walletContext.assets
+          }
           getOptionLabel={getAssetLabel}
           value={selectedAsset}
           onChange={(e, asset: AssetInfo | null) =>
             setTransaction({ ...transaction, assetIndex: asset ? asset.id : 0 })
           }
-          renderInput={(params) => <TextField {...params} label="Asset" helperText="Start typing to filter assets" />}
+          renderInput={(params) => {
+            return (
+              <TextField
+                {...params}
+                onChange={(e) => {
+                  let value = e.target.value;
+                  if (value.length === 9) {
+                    loadAsset(value);
+                  }
+                }}
+                label="Asset"
+                helperText="Start typing to filter assets"
+                disabled={loading}
+              />
+            );
+          }}
           filterOptions={filterOptions as any}
           autoSelect
         />

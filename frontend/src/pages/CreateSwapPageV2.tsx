@@ -56,6 +56,8 @@ function CreateSwapPageV2() {
       });
       const allTransactions = newTransactionsA.concat(newTransactionsB);
 
+      console.log('allTransactions', allTransactions);
+
       const tx = await walletContext.functions.createAtomicTransaction(allTransactions);
       setTimeout(() => {
         history.replace(`/tx/${tx}`);

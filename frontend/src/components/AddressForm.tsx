@@ -1,7 +1,7 @@
-import { Button, Grid, Theme, Typography } from '@material-ui/core';
+import { Button, Grid, IconButton, Theme, Typography } from '@material-ui/core';
 import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import 'reflect-metadata';
 import { colors } from 'src/constants';
 import WalletContext from 'src/providers/WalletContextProvider';
@@ -11,6 +11,9 @@ import GridCenter from './generic/GridCenter';
 import MyInput from './generic/MyInput';
 // // import RainbowDiv from './generic/RainbowDiv';
 import Title from './generic/Title';
+import CheckIcon from '@mui/icons-material/Check';
+import { showNotification } from 'src/helpers/helper';
+import SearchIcon from '@mui/icons-material/Search';
 
 type Props = {
   addressA: string;
@@ -25,6 +28,28 @@ const AddressForm: React.FC<Props> = (props) => {
 
   const classes = useStyles();
 
+  useEffect(() => {
+    if (!addressA) {
+      setAddressA(walletContext.selectedAccount!.address);
+    }
+  }, [addressA]);
+
+  useEffect(() => {
+    if (addressB.length !== 58) {
+      walletContext.functions.clearSecondaryAssets();
+    }
+  }, [addressB]);
+
+  const loadSecondaryAssets = async () => {
+    try {
+      console.log('LOAD');
+      await walletContext.functions.loadSecondaryAssets(addressB);
+    } catch (err) {
+      console.log('err', err);
+      showNotification('Error while loading assets from account.');
+    }
+  };
+
   return (
     <div className={classes.container}>
       <Grid container spacing={4}>
@@ -33,18 +58,17 @@ const AddressForm: React.FC<Props> = (props) => {
         </GridCenter>
 
         <Grid item xs={12} md={6}>
-          <ConnectedWalletSelect label={'You'} value={addressA} onChange={(txt) => setAddressA(txt)} />
-
-          {addressA && (
-            <div className={classes.buttonDiv}>
-              <Button variant={'contained'} onClick={() => {}} disabled>
-                ASSETS LOADED
-              </Button>
-            </div>
-          )}
+          <ConnectedWalletSelect
+            label={'You'}
+            value={addressA}
+            onChange={(txt) => {
+              setAddressA(txt);
+              walletContext.functions.selectAccount(txt).catch((err) => {});
+            }}
+          />
         </Grid>
 
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={6} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <MyInput
             className={classes.input}
             label={'Other'}
@@ -52,26 +76,14 @@ const AddressForm: React.FC<Props> = (props) => {
             value={addressB}
             onChange={(txt) => setAddressB(txt)}
             maxLength={58}
+            endAdornment={
+              addressB.length === 58 ? (
+                <IconButton onClick={() => loadSecondaryAssets()}>
+                  <SearchIcon />
+                </IconButton>
+              ) : undefined
+            }
           />
-
-          {addressB && addressB.length === 58 && walletContext.secondaryAssets.length === 0 && (
-            <div className={classes.buttonDiv}>
-              <Button variant={'contained'} onClick={() => {}}>
-                LOAD ASSETS*
-              </Button>
-              <Typography color={'#fff'} fontSize={12}>
-                *Optional
-              </Typography>
-            </div>
-          )}
-
-          {addressB && addressB.length === 58 && walletContext.secondaryAssets.length > 0 && (
-            <div className={classes.buttonDiv}>
-              <Button variant={'contained'} onClick={() => {}} disabled>
-                ASSETS LOADED
-              </Button>
-            </div>
-          )}
         </Grid>
       </Grid>
     </div>
