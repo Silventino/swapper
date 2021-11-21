@@ -207,14 +207,34 @@ const WalletContextProvider: React.FC = ({ children }) => {
       }
     }
 
-    const otherAssets = await getManyAssetInfo(assetsNotFound);
-    for (let i = 0; i < otherAssets.length; i++) {
-      const asset = otherAssets[i];
-      assetDict[asset.id] = asset;
+    // LOADING ASSETS IN MULTIPLE REQUESTS //////////////////////////////////////////////
+    let i = 0;
+    while(i < assetsNotFound.length){
+      const partialNotFound = assetsNotFound.slice(i, i + 10);
+      const otherAssets = await getManyAssetInfo(partialNotFound);
+      for (let j = 0; j < otherAssets.length; j++) {
+        const asset = otherAssets[j];
+        assetDict[asset.id] = asset;
+      }
+      newAssets = newAssets.concat(otherAssets);
+
+      i = i + 10
     }
 
-    newAssets = newAssets.concat(otherAssets);
+    const partialNotFound = assetsNotFound.slice(i, i + 10);
+    if(partialNotFound.length){
+      const otherAssets = await getManyAssetInfo(partialNotFound);
+      for (let j = 0; j < otherAssets.length; j++) {
+        const asset = otherAssets[j];
+        assetDict[asset.id] = asset;
+      }
+      newAssets = newAssets.concat(otherAssets);
+    }
+    ///////////////////////////////////////////////////////////////////////////////////////
+
     newAssets.push(ALGO_ASSET);
+    setAssetDict({ ...assetDict });
+
     return [newSelectedAccount, newAssets];
   };
 
@@ -223,7 +243,6 @@ const WalletContextProvider: React.FC = ({ children }) => {
     try {
       const [newSelectedAccount, newAssets] = await loadInfoFromAddress(address);
 
-      setAssetDict({ ...assetDict });
       setAssets([...newAssets]);
       setAccountAssets([...newAssets]);
       setSelectedAccount(newSelectedAccount);

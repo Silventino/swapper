@@ -128,7 +128,9 @@ const SingleTransaction: React.FC<PropsSingle> = (props) => {
   }
 
   useEffect(() => {
-    loadAssetFromTransaction();
+    if(walletContext.assets.length > 0){
+      loadAssetFromTransaction();
+    }
   }, [transaction.assetIndex, walletContext.assets]);
 
   const filterOptions = createFilterOptions({
