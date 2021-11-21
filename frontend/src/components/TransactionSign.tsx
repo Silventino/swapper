@@ -1,4 +1,4 @@
-import { Button, Grid, Theme } from '@material-ui/core';
+import { Button, Grid, IconButton, Theme } from '@material-ui/core';
 import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
 import clsx from 'clsx';
@@ -15,6 +15,7 @@ import MyInput from './generic/MyInput';
 // // import RainbowDiv from './generic/RainbowDiv';
 import Title from './generic/Title';
 import WalletContext, { AssetInfo } from '../providers/WalletContextProvider';
+import InfoIcon from '@mui/icons-material/Info';
 
 type Props = {
   index: number;
@@ -92,7 +93,18 @@ const TransactionSign: React.FC<Props> = (props) => {
         </GridCenter>
 
         <GridCenter item xs={12}>
-          <img src={getAssetImage(selectedAsset)} alt="" className={classes.img} />
+          <a href={`https://www.nftexplorer.app/asset/${selectedAsset?.id}`} target={"_blank"} className={classes.row}>
+            <div style={{ width: 40, height: 40 }} />
+            <img src={getAssetImage(selectedAsset)} alt="" className={classes.img} />
+            {
+              selectedAsset!.id === ALGO_ASSET.id ?
+              <div style={{ width: 40, height: 40 }} />
+              :
+              <IconButton onClick={() => {}}>
+                <InfoIcon />
+              </IconButton>
+            }
+          </a>
         </GridCenter>
 
         <Grid item xs={12}>
@@ -165,7 +177,13 @@ const useStyles = makeStyles<Theme>((theme) =>
       objectFit: 'contain',
       borderRadius: 7
     },
-    loaderDiv: { width: '100%', height: 50, display: 'flex', alignItems: 'center', justifyContent: 'center' }
+    loaderDiv: { width: '100%', height: 50, display: 'flex', alignItems: 'center', justifyContent: 'center' },
+    row: {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'flex-start',
+      alignItems: 'flex-start'
+    }
   })
 );
 
