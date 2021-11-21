@@ -89,6 +89,7 @@ type PropsWalletContext = {
   accounts: AccountInfo[];
   selectedAccount: AccountDetailedInfo | null;
   assets: AssetInfo[];
+  accountAssets: AssetInfo[];
   loadingAccount: boolean;
   myAlgoClient: MyAlgoClient;
   functions: {
@@ -99,7 +100,7 @@ type PropsWalletContext = {
     signTransactions: (t: CompleteTransaction[]) => Promise<CompleteTransaction[]>;
     sendTransactions: (blobs: Uint8Array[]) => Promise<string>;
     getAssetInfo: (assetId: string | number) => Promise<AssetInfo>;
-    optinAsset: (assetId: string | number) => Promise<void>;
+    optinAssets: (assetIds: string[] | number[]) => Promise<void>;
     optoutAsset: (assetIds: string[] | number[]) => Promise<void>;
     verifyGroup: (parentTx: string, transactions: CompleteTransaction[]) => Promise<boolean>;
     loadAssetsFromAddress: (address: string) => Promise<void>;
@@ -112,6 +113,7 @@ const DEFAULT_WALLET_CONTEXT_VALUE = {
   accounts: [],
   selectedAccount: null,
   assets: [],
+  accountAssets: [],
   loadingAccount: false,
   myAlgoClient: new MyAlgoClient(),
   functions: {
@@ -132,7 +134,7 @@ const DEFAULT_WALLET_CONTEXT_VALUE = {
     getAssetInfo: async () => {
       return {} as any;
     },
-    optinAsset: async () => {
+    optinAssets: async () => {
       return {} as any;
     },
     optoutAsset: async () => {
@@ -160,6 +162,7 @@ const WalletContextProvider: React.FC = ({ children }) => {
   const [accounts, setAccounts] = useLocalStorage<AccountInfo[]>('accounts', []);
   const [assetDict, setAssetDict] = useLocalStorage<AssetInfo[]>('assets', []);
 
+  const [accountAssets, setAccountAssets] = useState<AssetInfo[]>([]);
   const [assets, setAssets] = useState<AssetInfo[]>([]);
   const [loadingAccount, setLoadingAccount] = useState(false);
 
@@ -221,7 +224,8 @@ const WalletContextProvider: React.FC = ({ children }) => {
       const [newSelectedAccount, newAssets] = await loadInfoFromAddress(address);
 
       setAssetDict({ ...assetDict });
-      setAssets(newAssets);
+      setAssets([...newAssets]);
+      setAccountAssets([...newAssets]);
       setSelectedAccount(newSelectedAccount);
     } catch (err) {
       console.log('err', err);
@@ -258,23 +262,39 @@ const WalletContextProvider: React.FC = ({ children }) => {
     return txn;
   };
 
-  const optinAsset = async (assetIndex: number | string) => {
+  const optinAssets = async (assetIds: number[] | string[]) => {
     try {
       const baseTnx = await getBaseTransaction();
+      const transactions = [];
 
-      const txn: CompleteTransaction = {
-        ...baseTnx,
-        fee: 1000,
-        flatFee: true,
-        type: 'axfer',
-        assetIndex: parseInt(assetIndex as string),
-        from: selectedAccount!.address,
-        to: selectedAccount!.address,
-        amount: 0
-      };
+      for (let i = 0; i < assetIds.length; i++) {
+        const assetId = assetIds[i];
+        const txn: CompleteTransaction = {
+          ...baseTnx,
+          fee: 1000,
+          flatFee: true,
+          type: 'axfer',
+          assetIndex: parseInt(assetId as string),
+          from: selectedAccount!.address,
+          to: selectedAccount!.address,
+          amount: 0
+        };
+        transactions.push(txn);
+      }
 
-      const signed = await signTransaction(txn);
-      const txID = await sendTransactions([signed.blob!]);
+      let txgroup = algosdk.assignGroupID(transactions as TransactionLike[]);
+      const groupID = txgroup[0].group;
+      if (!groupID) {
+        throw new Error('Error while creating the group ID.');
+      }
+
+      for (let i = 0; i < transactions.length; i++) {
+        transactions[i].group = groupID;
+      }
+      const signed = await signTransactions(transactions);
+      const blobs = signed.map((item) => item.blob!);
+
+      const txID = await sendTransactions(blobs);
       await waitForConfirmation(algodClient, txID, 10000);
       await selectAccount(selectedAccount!.address);
     } catch (err) {
@@ -520,6 +540,7 @@ const WalletContextProvider: React.FC = ({ children }) => {
         accounts,
         selectedAccount,
         assets,
+        accountAssets,
         loadingAccount,
         functions: {
           connectMyAlgo,
@@ -529,7 +550,7 @@ const WalletContextProvider: React.FC = ({ children }) => {
           signTransactions,
           sendTransactions,
           getAssetInfo,
-          optinAsset,
+          optinAssets,
           optoutAsset,
           verifyGroup,
           loadAssetsFromAddress,

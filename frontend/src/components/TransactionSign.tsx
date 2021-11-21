@@ -53,25 +53,8 @@ const TransactionSign: React.FC<Props> = (props) => {
   const signTransaction = async () => {
     setLoading(true);
     try {
-      if (!walletContext.selectedAccount) {
-        return;
-      }
       const signed = await walletContext.functions.signTransaction(transaction);
       await swapApi.signTransaction(signed);
-      onSign();
-    } catch (err) {
-      showError(err);
-    }
-    setLoading(false);
-  };
-
-  const optinAsset = async () => {
-    setLoading(true);
-    try {
-      if (!walletContext.selectedAccount) {
-        return;
-      }
-      await walletContext.functions.optinAsset(transaction.assetIndex!);
       onSign();
     } catch (err) {
       showError(err);
@@ -83,11 +66,11 @@ const TransactionSign: React.FC<Props> = (props) => {
     if (!transaction.assetIndex) {
       setOptedIn(true);
     } else {
-      const newOptedIn = walletContext.assets.some((item) => item.id === transaction.assetIndex);
+      const newOptedIn = walletContext.accountAssets.some((item) => item.id === transaction.assetIndex);
       setOptedIn(newOptedIn);
     }
     getAsset();
-  }, [transaction.assetIndex, walletContext.assets]);
+  }, [transaction.assetIndex, walletContext.accountAssets]);
 
   useEffect(() => {
     const newIsPaticipating = walletContext.selectedAccount?.address === transaction.from;
@@ -161,14 +144,6 @@ const TransactionSign: React.FC<Props> = (props) => {
           <GridCenter item xs={12}>
             <Button variant={'contained'} onClick={signTransaction} disabled={isSigned}>
               SIGNED!
-            </Button>
-          </GridCenter>
-        )}
-
-        {!loading && !optedIn && (
-          <GridCenter item xs={12}>
-            <Button variant={'contained'} onClick={optinAsset}>
-              OPT-IN
             </Button>
           </GridCenter>
         )}

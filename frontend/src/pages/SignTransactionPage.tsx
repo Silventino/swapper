@@ -47,9 +47,6 @@ function SignTransactionPage() {
       setLoading(true);
     }
     try {
-      if (!walletContext.selectedAccount) {
-        throw new Error('Please connect your wallet first.');
-      }
       const newSwap = await swapApi.getSwap(id);
 
       if (newSwap.status === STATUS_COMPLETED) {
@@ -76,9 +73,6 @@ function SignTransactionPage() {
   const signAll = async () => {
     setLoading(true);
     try {
-      if (!walletContext.selectedAccount) {
-        return;
-      }
       const signeds = await walletContext.functions.signTransactions(myUnsignedTransactions);
       for (let i = 0; i < signeds.length; i++) {
         const signed = signeds[i];
@@ -92,14 +86,21 @@ function SignTransactionPage() {
     setLoading(false);
   };
 
+  const optinAll = async () => {
+    setLoading(true);
+    try {
+      await walletContext.functions.optinAssets(notOptedInAssets);
+    } catch (err) {
+      showError(err);
+    }
+    setLoading(false);
+  };
+
   const finish = async () => {
     setLoading(true);
     try {
       if (!swap) {
         throw new Error('Swap not found.');
-      }
-      if (!walletContext.selectedAccount) {
-        throw new Error('Please connect your wallet first.');
       }
       const signed = swap.transactions.map((item) => {
         if (!item.blob) {
@@ -165,7 +166,7 @@ function SignTransactionPage() {
       const newNotOptedInAssets: number[] = [];
       for (let i = 0; i < swap.transactions.length; i++) {
         const transaction = swap.transactions[i];
-        const opted = walletContext.assets.some((asset) => asset.id === transaction.assetIndex);
+        const opted = walletContext.accountAssets.some((asset) => asset.id === transaction.assetIndex);
         if (!opted && transaction.assetIndex) {
           newNotOptedInAssets.push(transaction.assetIndex);
         }
@@ -201,8 +202,16 @@ function SignTransactionPage() {
     return (
       <Grid container spacing={4} justifyContent={'center'} className={classes.container}>
         <Grid item xs={12}>
-          <Alert severity="info">You need to opt-in these assets before continuing.</Alert>
+          <Alert
+          severity="info"
+          action={
+            <Button variant="contained" size="small" onClick={() => optinAll()}>
+              OPT-IN ALL
+            </Button>
+          }
+          >You need to opt-in these assets before continuing.</Alert>
         </Grid>
+
 
         {notOptedInAssets.map((assetIndex, index) => (
           <GridCenter key={`transaction${index}`} item xs={12} md={6} className={classes.swapGrid}>

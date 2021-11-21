@@ -5,7 +5,7 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import React, { useContext, useEffect, useState } from 'react';
 import 'reflect-metadata';
-import { colors, EMPTY_PARTIAL_TRANSACTION } from 'src/constants';
+import { ALGO_ASSET, colors, EMPTY_PARTIAL_TRANSACTION } from 'src/constants';
 import { getAssetImage, getAssetLabel, showNotification } from 'src/helpers/helper';
 import PartialTransaction from 'src/types/PartialTransaction';
 import '../App.css';
@@ -116,7 +116,7 @@ const SingleTransaction: React.FC<PropsSingle> = (props) => {
       if (!newAsset) {
         newAsset = await walletContext.functions.getAssetInfo(transaction.assetIndex);
       }
-      setSelectedAsset(newAsset ?? null);
+      setSelectedAsset(newAsset ?? ALGO_ASSET);
     } catch (err) {
       console.log(err);
       setSelectedAsset(null);

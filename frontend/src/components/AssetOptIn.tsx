@@ -43,10 +43,7 @@ const AssetOptIn: React.FC<Props> = (props) => {
   const optinAsset = async () => {
     setLoading(true);
     try {
-      if (!walletContext.selectedAccount) {
-        return;
-      }
-      await walletContext.functions.optinAsset(assetIndex);
+      await walletContext.functions.optinAssets([assetIndex]);
       onOptIn();
     } catch (err) {
       showError(err);
