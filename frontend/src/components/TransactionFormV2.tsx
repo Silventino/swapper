@@ -16,6 +16,7 @@ import MySelect from './generic/MySelect';
 import Title from './generic/Title';
 import WalletContext, { AssetInfo } from '../providers/WalletContextProvider';
 import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
+import InfoIcon from '@mui/icons-material/Info';
 
 type Props = {
   title: string;
@@ -144,18 +145,33 @@ const SingleTransaction: React.FC<PropsSingle> = (props) => {
   return (
     <Grid container spacing={3}>
       <GridCenter item xs={12}>
-        {canDelete ? (
           <div className={classes.divWithRemove}>
             <div style={{ width: 40, height: 40 }} />
-            <img src={getAssetImage(selectedAsset)} alt="" className={classes.img} />
 
-            <IconButton onClick={() => onDelete()}>
-              <DeleteIcon />
-            </IconButton>
+            <a href={`https://www.nftexplorer.app/asset/${selectedAsset?.id}`} target={"_blank"} className={classes.row}>
+              <div style={{ width: 40, height: 40 }} />
+              <img src={getAssetImage(selectedAsset)} alt="" className={classes.img} />
+              {
+                selectedAsset?.id === ALGO_ASSET.id ?
+                <div style={{ width: 40, height: 40 }} />
+                :
+                <IconButton onClick={() => {}}>
+                  <InfoIcon />
+                </IconButton>
+              }
+            </a>
+
+            <div className={classes.column}>
+              {
+                canDelete &&
+                <IconButton onClick={() => onDelete()}>
+                  <DeleteIcon />
+                </IconButton>
+              }
+              <div style={{ width: 40, height: 40 }} />
+            </div>
+
           </div>
-        ) : (
-          <img src={getAssetImage(selectedAsset)} alt="" className={classes.img} />
-        )}
       </GridCenter>
 
       <Grid item xs={12}>
@@ -222,7 +238,17 @@ const useStyles = makeStyles<Theme>((theme) =>
       flexDirection: 'row',
       alignItems: 'flex-start',
       justifyContent: 'space-between'
-    }
+    },
+    column: {
+      display: 'flex',
+      flexDirection: 'column',
+    },
+    row: {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'flex-start',
+      alignItems: 'flex-start'
+    },
   })
 );
 
