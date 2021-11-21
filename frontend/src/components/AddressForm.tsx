@@ -34,16 +34,9 @@ const AddressForm: React.FC<Props> = (props) => {
     }
   }, [addressA]);
 
-  useEffect(() => {
-    if (addressB.length !== 58) {
-      walletContext.functions.clearSecondaryAssets();
-    }
-  }, [addressB]);
-
-  const loadSecondaryAssets = async () => {
+  const loadAssetsFromAddress = async () => {
     try {
-      console.log('LOAD');
-      await walletContext.functions.loadSecondaryAssets(addressB);
+      await walletContext.functions.loadAssetsFromAddress(addressB);
     } catch (err) {
       console.log('err', err);
       showNotification('Error while loading assets from account.');
@@ -77,11 +70,12 @@ const AddressForm: React.FC<Props> = (props) => {
             onChange={(txt) => setAddressB(txt)}
             maxLength={58}
             endAdornment={
-              addressB.length === 58 ? (
-                <IconButton onClick={() => loadSecondaryAssets()}>
-                  <SearchIcon />
-                </IconButton>
-              ) : undefined
+              // addressB.length === 58 ? (
+              //   <IconButton onClick={() => loadAssetsFromAddress()}>
+              //     <SearchIcon />
+              //   </IconButton>
+              // ) :
+              undefined
             }
           />
         </Grid>

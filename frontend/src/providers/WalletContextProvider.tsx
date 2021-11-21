@@ -68,6 +68,7 @@ type TransactionInfo = {
 };
 
 export type AssetInfo = {
+  id: number;
   creator: string;
   owner: null;
   total: number;
@@ -79,7 +80,6 @@ export type AssetInfo = {
   managerkey: string;
   reserveaddr: string;
   circulatingsupply: number;
-  id: number;
   verified: boolean;
   destroyed: boolean;
 };
@@ -89,7 +89,6 @@ type PropsWalletContext = {
   accounts: AccountInfo[];
   selectedAccount: AccountDetailedInfo | null;
   assets: AssetInfo[];
-  secondaryAssets: AssetInfo[];
   loadingAccount: boolean;
   myAlgoClient: MyAlgoClient;
   functions: {
@@ -103,8 +102,8 @@ type PropsWalletContext = {
     optinAsset: (assetId: string | number) => Promise<void>;
     optoutAsset: (assetIds: string[] | number[]) => Promise<void>;
     verifyGroup: (parentTx: string, transactions: CompleteTransaction[]) => Promise<boolean>;
-    loadSecondaryAssets: (address: string) => Promise<void>;
-    clearSecondaryAssets: () => void;
+    loadAssetsFromAddress: (address: string) => Promise<void>;
+    loadAsset: (assetId: string) => Promise<AssetInfo>;
     logout: () => void;
   };
 };
@@ -113,7 +112,6 @@ const DEFAULT_WALLET_CONTEXT_VALUE = {
   accounts: [],
   selectedAccount: null,
   assets: [],
-  secondaryAssets: [],
   loadingAccount: false,
   myAlgoClient: new MyAlgoClient(),
   functions: {
@@ -146,10 +144,10 @@ const DEFAULT_WALLET_CONTEXT_VALUE = {
     logout: async () => {
       return {} as any;
     },
-    loadSecondaryAssets: async () => {
+    loadAssetsFromAddress: async () => {
       return {} as any;
     },
-    clearSecondaryAssets: () => {
+    loadAsset: async () => {
       return {} as any;
     }
   }
@@ -161,7 +159,6 @@ const WalletContextProvider: React.FC = ({ children }) => {
   const [accounts, setAccounts] = useLocalStorage<AccountInfo[]>('accounts', []);
   const [assetDict, setAssetDict] = useLocalStorage<AssetInfo[]>('assets', []);
 
-  const [secondaryAssets, setSecondaryAssets] = useState<AssetInfo[]>([]);
   const [assets, setAssets] = useState<AssetInfo[]>([]);
   const [selectedAccount, setSelectedAccount] = useState<AccountDetailedInfo | null>(null);
   const [loadingAccount, setLoadingAccount] = useState(false);
@@ -481,11 +478,11 @@ const WalletContextProvider: React.FC = ({ children }) => {
     }
   };
 
-  const loadSecondaryAssets = async (address: string) => {
+  const loadAssetsFromAddress = async (address: string) => {
     setLoadingAccount(true);
     try {
       const [newSelectedAccount, newAssets] = await loadInfoFromAddress(address);
-      setSecondaryAssets(newAssets);
+      setAssets(assets.concat(newAssets))
     } catch (err) {
       setLoadingAccount(false);
       throw err;
@@ -493,8 +490,24 @@ const WalletContextProvider: React.FC = ({ children }) => {
     setLoadingAccount(false);
   };
 
-  const clearSecondaryAssets = () => {
-    setSecondaryAssets([]);
+  const loadAsset = async (assetIdStr: string) => {
+    setLoadingAccount(true);
+    try {
+      const assetId = parseInt(assetIdStr)
+      const alreadyLoaded = assets.find((item) => item.id === assetId);
+      if(alreadyLoaded){
+        setLoadingAccount(false);
+        return alreadyLoaded;
+      }
+      const newAsset = await getAssetInfo(assetId);
+      assets.push(newAsset)
+      setAssets(assets)
+      setLoadingAccount(false);
+      return newAsset;
+    } catch (err) {
+      setLoadingAccount(false);
+      throw err;
+    }
   };
 
   const logout = () => {
@@ -515,7 +528,6 @@ const WalletContextProvider: React.FC = ({ children }) => {
         accounts,
         selectedAccount,
         assets,
-        secondaryAssets,
         loadingAccount,
         functions: {
           connectMyAlgo,
@@ -528,8 +540,8 @@ const WalletContextProvider: React.FC = ({ children }) => {
           optinAsset,
           optoutAsset,
           verifyGroup,
-          loadSecondaryAssets,
-          clearSecondaryAssets,
+          loadAssetsFromAddress,
+          loadAsset,
           logout
         }
       }}
