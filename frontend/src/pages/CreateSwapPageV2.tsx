@@ -27,7 +27,7 @@ function CreateSwapPageV2() {
 
   const history = useHistory();
 
-  const [addressA, setAddressA] = useState('');
+  const [addressA, setAddressA] = useState(walletContext.selectedAccount?.address ?? '');
   const [addressB, setAddressB] = useState('');
 
   const [transactionsA, setTransactionsA] = useState<PartialTransaction[]>([{ ...EMPTY_PARTIAL_TRANSACTION }]);

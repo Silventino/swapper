@@ -50,7 +50,7 @@ function SignTransactionPage() {
       if (!walletContext.selectedAccount) {
         throw new Error('Please connect your wallet first.');
       }
-      const newSwap = await swapApi.getSwap(walletContext.selectedAccount.address, id);
+      const newSwap = await swapApi.getSwap(id);
 
       if (newSwap.status === STATUS_COMPLETED) {
         history.replace('/success');
@@ -82,7 +82,7 @@ function SignTransactionPage() {
       const signeds = await walletContext.functions.signTransactions(myUnsignedTransactions);
       for (let i = 0; i < signeds.length; i++) {
         const signed = signeds[i];
-        await swapApi.signTransaction(walletContext.selectedAccount.address, signed);
+        await swapApi.signTransaction(signed);
       }
       showNotification('Sucess! All transactions from your wallet were signed.');
       await getTransaction();
@@ -109,7 +109,7 @@ function SignTransactionPage() {
       });
 
       await walletContext.functions.sendTransactions(signed);
-      await swapApi.completeSwap(walletContext.selectedAccount.address, swap!.txId);
+      await swapApi.completeSwap(swap!.txId);
       showNotification('Sucess! Swap completed.');
       history.replace('/success');
     } catch (err: any) {
@@ -121,7 +121,7 @@ function SignTransactionPage() {
           history.replace('/success');
         }
         if (message.search('txn dead') !== -1) {
-          swapApi.killSwap(walletContext.selectedAccount!.address, swap!.txId).catch(() => {});
+          swapApi.killSwap(swap!.txId).catch(() => {});
           history.replace('/fail');
         }
       }

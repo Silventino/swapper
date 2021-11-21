@@ -2,17 +2,15 @@ import { fromCompleteTransaction, toCompleteTransaction } from 'src/helpers/help
 import CompleteTransaction from 'src/types/CompleteTransaction';
 import Swap from 'src/types/Swap';
 import SwapReq from 'src/types/SwapReq';
-import myAxios from './myAxios';
+import myAxios, { getConnectedWallet } from './myAxios';
 
 const PREFIX = 'api';
 const ROUTE = 'transaction';
 
 class SwapApi {
-  async getSwap(myWallet: string, parent: string) {
+  async getSwap( parent: string) {
     try {
-      if (!myWallet) {
-        throw new Error('Please, connect your wallet first.');
-      }
+      const myWallet = getConnectedWallet();
       const res = await myAxios.post<SwapReq>(
         `/${PREFIX}/${ROUTE}/get`,
         { parent },
@@ -34,11 +32,9 @@ class SwapApi {
     }
   }
 
-  async insertSwap(myWallet: string, transactions: CompleteTransaction[], parent: string) {
+  async insertSwap( transactions: CompleteTransaction[], parent: string) {
     try {
-      if (!myWallet) {
-        throw new Error('Please, connect your wallet first.');
-      }
+      const myWallet = getConnectedWallet();
       const treated = transactions.map((item) => fromCompleteTransaction(item));
       let res = await myAxios.post(
         `/${PREFIX}/${ROUTE}/insert`,
@@ -53,11 +49,9 @@ class SwapApi {
     }
   }
 
-  async signTransaction(myWallet: string, signed: CompleteTransaction) {
+  async signTransaction( signed: CompleteTransaction) {
     try {
-      if (!myWallet) {
-        throw new Error('Please, connect your wallet first.');
-      }
+      const myWallet = getConnectedWallet();
       const treated = fromCompleteTransaction(signed);
       let res = await myAxios.post(
         `/${PREFIX}/${ROUTE}/sign`,
@@ -72,11 +66,9 @@ class SwapApi {
     }
   }
 
-  async completeSwap(myWallet: string, txId: string) {
+  async completeSwap( txId: string) {
     try {
-      if (!myWallet) {
-        throw new Error('Please, connect your wallet first.');
-      }
+      const myWallet = getConnectedWallet();
       let res = await myAxios.post(`/${PREFIX}/${ROUTE}/complete`, { txId }, { headers: { Authorization: myWallet } });
       let data = res.data;
       return data;
@@ -86,11 +78,9 @@ class SwapApi {
     }
   }
 
-  async killSwap(myWallet: string, txId: string) {
+  async killSwap( txId: string) {
     try {
-      if (!myWallet) {
-        throw new Error('Please, connect your wallet first.');
-      }
+      const myWallet = getConnectedWallet();
       let res = await myAxios.post(`/${PREFIX}/${ROUTE}/kill`, { txId }, { headers: { Authorization: myWallet } });
       let data = res.data;
       return data;

@@ -52,7 +52,7 @@ const AddressForm: React.FC<Props> = (props) => {
 
         <Grid item xs={12} md={6}>
           <ConnectedWalletSelect
-            label={'You'}
+            label={'Your Address'}
             value={addressA}
             onChange={(txt) => {
               setAddressA(txt);
@@ -64,7 +64,7 @@ const AddressForm: React.FC<Props> = (props) => {
         <Grid item xs={12} md={6} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <MyInput
             className={classes.input}
-            label={'Other'}
+            label={'Other\'s Address'}
             fullWidth
             value={addressB}
             onChange={(txt) => setAddressB(txt)}

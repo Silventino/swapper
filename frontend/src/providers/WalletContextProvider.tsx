@@ -26,7 +26,7 @@ export type AccountInfo = {
   address: string;
 };
 
-type AccountDetailedInfo = {
+export type AccountDetailedInfo = {
   address: string;
   amount: number;
   'amount-without-pending-rewards': number;
@@ -156,11 +156,11 @@ const DEFAULT_WALLET_CONTEXT_VALUE = {
 const WalletContext = createContext<PropsWalletContext>(DEFAULT_WALLET_CONTEXT_VALUE);
 
 const WalletContextProvider: React.FC = ({ children }) => {
+  const [selectedAccount, setSelectedAccount] = useLocalStorage<AccountDetailedInfo | null>('selectedAccount', null);
   const [accounts, setAccounts] = useLocalStorage<AccountInfo[]>('accounts', []);
   const [assetDict, setAssetDict] = useLocalStorage<AssetInfo[]>('assets', []);
 
   const [assets, setAssets] = useState<AssetInfo[]>([]);
-  const [selectedAccount, setSelectedAccount] = useState<AccountDetailedInfo | null>(null);
   const [loadingAccount, setLoadingAccount] = useState(false);
 
   const [myAlgoClient] = useState(new MyAlgoClient());
@@ -172,26 +172,12 @@ const WalletContextProvider: React.FC = ({ children }) => {
 
   const connectMyAlgo = async () => {
     try {
-      // PRODUCTION ///////
       const res = await myAlgoClient.connect();
-
-      // DEV /////////////
-      // const res = [
-      //   {
-      //     address: '3ITIMVIPABPBKFT5K36NV2XYZU3YNNACSXLNGVBJ4SJVILZNVRWX2HESWQ',
-      //     name: 'MyAlgoWallet'
-      //   },
-      //   {
-      //     address: 'DHMWJUWE5RSLI6Y7PU53UUT3VMN5U7NWP7DH2XLGYO3FRYJIUJUXBAXGLU',
-      //     name: 'TipBot'
-      //   }
-      // ];
-      //////////////////
-
       setAccounts(res);
-      if (!selectedAccount && res.length) {
-        selectAccount(res[0].address);
+      if (!res.length) {
+        throw new Error("Failed to connect wallet.");
       }
+      selectAccount(res[0].address);
     } catch (err) {
       console.log('err', err);
       throw err;
@@ -432,7 +418,7 @@ const WalletContextProvider: React.FC = ({ children }) => {
     let signedTxn = await myAlgoClient.signTransaction(txn as any);
     const txID = await sendTransactions([signedTxn.blob]);
 
-    await swapApi.insertSwap(selectedAccount.address, transactions, txID);
+    await swapApi.insertSwap(transactions, txID);
 
     return txID;
   };
@@ -520,6 +506,12 @@ const WalletContextProvider: React.FC = ({ children }) => {
       selectAccount(accounts[0].address);
     }
   }, [selectedAccount, accounts]);
+
+  useEffect(() => {
+    if (!assets.length && selectedAccount) {
+      selectAccount(selectedAccount.address);
+    }
+  }, [assets]);
 
   return (
     <WalletContext.Provider

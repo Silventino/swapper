@@ -57,7 +57,7 @@ const TransactionSign: React.FC<Props> = (props) => {
         return;
       }
       const signed = await walletContext.functions.signTransaction(transaction);
-      await swapApi.signTransaction(walletContext.selectedAccount.address, signed);
+      await swapApi.signTransaction(signed);
       onSign();
     } catch (err) {
       showError(err);
