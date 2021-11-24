@@ -3,14 +3,6 @@ import shutil
 from pathlib import Path
 import subprocess
 
-
-print("Atenção!")
-print("Antes de rodar esse script, commite suas alterações para o Git")
-print("Esse script é BRUTAL e VAI reverter todos os arquivos não commitados.")
-comando = input("Deseja prosseguir? [s/n]")
-if(comando != 's'):
-  exit(0)
-
 buildPath = "../swapper-build"
 novoBuildPath = input("Qual o caminho para salvar a build? Padrão: '../swapper-build'")
 if (novoBuildPath != ''):

@@ -97,7 +97,7 @@ const TransactionSign: React.FC<Props> = (props) => {
             <div style={{ width: 40, height: 40 }} />
             <img src={getAssetImage(selectedAsset)} alt="" className={classes.img} />
             {
-              selectedAsset!.id === ALGO_ASSET.id ?
+              selectedAsset?.id === ALGO_ASSET.id ?
               <div style={{ width: 40, height: 40 }} />
               :
               <IconButton onClick={() => {}}>
