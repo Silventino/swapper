@@ -10,15 +10,19 @@ type Props<T> = {
   value: T | null;
   onChange: (x: T) => void;
   style?: any;
+
+  className?: string;
+  inputId?: string;
 };
 
 function MySelectBase<T>(props: Props<T>) {
-  const { options, getOptionLabel, value, onChange, label, style } = props;
+  const { options, getOptionLabel, value, onChange, label, style, className, inputId } = props;
 
   useEffect(() => {}, []);
 
   return (
     <Select
+      id={inputId}
       label={label}
       style={style}
       value={getOptionLabel(value)}
@@ -28,6 +32,7 @@ function MySelectBase<T>(props: Props<T>) {
         onChange(newValue!);
       }}
       multiline
+      className={className}
     >
       {options.map((item) => (
         <MenuItem key={getOptionLabel(item)} value={getOptionLabel(item)}>

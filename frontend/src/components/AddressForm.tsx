@@ -58,6 +58,7 @@ const AddressForm: React.FC<Props> = (props) => {
               setAddressA(txt);
               walletContext.functions.selectAccount(txt).catch((err) => {});
             }}
+            inputId={"personA-addr"}
           />
         </Grid>
 
@@ -69,6 +70,7 @@ const AddressForm: React.FC<Props> = (props) => {
             value={addressB}
             onChange={(txt) => setAddressB(txt)}
             maxLength={58}
+            inputId={"personB-addr"}
             endAdornment={
               // addressB.length === 58 ? (
               //   <IconButton onClick={() => loadAssetsFromAddress()}>

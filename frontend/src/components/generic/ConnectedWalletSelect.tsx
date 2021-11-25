@@ -10,6 +10,9 @@ type Props = {
   fullWidth?: boolean;
   value: string;
   onChange: (x: string) => void;
+
+  inputId?: string;
+  className?: string;
 };
 
 const ConnectedWalletSelect: React.FC<Props> = (props) => {

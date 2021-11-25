@@ -10,43 +10,28 @@ type Props = {
   value: number;
   onChange: (x: number) => void;
   decimalScale?: number;
+  className?: string;
+
+  id?: string;
 };
 
 const MyNumberInput: React.FC<Props> = (props) => {
-  const { label, fullWidth, value, onChange, decimalScale } = props;
+  const { label, fullWidth, value, onChange, decimalScale, className, id } = props;
   // useEffect(() => {}, []);
 
   return (
     <NumberFormat
-      // isNumericString
       label={label}
       decimalScale={decimalScale}
       decimalSeparator={"."}
       thousandSeparator={","}
       fullWidth={fullWidth === false ? false : true}
       value={value}
-      // variant={newVariant}
-      // {...other}
       customInput={TextField}
-      // inputProps={{
-      //   // type: 'number',
-      //   maxLength,
-      //   style: {
-      //     textAlign,
-      //   },
-      // }}
-      // disabled={disabled}
-      // onFocus={(e) => {
-      //   if (autoSelect) {
-      //     if (suffix === undefined) {
-      //       e.target.select();
-      //     } else {
-      //       setTimeout(() => {
-      //         e.target.select();
-      //       }, 200);
-      //     }
-      //   }
-      // }}
+      inputProps={{
+        className: className,
+        id: id
+      }}
       onValueChange={(value) => {
         if (!value.floatValue) {
           value.floatValue = 0;

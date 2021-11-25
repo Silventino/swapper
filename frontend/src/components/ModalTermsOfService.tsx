@@ -29,7 +29,7 @@ const ModalTermsOfService: React.FC<Props> = (props) => {
         <Button variant={'contained'} style={{ backgroundColor: red[500], color: '#fff' }} onClick={onClose}>
           DENY
         </Button>
-        <Button variant={'contained'} onClick={onAccept}>
+        <Button variant={'contained'} onClick={onAccept} id={"btn-accept"}>
           ACCEPT AND CONTINUE
         </Button>
       </DivCenter>

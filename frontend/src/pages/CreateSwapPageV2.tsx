@@ -16,6 +16,7 @@ import Loader from 'src/components/generic/Loader';
 import ModalTermsOfService from 'src/components/ModalTermsOfService';
 import AddressForm from 'src/components/AddressForm';
 import { setTimeout } from 'timers';
+import CheckboxDonation from "../components/CheckboxDonation";
 
 function CreateSwapPageV2() {
   const walletContext = useContext(WalletContext);
@@ -101,18 +102,25 @@ function CreateSwapPageV2() {
             title={"You'll Send"}
             transactions={transactionsA}
             setTransactions={(t) => setTransactionsA([...t])}
+            id={"personA"}
           />
         </Grid>
+
         <Grid item xs={12} md={6}>
           <TransactionFormV2
             title={"You'll Receive"}
             transactions={transactionsB}
             setTransactions={(t) => setTransactionsB([...t])}
+            id={"personB"}
           />
         </Grid>
 
-        <GridCenter item xs={12} style={{ marginTop: 20 }}>
-          <Button variant={'contained'} onClick={() => setOpenTermsOfService(true)}>
+        {/*<GridCenter item xs={12}>*/}
+        {/*  <CheckboxDonation />*/}
+        {/*</GridCenter>*/}
+
+        <GridCenter item xs={12} >
+          <Button id={"btn-letsgo"}  variant={'contained'} onClick={() => setOpenTermsOfService(true)}>
             LET'S GO!
           </Button>
         </GridCenter>

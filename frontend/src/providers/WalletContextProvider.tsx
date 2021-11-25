@@ -78,7 +78,9 @@ export type AssetInfo = {
   assetname: string;
   url: string;
   managerkey: string;
-  reserveaddr: string;
+  reserveaddr: string | null;
+  clawbackaddr?: string | null;
+  freezeaddr?: string | null;
   circulatingsupply: number;
   verified: boolean;
   destroyed: boolean;

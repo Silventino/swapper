@@ -22,10 +22,12 @@ type Props = {
   title: string;
   transactions: PartialTransaction[];
   setTransactions: (x: PartialTransaction[]) => void;
+
+  id?: string;
 };
 
 const TransactionFormV2: React.FC<Props> = (props) => {
-  const { transactions, setTransactions, title } = props;
+  const { transactions, setTransactions, title, id } = props;
   const classes = useStyles();
 
   const walletContext = useContext(WalletContext);
@@ -59,12 +61,14 @@ const TransactionFormV2: React.FC<Props> = (props) => {
               setTransaction={(t) => updateTransaction(t, i)}
               canDelete={transactions.length > 1}
               onDelete={() => removeTransaction(i)}
+              id={id? `${id}-${i}` : undefined}
             />
           </Grid>
         ))}
 
         <GridCenter item xs={12}>
           <Button
+            id={id? `${id}-addAsset` : undefined}
             startIcon={<AddIcon />}
             variant={'contained'}
             onClick={() => setTransactions([...transactions, { ...EMPTY_PARTIAL_TRANSACTION }])}
@@ -82,15 +86,16 @@ type PropsSingle = {
   setTransaction: (x: PartialTransaction) => void;
   canDelete: boolean;
   onDelete: () => void;
+
+  id?: string;
 };
 
 const SingleTransaction: React.FC<PropsSingle> = (props) => {
-  const { transaction, setTransaction, canDelete, onDelete } = props;
+  const { transaction, setTransaction, canDelete, onDelete, id } = props;
   const walletContext = useContext(WalletContext);
   const classes = useStyles();
 
   const [selectedAsset, setSelectedAsset] = useState<AssetInfo | null>(null);
-  // const [extraAsset, setExtraAsset] = useState<AssetInfo | null>(null);
 
   const [loading, setLoading] = useState(false);
 
@@ -176,6 +181,7 @@ const SingleTransaction: React.FC<PropsSingle> = (props) => {
 
       <Grid item xs={12}>
         <Autocomplete
+          id={id? `${id}-asset` : undefined}
           disablePortal
           options={ walletContext.assets }
           getOptionLabel={getAssetLabel}
@@ -204,6 +210,7 @@ const SingleTransaction: React.FC<PropsSingle> = (props) => {
 
       <Grid item xs={12}>
         <MyNumberInput
+          id={id? `${id}-amount` : undefined}
           label={'Amount'}
           fullWidth
           decimalScale={selectedAsset ? selectedAsset.decimals : 0}

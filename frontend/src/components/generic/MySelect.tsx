@@ -11,11 +11,14 @@ type Props<T> = {
   getOptionLabel: (x: T | null) => string;
   value: T | null;
   onChange: (x: T) => void;
+
   fullWidth?: boolean;
+  inputId?: string;
+  className?: string;
 };
 
 function MySelect<T>(props: Props<T>) {
-  const { label, options, getOptionLabel, value, onChange, fullWidth } = props;
+  const { label, options, getOptionLabel, value, onChange, fullWidth, inputId, className } = props;
 
   useEffect(() => {}, []);
 
@@ -23,9 +26,10 @@ function MySelect<T>(props: Props<T>) {
     <FormControl
       // variant="filled"
       fullWidth={fullWidth === false ? false : true}
+      className={className}
     >
       <InputLabel>{label}</InputLabel>
-      <MySelectBase label={label} options={options} getOptionLabel={getOptionLabel} value={value} onChange={onChange} />
+      <MySelectBase label={label} options={options} getOptionLabel={getOptionLabel} value={value} onChange={onChange} inputId={inputId} />
     </FormControl>
   );
 }
