@@ -1,57 +1,59 @@
 import { Theme } from '@material-ui/core';
 import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
-import React, {useContext, useState} from 'react';
-import { useHistory } from 'react-router';
-import {Checkbox, Typography} from "@mui/material";
-import MySelectBase from "./generic/MySelectBase";
-import WalletContext, {AssetInfo} from "../providers/WalletContextProvider";
-import {ALGO_ASSET, FINITE_ASSET, YLDY_ASSET} from "../constants";
-import MyNumberInput from "./generic/MyNumberInput";
-import clsx from "clsx";
+import { Checkbox, Typography } from '@mui/material';
+import clsx from 'clsx';
+import React, { useState } from 'react';
+import { ALGO_ASSET, FINITE_ASSET, YLDY_ASSET } from '../constants';
+import { AssetInfo } from '../providers/WalletContextProvider';
+import MyNumberInput from './generic/MyNumberInput';
+import MySelectBase from './generic/MySelectBase';
+
+export type DonationInfo = {
+  willDonate: boolean;
+  asset: AssetInfo;
+  amount: number;
+};
 
 type Props = {
+  donationInfo: DonationInfo;
+  setDonationInfo: (x: DonationInfo) => void;
 };
 
 const CheckboxDonation: React.FC<Props> = (props) => {
+  const { donationInfo, setDonationInfo } = props;
   const classes = useStyles();
-  const [assets] = useState<AssetInfo[]>([
-    ALGO_ASSET,
-    YLDY_ASSET,
-    FINITE_ASSET
-  ])
+  const [assets] = useState<AssetInfo[]>([ALGO_ASSET, YLDY_ASSET, FINITE_ASSET]);
 
   return (
-    <div className={classes.container} onClick={()=>console.log("OKOKOK")}>
-      <Checkbox checked={true} onChange={() => {}}  />
-      <Typography className={classes.textRight}>
-        I want to donate
-      </Typography>
+    <div
+      className={classes.container}
+      onClick={() => setDonationInfo({ ...donationInfo, willDonate: !donationInfo.willDonate })}
+    >
+      <Checkbox checked={donationInfo.willDonate} onChange={() => {}} />
+      <Typography className={classes.textRight}>I want to donate</Typography>
 
-      <div onClick={(e)=> e.stopPropagation()}>
+      <div onClick={(e) => e.stopPropagation()}>
         <MyNumberInput
           label={''}
           decimalScale={1}
-          value={0.5}
-          onChange={(txt) => {}}
+          value={donationInfo.amount}
+          onChange={(txt) => setDonationInfo({ ...donationInfo, amount: txt })}
           className={clsx(classes.input, classes.numberInput)}
         />
       </div>
 
-      <div onClick={(e)=> e.stopPropagation()}>
+      <div onClick={(e) => e.stopPropagation()}>
         <MySelectBase<AssetInfo>
           options={assets}
-          getOptionLabel={(x) => x? x.unitname : 'None' }
-          value={ALGO_ASSET}
-          onChange={(x) => {}}
+          getOptionLabel={(x) => (x ? x.unitname : 'None')}
+          value={donationInfo.asset}
+          onChange={(x) => setDonationInfo({ ...donationInfo, asset: x })}
           className={classes.input}
         />
       </div>
 
-      <Typography className={classes.textLeft}>
-        to Swapper
-      </Typography>
-
+      <Typography className={classes.textLeft}>to Swapper</Typography>
     </div>
   );
 };
@@ -66,8 +68,8 @@ const useStyles = makeStyles<Theme>((theme) =>
     },
     input: { paddingTop: 5, paddingBottom: 5 },
     numberInput: { width: 55, textAlign: 'center' },
-    textRight: {marginRight: 5},
-    textLeft: {marginLeft: 5}
+    textRight: { marginRight: 5 },
+    textLeft: { marginLeft: 5 }
   })
 );
 

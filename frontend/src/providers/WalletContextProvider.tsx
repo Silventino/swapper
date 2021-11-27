@@ -10,6 +10,7 @@ import { useLocalStorage } from 'src/helpers/helper';
 import BaseTransaction from 'src/types/BaseTransaction';
 import CompleteTransaction from 'src/types/CompleteTransaction';
 import PartialTransaction from 'src/types/PartialTransaction';
+import { DonationInfo } from 'src/components/CheckboxDonation';
 
 const TESTNET = false;
 
@@ -97,7 +98,7 @@ type PropsWalletContext = {
   functions: {
     connectMyAlgo: () => Promise<void>;
     selectAccount: (addr: string) => Promise<void>;
-    createAtomicTransaction: (t: PartialTransaction[]) => Promise<string>;
+    createAtomicTransaction: (t: PartialTransaction[], d?: DonationInfo) => Promise<string>;
     signTransaction: (t: CompleteTransaction) => Promise<CompleteTransaction>;
     signTransactions: (t: CompleteTransaction[]) => Promise<CompleteTransaction[]>;
     sendTransactions: (blobs: Uint8Array[]) => Promise<string>;
@@ -180,7 +181,7 @@ const WalletContextProvider: React.FC = ({ children }) => {
       const res = await myAlgoClient.connect();
       setAccounts(res);
       if (!res.length) {
-        throw new Error("Failed to connect wallet.");
+        throw new Error('Failed to connect wallet.');
       }
       selectAccount(res[0].address);
     } catch (err) {
@@ -211,7 +212,7 @@ const WalletContextProvider: React.FC = ({ children }) => {
 
     // LOADING ASSETS IN MULTIPLE REQUESTS //////////////////////////////////////////////
     let i = 0;
-    while(i < assetsNotFound.length){
+    while (i < assetsNotFound.length) {
       const partialNotFound = assetsNotFound.slice(i, i + 10);
       const otherAssets = await getManyAssetInfo(partialNotFound);
       for (let j = 0; j < otherAssets.length; j++) {
@@ -220,11 +221,11 @@ const WalletContextProvider: React.FC = ({ children }) => {
       }
       newAssets = newAssets.concat(otherAssets);
 
-      i = i + 10
+      i = i + 10;
     }
 
     const partialNotFound = assetsNotFound.slice(i, i + 10);
-    if(partialNotFound.length){
+    if (partialNotFound.length) {
       const otherAssets = await getManyAssetInfo(partialNotFound);
       for (let j = 0; j < otherAssets.length; j++) {
         const asset = otherAssets[j];
@@ -356,7 +357,7 @@ const WalletContextProvider: React.FC = ({ children }) => {
     }
   };
 
-  const createAtomicTransaction = async (transactions: PartialTransaction[]) => {
+  const createAtomicTransaction = async (transactions: PartialTransaction[], donation?: DonationInfo) => {
     try {
       const baseTnx = await getBaseTransaction();
       baseTnx.lastRound = baseTnx.firstRound + 500;
@@ -401,7 +402,7 @@ const WalletContextProvider: React.FC = ({ children }) => {
         newTransactions[i].group = groupID;
       }
 
-      const txID = await saveGroup(groupID, newTransactions);
+      const txID = await saveGroup(groupID, newTransactions, donation);
 
       return txID;
     } catch (err) {
@@ -436,25 +437,38 @@ const WalletContextProvider: React.FC = ({ children }) => {
     return verified;
   };
 
-  const saveGroup = async (groupID: Buffer, transactions: CompleteTransaction[]) => {
+  const saveGroup = async (groupID: Buffer, transactions: CompleteTransaction[], donation?: DonationInfo) => {
     if (!selectedAccount) {
       return '';
     }
 
-    // const teste = transactions.map((item) => fromCompleteTransaction(item));
-
     const baseTnx = await getBaseTransaction();
-    const txn: TransactionLike = {
-      ...baseTnx,
-      fee: 1000,
-      flatFee: true,
-      type: 'pay' as any,
-      from: selectedAccount.address,
-      to: 'VT7NZ62266IYHMEHWXLZXARZLA324BDTTKNJPYWXBNDO7TYMWJY27KC2XY',
-      // amount: 100000,
-      amount: 10,
-      note: new Uint8Array(Buffer.from(JSON.stringify(groupID)))
-    } as TransactionLike;
+    let txn;
+
+    if (donation && donation.willDonate) {
+      txn = {
+        ...baseTnx,
+        fee: 1000,
+        flatFee: true,
+        type: donation.asset.id === ALGO_ASSET.id ? 'pay' : 'axfer',
+        assetIndex: donation.asset.id === ALGO_ASSET.id ? undefined : donation.asset.id,
+        from: selectedAccount.address,
+        to: 'VT7NZ62266IYHMEHWXLZXARZLA324BDTTKNJPYWXBNDO7TYMWJY27KC2XY',
+        amount: donation.amount * Math.pow(10, donation.asset.decimals),
+        note: new Uint8Array(Buffer.from(JSON.stringify(groupID)))
+      } as TransactionLike;
+    } else {
+      txn = {
+        ...baseTnx,
+        fee: 1000,
+        flatFee: true,
+        type: 'pay' as any,
+        from: selectedAccount.address,
+        to: 'VT7NZ62266IYHMEHWXLZXARZLA324BDTTKNJPYWXBNDO7TYMWJY27KC2XY',
+        amount: 1,
+        note: new Uint8Array(Buffer.from(JSON.stringify(groupID)))
+      } as TransactionLike;
+    }
 
     let signedTxn = await myAlgoClient.signTransaction(txn as any);
     const txID = await sendTransactions([signedTxn.blob]);
@@ -509,7 +523,7 @@ const WalletContextProvider: React.FC = ({ children }) => {
     setLoadingAccount(true);
     try {
       const [newSelectedAccount, newAssets] = await loadInfoFromAddress(address);
-      setAssets(assets.concat(newAssets))
+      setAssets(assets.concat(newAssets));
     } catch (err) {
       setLoadingAccount(false);
       throw err;
@@ -520,15 +534,15 @@ const WalletContextProvider: React.FC = ({ children }) => {
   const loadAsset = async (assetIdStr: string) => {
     setLoadingAccount(true);
     try {
-      const assetId = parseInt(assetIdStr)
+      const assetId = parseInt(assetIdStr);
       const alreadyLoaded = assets.find((item) => item.id === assetId);
-      if(alreadyLoaded){
+      if (alreadyLoaded) {
         setLoadingAccount(false);
         return alreadyLoaded;
       }
       const newAsset = await getAssetInfo(assetId);
-      assets.push(newAsset)
-      setAssets(assets)
+      assets.push(newAsset);
+      setAssets(assets);
       setLoadingAccount(false);
       return newAsset;
     } catch (err) {
