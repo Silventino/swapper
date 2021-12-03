@@ -259,7 +259,7 @@ function SignTransactionPage() {
 
       {myUnsignedTransactions.length > 0 && (
         <GridCenter item xs={12} className={classes.buttonDiv}>
-          <Button variant={'contained'} onClick={() => signAll()}>
+          <Button id={"signAllBtn"} variant={'contained'} onClick={() => signAll()}>
             SIGN ALL
           </Button>
         </GridCenter>

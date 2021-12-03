@@ -4,7 +4,7 @@ import axios from 'axios';
 import React, { createContext, useEffect, useState } from 'react';
 import swapApi from 'src/api/swapApi';
 import assetApi from 'src/api/assetApi';
-import { ALGO_ASSET } from 'src/constants';
+import { ALGO_ASSET, DONATION_ADDRESS } from 'src/constants';
 import { waitForConfirmation } from 'src/helpers/algoHelper';
 import { useLocalStorage } from 'src/helpers/helper';
 import BaseTransaction from 'src/types/BaseTransaction';
@@ -453,7 +453,7 @@ const WalletContextProvider: React.FC = ({ children }) => {
         type: donation.asset.id === ALGO_ASSET.id ? 'pay' : 'axfer',
         assetIndex: donation.asset.id === ALGO_ASSET.id ? undefined : donation.asset.id,
         from: selectedAccount.address,
-        to: 'VT7NZ62266IYHMEHWXLZXARZLA324BDTTKNJPYWXBNDO7TYMWJY27KC2XY',
+        to: DONATION_ADDRESS,
         amount: donation.amount * Math.pow(10, donation.asset.decimals),
         note: new Uint8Array(Buffer.from(JSON.stringify(groupID)))
       } as TransactionLike;
@@ -464,7 +464,7 @@ const WalletContextProvider: React.FC = ({ children }) => {
         flatFee: true,
         type: 'pay' as any,
         from: selectedAccount.address,
-        to: 'VT7NZ62266IYHMEHWXLZXARZLA324BDTTKNJPYWXBNDO7TYMWJY27KC2XY',
+        to: DONATION_ADDRESS,
         amount: 1,
         note: new Uint8Array(Buffer.from(JSON.stringify(groupID)))
       } as TransactionLike;
@@ -523,7 +523,8 @@ const WalletContextProvider: React.FC = ({ children }) => {
     setLoadingAccount(true);
     try {
       const [newSelectedAccount, newAssets] = await loadInfoFromAddress(address);
-      setAssets(assets.concat(newAssets));
+      const newSet = new Set(assets.concat(newAssets));
+      setAssets(Array.from(newSet.values()));
     } catch (err) {
       setLoadingAccount(false);
       throw err;

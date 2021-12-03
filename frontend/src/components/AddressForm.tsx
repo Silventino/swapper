@@ -37,6 +37,7 @@ const AddressForm: React.FC<Props> = (props) => {
   const loadAssetsFromAddress = async () => {
     try {
       await walletContext.functions.loadAssetsFromAddress(addressB);
+      showNotification('Assets loaded from second address.');
     } catch (err) {
       console.log('err', err);
       showNotification('Error while loading assets from account.');
@@ -58,26 +59,23 @@ const AddressForm: React.FC<Props> = (props) => {
               setAddressA(txt);
               walletContext.functions.selectAccount(txt).catch((err) => {});
             }}
-            inputId={"personA-addr"}
+            inputId={'personA-addr'}
           />
         </Grid>
 
         <Grid item xs={12} md={6} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <MyInput
             className={classes.input}
-            label={'Other\'s Address'}
+            label={"Other's Address"}
             fullWidth
             value={addressB}
             onChange={(txt) => setAddressB(txt)}
             maxLength={58}
-            inputId={"personB-addr"}
+            inputId={'personB-addr'}
             endAdornment={
-              // addressB.length === 58 ? (
-              //   <IconButton onClick={() => loadAssetsFromAddress()}>
-              //     <SearchIcon />
-              //   </IconButton>
-              // ) :
-              undefined
+              <IconButton onClick={() => loadAssetsFromAddress()} disabled={addressB.length !== 58} >
+                <SearchIcon />
+              </IconButton>
             }
           />
         </Grid>

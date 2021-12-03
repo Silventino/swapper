@@ -33,7 +33,7 @@ const MyDrawer: React.FC<Props> = (props) => {
           <ListItem
             button
             onClick={() => {
-              history.replace('/');
+              history.push('/');
               setOpen(false);
             }}
             className={classes.drawerItem}

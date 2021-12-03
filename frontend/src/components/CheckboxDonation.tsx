@@ -4,7 +4,7 @@ import makeStyles from '@material-ui/styles/makeStyles';
 import { Checkbox, Typography } from '@mui/material';
 import clsx from 'clsx';
 import React, { useState } from 'react';
-import { ALGO_ASSET, FINITE_ASSET, YLDY_ASSET } from '../constants';
+import { ALGO_ASSET, colors, FINITE_ASSET, YLDY_ASSET } from '../constants';
 import { AssetInfo } from '../providers/WalletContextProvider';
 import MyNumberInput from './generic/MyNumberInput';
 import MySelectBase from './generic/MySelectBase';
@@ -64,7 +64,10 @@ const useStyles = makeStyles<Theme>((theme) =>
       display: 'flex',
       flexDirection: 'row',
       color: '#fff',
-      alignItems: 'center'
+      alignItems: 'center',
+      backgroundColor: colors.backgroundDark,
+      padding: 10,
+      borderRadius: 7
     },
     input: { paddingTop: 5, paddingBottom: 5 },
     numberInput: { width: 55, textAlign: 'center' },

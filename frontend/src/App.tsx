@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-d
 import 'reflect-metadata';
 import './App.css';
 import Header from './components/Header';
+import Footer from './components/Footer';
 import ModalConnect from './components/ModalConnect';
 import ModalLoading from './components/ModalLoading';
 import WalletContext from './providers/WalletContextProvider';
@@ -15,7 +16,9 @@ import SignTransactionPage from './pages/SignTransactionPage';
 import SuccessPage from './pages/SuccessPage';
 import FailPage from './pages/FailPage';
 import OptoutPage from './pages/OptoutPage';
-import CreateSwapPageV3 from "./pages/CreateSwapPageV3";
+import CreateSwapPageV3 from './pages/CreateSwapPageV3';
+import MyParticles from './components/generic/MyParticles';
+import DonatePage from './pages/DonatePage';
 
 function App() {
   const classes = useStyles();
@@ -23,48 +26,62 @@ function App() {
   const walletContext = useContext(WalletContext);
 
   return (
-    <div className="App">
-      <ModalConnect />
-      <ModalLoading loading={walletContext.loadingAccount} />
+    <Router>
+      <div className="App">
+        <ModalConnect />
+        <ModalLoading loading={walletContext.loadingAccount} />
 
-      <div className={classes.appContent}>
-        <Router>
-          <Header />
-          <Switch>
-            <Route path="/tx/:id">
-              <SignTransactionPage />
-            </Route>
-            <Route path="/success">
-              <SuccessPage />
-            </Route>
-            <Route path="/fail">
-              <FailPage />
-            </Route>
-            <Route path="/optout">
-              <OptoutPage />
-            </Route>
-            <Route path="/old">
-              <CreateSwapPageV2 />
-            </Route>
-            <Route path="/">
-              <CreateSwapPageV3 />
-            </Route>
-            <Route path="/*">
-              <Redirect to={'/'} />
-            </Route>
-          </Switch>
-        </Router>
+        <Header />
+
+        <MyParticles />
+        <div className={classes.appContent}>
+          <div style={{ zIndex: 1 }}>
+            <Switch>
+              <Route path="/tx/:id">
+                <SignTransactionPage />
+              </Route>
+              <Route path="/donate">
+                <DonatePage />
+              </Route>
+              <Route path="/success">
+                <SuccessPage />
+              </Route>
+              <Route path="/fail">
+                <FailPage />
+              </Route>
+              <Route path="/optout">
+                <OptoutPage />
+              </Route>
+              <Route path="/old">
+                <CreateSwapPageV2 />
+              </Route>
+              <Route path="/">
+                <CreateSwapPageV3 />
+              </Route>
+              <Route path="/*">
+                <Redirect to={'/'} />
+              </Route>
+            </Switch>
+          </div>
+          <Footer />
+        </div>
+
       </div>
-    </div>
+    </Router>
   );
 }
 
 const useStyles = makeStyles<Theme>((theme) =>
   createStyles({
     appContent: {
-      marginTop: HEADER_HEIGHT + 40,
+      paddingTop: HEADER_HEIGHT + 50,
       display: 'flex',
-      justifyContent: 'center'
+      alignItems: 'center',
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+      minHeight: '100vh'
+      // flex: 1,
+      // height: '100%'
     },
     swapGrid: { marginTop: 10 }
   })

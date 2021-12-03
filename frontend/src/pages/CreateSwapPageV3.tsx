@@ -128,7 +128,7 @@ function CreateSwapPageV3() {
         </GridCenter>
 
         <GridCenter item xs={12} >
-          <Button id={"btn-letsgo"}  variant={'contained'} onClick={() => setOpenTermsOfService(true)}>
+          <Button id={"btn-letsgo"} variant={'contained'} onClick={() => setOpenTermsOfService(true)} style={{marginBottom: 35}}>
             LET'S GO!
           </Button>
         </GridCenter>

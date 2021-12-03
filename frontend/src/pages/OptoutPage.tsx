@@ -22,7 +22,7 @@ function OptoutPage() {
           You took too long to complete the swap and now it is invalid. Please, create another one.
         </Typography>
 
-        <Button variant="contained" className={classes.btn} onClick={() => history.replace('/')}>
+        <Button variant="contained" className={classes.btn} onClick={() => history.push('/')}>
           NEW SWAP
         </Button>
       </GridCenter>

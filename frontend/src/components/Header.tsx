@@ -71,7 +71,8 @@ const useStyles = makeStyles<Theme>((theme) =>
       alignItems: 'center',
       justifyContent: 'space-between',
       paddingRight: 10,
-      paddingLeft: 10
+      paddingLeft: 10,
+      zIndex: 1
       // borderBottomWidth: 0.01,
       // borderBottom: 'solid white'
     },

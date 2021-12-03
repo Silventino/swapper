@@ -3,6 +3,7 @@ import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
 import React from 'react';
 import 'reflect-metadata';
+import { DONATION_ADDRESS } from 'src/constants';
 import { showError, showNotification } from 'src/helpers/helper';
 import '../App.css';
 import qr from '../assets/qr.jpeg';
@@ -13,7 +14,7 @@ function SuccessPage() {
 
   const copyToClipboard = () => {
     try {
-      navigator.clipboard.writeText('VT7NZ62266IYHMEHWXLZXARZLA324BDTTKNJPYWXBNDO7TYMWJY27KC2XY');
+      navigator.clipboard.writeText(DONATION_ADDRESS);
       showNotification('Address copied to clipboard!');
     } catch (err) {
       showError(err);
