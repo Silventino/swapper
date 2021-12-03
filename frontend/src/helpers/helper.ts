@@ -17,14 +17,14 @@ export const showError = (err: Error | any) => {
       message = 'This swap is not valid anymore because you took too long to complete it 😔 Please create a new one.';
     }
 
-    toast(message);
+    toast.error(message);
     return;
   }
-  toast(err.message);
+  toast.error(err.message);
 };
 
 export const showNotification = (msg: string) => {
-  toast(msg);
+  toast.info(msg);
 };
 
 export function makeTestID(length: number) {

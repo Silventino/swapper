@@ -1,19 +1,14 @@
-import 'reflect-metadata';
+// import reportWebVitals from "./reportWebVitals";
+import { adaptV4Theme, createTheme, StyledEngineProvider, ThemeProvider } from '@material-ui/core/styles';
 import React from 'react';
 import ReactDOM from 'react-dom';
-
-import './App.css';
-import App from './App';
-// import reportWebVitals from "./reportWebVitals";
-
-import { createTheme, ThemeProvider, Theme, StyledEngineProvider, adaptV4Theme } from '@material-ui/core/styles';
-
-import { WalletContextProvider } from './providers/WalletContextProvider';
-
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import createPalette from '@material-ui/core/styles/createPalette';
+import 'reflect-metadata';
+import App from './App';
+import './App.css';
 import { colors } from './constants';
+import { WalletContextProvider } from './providers/WalletContextProvider';
 
 const darkTheme = createTheme(
   adaptV4Theme({
@@ -39,11 +34,7 @@ ReactDOM.render(
     <ToastContainer
       position="top-right"
       autoClose={5000}
-      hideProgressBar={false}
-      newestOnTop={false}
       closeOnClick
-      rtl={false}
-      pauseOnFocusLoss
       draggable
       pauseOnHover
     />
