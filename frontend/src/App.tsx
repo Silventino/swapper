@@ -33,7 +33,7 @@ function App() {
 
         <Header />
 
-        <MyParticles />
+        {/* <MyParticles /> */}
         <div className={classes.appContent}>
           <div style={{ zIndex: 1 }}>
             <Switch>
