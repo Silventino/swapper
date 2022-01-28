@@ -11,9 +11,9 @@ import Loader from 'src/components/generic/Loader';
 import TransactionSign from 'src/components/TransactionSign';
 import { showError, showNotification } from 'src/helpers/helper';
 import Swap from 'src/types/Swap';
-import '../App.css';
-import GridCenter from '../components/generic/GridCenter';
-import WalletContext from '../providers/WalletContextProvider';
+import '../../App.css';
+import GridCenter from '../../components/generic/GridCenter';
+import WalletContext from '../../providers/WalletContextProvider';
 import CompleteTransaction from 'src/types/CompleteTransaction';
 import { STATUS_COMPLETED, STATUS_DEAD } from 'src/constants';
 

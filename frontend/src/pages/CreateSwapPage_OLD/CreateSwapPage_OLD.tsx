@@ -3,12 +3,12 @@ import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
 import React, { useContext, useState } from 'react';
 import 'reflect-metadata';
-import '../App.css';
+import '../../App.css';
 
-import GridCenter from '../components/generic/GridCenter';
-import TransactionFormV2 from '../components/TransactionFormV2';
-import WalletContext from '../providers/WalletContextProvider';
-import { EMPTY_PARTIAL_TRANSACTION, HEADER_HEIGHT } from '../constants';
+import GridCenter from '../../components/generic/GridCenter';
+import TransactionFormV2 from '../../components/TransactionFormV2';
+import WalletContext from '../../providers/WalletContextProvider';
+import { EMPTY_PARTIAL_TRANSACTION, HEADER_HEIGHT } from '../../constants';
 import { showError, showNotification } from 'src/helpers/helper';
 import PartialTransaction from 'src/types/PartialTransaction';
 import { useHistory } from 'react-router-dom';
@@ -16,9 +16,9 @@ import Loader from 'src/components/generic/Loader';
 import ModalTermsOfService from 'src/components/ModalTermsOfService';
 import AddressForm from 'src/components/AddressForm';
 import { setTimeout } from 'timers';
-import CheckboxDonation from "../components/CheckboxDonation";
+import CheckboxDonation from "../../components/CheckboxDonation";
 
-function CreateSwapPageV2() {
+function CreateSwapPage_OLD() {
   const walletContext = useContext(WalletContext);
 
   const [loading, setLoading] = useState(false);
@@ -138,4 +138,4 @@ const useStyles = makeStyles<Theme>((theme) =>
   })
 );
 
-export default CreateSwapPageV2;
+export default CreateSwapPage_OLD;

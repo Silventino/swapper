@@ -4,10 +4,10 @@ import makeStyles from '@material-ui/styles/makeStyles';
 import React from 'react';
 import { useHistory } from 'react-router';
 import 'reflect-metadata';
-import '../App.css';
-import GridCenter from '../components/generic/GridCenter';
+import '../../App.css';
+import GridCenter from '../../components/generic/GridCenter';
 
-function FailPage() {
+function OptoutPage() {
   const classes = useStyles();
 
   const history = useHistory();
@@ -72,4 +72,4 @@ const useStyles = makeStyles<Theme>((theme) =>
   })
 );
 
-export default FailPage;
+export default OptoutPage;

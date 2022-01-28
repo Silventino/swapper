@@ -1,18 +1,16 @@
-import { Button, Grid, IconButton, Theme, Typography } from '@material-ui/core';
+import {Grid, IconButton, Theme} from '@material-ui/core';
 import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
-import React, { useContext, useEffect } from 'react';
+import React, {useContext, useEffect} from 'react';
 import 'reflect-metadata';
-import { colors } from 'src/constants';
+import {colors} from 'src/constants';
 import WalletContext from 'src/providers/WalletContextProvider';
 import '../App.css';
 import ConnectedWalletSelect from './generic/ConnectedWalletSelect';
 import GridCenter from './generic/GridCenter';
 import MyInput from './generic/MyInput';
-// // import RainbowDiv from './generic/RainbowDiv';
 import Title from './generic/Title';
-import CheckIcon from '@mui/icons-material/Check';
-import { showNotification } from 'src/helpers/helper';
+import {showNotification} from 'src/helpers/helper';
 import SearchIcon from '@mui/icons-material/Search';
 
 type Props = {

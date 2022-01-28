@@ -5,9 +5,9 @@ import React from 'react';
 import 'reflect-metadata';
 import { DONATION_ADDRESS } from 'src/constants';
 import { showError, showNotification } from 'src/helpers/helper';
-import '../App.css';
-import qr from '../assets/qr.jpeg';
-import GridCenter from '../components/generic/GridCenter';
+import '../../App.css';
+import qr from '../../assets/qr.jpeg';
+import GridCenter from '../../components/generic/GridCenter';
 
 function SuccessPage() {
   const classes = useStyles();

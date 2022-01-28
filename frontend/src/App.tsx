@@ -1,8 +1,8 @@
-import { Theme } from '@material-ui/core';
+import {Theme} from '@material-ui/core';
 import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
-import React, { useContext } from 'react';
-import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
+import React, {useContext} from 'react';
+import {BrowserRouter as Router, Redirect, Route, Switch} from 'react-router-dom';
 import 'reflect-metadata';
 import './App.css';
 import Header from './components/Header';
@@ -10,14 +10,13 @@ import Footer from './components/Footer';
 import ModalConnect from './components/ModalConnect';
 import ModalLoading from './components/ModalLoading';
 import WalletContext from './providers/WalletContextProvider';
-import { HEADER_HEIGHT } from './constants';
-import CreateSwapPageV2 from './pages/CreateSwapPageV2';
+import {HEADER_HEIGHT} from './constants';
+import CreateSwapPage_OLD from './pages/CreateSwapPage_OLD';
 import SignTransactionPage from './pages/SignTransactionPage';
 import SuccessPage from './pages/SuccessPage';
 import FailPage from './pages/FailPage';
 import OptoutPage from './pages/OptoutPage';
-import CreateSwapPageV3 from './pages/CreateSwapPageV3';
-import MyParticles from './components/generic/MyParticles';
+import CreateSwapPage from './pages/CreateSwapPage';
 import DonatePage from './pages/DonatePage';
 
 function App() {
@@ -28,42 +27,42 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <ModalConnect />
-        <ModalLoading loading={walletContext.loadingAccount} />
+        <ModalConnect/>
+        <ModalLoading loading={walletContext.loadingAccount}/>
 
-        <Header />
+        <Header/>
 
         {/* <MyParticles /> */}
         <div className={classes.appContent}>
-          <div style={{ zIndex: 1 }}>
+          <div style={{zIndex: 1}}>
             <Switch>
               <Route path="/tx/:id">
-                <SignTransactionPage />
+                <SignTransactionPage/>
               </Route>
               <Route path="/donate">
-                <DonatePage />
+                <DonatePage/>
               </Route>
               <Route path="/success">
-                <SuccessPage />
+                <SuccessPage/>
               </Route>
               <Route path="/fail">
-                <FailPage />
+                <FailPage/>
               </Route>
               <Route path="/optout">
-                <OptoutPage />
+                <OptoutPage/>
               </Route>
               <Route path="/old">
-                <CreateSwapPageV2 />
+                <CreateSwapPage_OLD/>
               </Route>
               <Route path="/">
-                <CreateSwapPageV3 />
+                <CreateSwapPage/>
               </Route>
               <Route path="/*">
-                <Redirect to={'/'} />
+                <Redirect to={'/'}/>
               </Route>
             </Switch>
           </div>
-          <Footer />
+          <Footer/>
         </div>
 
       </div>
@@ -83,7 +82,7 @@ const useStyles = makeStyles<Theme>((theme) =>
       // flex: 1,
       // height: '100%'
     },
-    swapGrid: { marginTop: 10 }
+    swapGrid: {marginTop: 10}
   })
 );
 
