@@ -21,7 +21,7 @@ const ConnectedWalletSelect: React.FC<Props> = (props) => {
   useEffect(() => {
     const newSelected = walletContext.accounts.find((item) => item.address === value);
     setSelected(newSelected ?? null);
-  }, [value]);
+  }, [value, walletContext.accounts]);
 
   return (
     <>

@@ -12,7 +12,7 @@ const ConnectButton: React.FC<Props> = (props) => {
 
   const connect = async () => {
     try {
-      await walletContext.functions.connectMyAlgo();
+      await walletContext.connectMyAlgo();
     } catch (err) {
       showError(err);
     }

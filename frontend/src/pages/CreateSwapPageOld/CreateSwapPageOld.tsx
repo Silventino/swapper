@@ -58,7 +58,7 @@ function CreateSwapPageOld() {
 
       console.log('allTransactions', allTransactions);
 
-      const tx = await walletContext.functions.createAtomicTransaction(allTransactions);
+      const tx = await walletContext.createAtomicTransaction(allTransactions);
       setTimeout(() => {
         history.replace(`/tx/${tx}`);
         showNotification('Swap created!');

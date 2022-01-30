@@ -2,7 +2,7 @@ import {Button, Grid, Theme} from '@material-ui/core';
 import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
 import Alert from '@material-ui/core/Alert';
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
 import 'reflect-metadata';
 import swapApi from 'src/api/swapApi';
@@ -16,6 +16,7 @@ import GridCenter from '../../components/generic/GridCenter';
 import WalletContext from '../../providers/WalletContextProvider';
 import CompleteTransaction from 'src/types/CompleteTransaction';
 import {STATUS_COMPLETED, STATUS_DEAD} from 'src/constants';
+import {verifyGroup} from "../../providers/WalletContextFunctions";
 
 function SignTransactionPage() {
   let { id } = useParams<{ id: string }>();
@@ -42,38 +43,43 @@ function SignTransactionPage() {
     }
   };
 
-  const getTransaction = async (showLoader: boolean = true) => {
-    if (showLoader) {
-      setLoading(true);
-    }
-    try {
-      const newSwap = await swapApi.getSwap(id);
-
-      if (newSwap.status === STATUS_COMPLETED) {
-        history.replace('/success');
-        return true;
+  const getTransaction = useCallback(
+    async (showLoader: boolean = true) => {
+      console.log("effect com walletContext.3")
+      if (showLoader) {
+        setLoading(true);
       }
+      try {
+        const newSwap = await swapApi.getSwap(id);
 
-      if (newSwap.status === STATUS_DEAD) {
-        history.replace('/fail');
-        return true;
+        if (newSwap.status === STATUS_COMPLETED) {
+          history.replace('/success');
+          return true;
+        }
+
+        if (newSwap.status === STATUS_DEAD) {
+          history.replace('/fail');
+          return true;
+        }
+
+        await verifyGroup(id, newSwap.transactions);
+        setSwap(newSwap);
+      } catch (err: any) {
+        console.log(err);
+        showError(err);
       }
+      if (showLoader) {
+        setLoading(false);
+      }
+    },
+    [id, history]
+  );
 
-      await walletContext.functions.verifyGroup(id, newSwap.transactions);
-      setSwap(newSwap);
-    } catch (err: any) {
-      console.log(err);
-      showError(err);
-    }
-    if (showLoader) {
-      setLoading(false);
-    }
-  };
 
   const signAll = async () => {
     setLoading(true);
     try {
-      const signeds = await walletContext.functions.signTransactions(myUnsignedTransactions);
+      const signeds = await walletContext.signTransactions(myUnsignedTransactions);
       for (let i = 0; i < signeds.length; i++) {
         const signed = signeds[i];
         await swapApi.signTransaction(signed);
@@ -89,7 +95,7 @@ function SignTransactionPage() {
   const optinAll = async () => {
     setLoading(true);
     try {
-      await walletContext.functions.optinAssets(notOptedInAssets);
+      await walletContext.optinAssets(notOptedInAssets);
     } catch (err) {
       showError(err);
     }
@@ -109,7 +115,7 @@ function SignTransactionPage() {
         return item.blob;
       });
 
-      await walletContext.functions.sendTransactions(signed);
+      await walletContext.sendTransactions(signed);
       await swapApi.completeSwap(swap!.txId);
       showNotification('Sucess! Swap completed.');
       history.replace('/success');
@@ -136,58 +142,58 @@ function SignTransactionPage() {
     if (walletContext.selectedAccount) {
       getTransaction();
     }
-  }, [walletContext.selectedAccount]);
-
-  const loop = async () => {
-    if (window.location.href.search('success') !== -1) {
-      return;
-    }
-    console.log('Reloading!');
-
-    const completed = await getTransaction(false);
-    if (completed === true) {
-      return;
-    }
-    setTimeout(() => {
-      loop();
-    }, 5 * 1000);
-  };
-
-  const verifySteps = () => {
-    if (swap) {
-      const newAllSigned = swap.transactions.every((item) => Boolean(item.txID && item.blob));
-
-      const myTransactions = swap.transactions.filter((item) =>
-        Boolean(walletContext.selectedAccount && item.from === walletContext.selectedAccount.address)
-      );
-      const newMyUnsignedTransactions = myTransactions.filter((item) => Boolean(!item.txID && !item.blob));
-      const newAllMineSigned = myTransactions.every((item) => Boolean(item.txID && item.blob));
-
-      const newNotOptedInAssets: number[] = [];
-      for (let i = 0; i < swap.transactions.length; i++) {
-        const transaction = swap.transactions[i];
-        const opted = walletContext.accountAssets.some((asset) => asset.id === transaction.assetIndex);
-        if (!opted && transaction.assetIndex) {
-          newNotOptedInAssets.push(transaction.assetIndex);
-        }
-      }
-
-      setMyUnsignedTransactions(newMyUnsignedTransactions);
-      setNotOptedInAssets(newNotOptedInAssets);
-      setAllSigned(newAllSigned);
-      setAllMineSigned(newAllMineSigned);
-    }
-  };
+  }, [walletContext.selectedAccount, getTransaction]);
 
   useEffect(() => {
+    const loop = async () => {
+      if (window.location.href.search('success') !== -1) {
+        return;
+      }
+      console.log('Reloading!');
+
+      const completed = await getTransaction(false);
+      if (completed === true) {
+        return;
+      }
+      setTimeout(() => {
+        loop();
+      }, 5 * 1000);
+    };
+
     if (walletContext.selectedAccount) {
       loop();
     }
-  }, [walletContext.selectedAccount]);
+  }, [walletContext.selectedAccount, getTransaction]);
 
   useEffect(() => {
+    const verifySteps = () => {
+      if (swap) {
+        const newAllSigned = swap.transactions.every((item) => Boolean(item.txID && item.blob));
+
+        const myTransactions = swap.transactions.filter((item) =>
+          Boolean(walletContext.selectedAccount && item.from === walletContext.selectedAccount.address)
+        );
+        const newMyUnsignedTransactions = myTransactions.filter((item) => Boolean(!item.txID && !item.blob));
+        const newAllMineSigned = myTransactions.every((item) => Boolean(item.txID && item.blob));
+
+        const newNotOptedInAssets: number[] = [];
+        for (let i = 0; i < swap.transactions.length; i++) {
+          const transaction = swap.transactions[i];
+          const opted = walletContext.accountAssets.some((asset) => asset.id === transaction.assetIndex);
+          if (!opted && transaction.assetIndex) {
+            newNotOptedInAssets.push(transaction.assetIndex);
+          }
+        }
+
+        setMyUnsignedTransactions(newMyUnsignedTransactions);
+        setNotOptedInAssets(newNotOptedInAssets);
+        setAllSigned(newAllSigned);
+        setAllMineSigned(newAllMineSigned);
+      }
+    };
+
     verifySteps();
-  }, [swap]);
+  }, [swap, walletContext.accountAssets, walletContext.selectedAccount]);
 
   if (!walletContext.selectedAccount || !swap || !swap.transactions.length) {
     return null;

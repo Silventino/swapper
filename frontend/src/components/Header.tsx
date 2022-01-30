@@ -20,7 +20,7 @@ const Header: React.FC = (props) => {
   const classes = useStyles();
 
   const logout = () => {
-    walletContext.functions.logout();
+    walletContext.logout();
   };
 
   return (
@@ -46,7 +46,7 @@ const Header: React.FC = (props) => {
             options={walletContext.accounts.map((item) => item.address)}
             getOptionLabel={(x) => `${x?.substring(0, 5)}...${x?.substring(53)}`}
             value={walletContext.selectedAccount?.address}
-            onChange={(x) => (x ? walletContext.functions.selectAccount(x) : null)}
+            onChange={(x) => (x ? walletContext.selectAccount(x) : null)}
             style={{ paddingTop: 5, paddingBottom: 5 }}
           />
           <IconButton onClick={() => logout()} className={classes.headerButton} size="medium">

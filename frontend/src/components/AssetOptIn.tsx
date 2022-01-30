@@ -12,6 +12,7 @@ import MyInput from './generic/MyInput';
 import Title from './generic/Title';
 import Loader from './generic/Loader';
 import WalletContext, {AssetInfo} from '../providers/WalletContextProvider';
+import {getAssetInfo} from "../providers/WalletContextFunctions";
 
 type Props = {
   assetIndex: number;
@@ -27,22 +28,10 @@ const AssetOptIn: React.FC<Props> = (props) => {
 
   const walletContext = useContext(WalletContext);
 
-  const getAsset = async () => {
-    setLoading(true);
-    try {
-      let newAsset;
-      newAsset = await walletContext.functions.getAssetInfo(assetIndex);
-      setSelectedAsset(newAsset ?? null);
-    } catch (err) {
-      showError(err);
-    }
-    setLoading(false);
-  };
-
   const optinAsset = async () => {
     setLoading(true);
     try {
-      await walletContext.functions.optinAssets([assetIndex]);
+      await walletContext.optinAssets([assetIndex]);
       onOptIn();
     } catch (err) {
       showError(err);
@@ -51,6 +40,18 @@ const AssetOptIn: React.FC<Props> = (props) => {
   };
 
   useEffect(() => {
+    const getAsset = async () => {
+      setLoading(true);
+      try {
+        let newAsset;
+        newAsset = await getAssetInfo(assetIndex);
+        setSelectedAsset(newAsset ?? null);
+      } catch (err) {
+        showError(err);
+      }
+      setLoading(false);
+    };
+
     getAsset();
   }, [assetIndex]);
 

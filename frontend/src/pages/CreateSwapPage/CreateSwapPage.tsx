@@ -64,7 +64,7 @@ function CreateSwapPage() {
       });
       const allTransactions = newTransactionsA.concat(newTransactionsB);
 
-      const tx = await walletContext.functions.createAtomicTransaction(allTransactions, donationInfo);
+      const tx = await walletContext.createAtomicTransaction(allTransactions, donationInfo);
       setTimeout(() => {
         history.replace(`/tx/${tx}`);
         showNotification('Swap created!');

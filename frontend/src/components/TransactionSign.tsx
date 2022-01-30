@@ -16,6 +16,7 @@ import MyInput from './generic/MyInput';
 import Title from './generic/Title';
 import WalletContext, {AssetInfo} from '../providers/WalletContextProvider';
 import InfoIcon from '@mui/icons-material/Info';
+import {getAssetInfo} from "../providers/WalletContextFunctions";
 
 type Props = {
   index: number;
@@ -35,26 +36,11 @@ const TransactionSign: React.FC<Props> = (props) => {
 
   const walletContext = useContext(WalletContext);
 
-  const getAsset = async () => {
-    setLoading(true);
-    try {
-      let newAsset;
-      if (!transaction.assetIndex) {
-        newAsset = ALGO_ASSET;
-      } else {
-        newAsset = await walletContext.functions.getAssetInfo(transaction.assetIndex);
-      }
-      setSelectedAsset(newAsset ?? null);
-    } catch (err) {
-      showError(err);
-    }
-    setLoading(false);
-  };
 
   const signTransaction = async () => {
     setLoading(true);
     try {
-      const signed = await walletContext.functions.signTransaction(transaction);
+      const signed = await walletContext.signTransaction(transaction);
       await swapApi.signTransaction(signed);
       onSign();
     } catch (err) {
@@ -64,6 +50,23 @@ const TransactionSign: React.FC<Props> = (props) => {
   };
 
   useEffect(() => {
+    console.log("effect com walletContext.2");
+    const getAsset = async () => {
+      setLoading(true);
+      try {
+        let newAsset;
+        if (!transaction.assetIndex) {
+          newAsset = ALGO_ASSET;
+        } else {
+          newAsset = await getAssetInfo(transaction.assetIndex);
+        }
+        setSelectedAsset(newAsset ?? null);
+      } catch (err) {
+        showError(err);
+      }
+      setLoading(false);
+    };
+
     if (!transaction.assetIndex) {
       setOptedIn(true);
     } else {
@@ -79,7 +82,7 @@ const TransactionSign: React.FC<Props> = (props) => {
 
     const newIsSigned = Boolean(transaction.txID && transaction.blob);
     setIsSigned(newIsSigned);
-  }, [walletContext.accounts, transaction]);
+  }, [walletContext.accounts, walletContext.selectedAccount?.address, transaction]);
 
   if (!walletContext.selectedAccount) {
     return null;

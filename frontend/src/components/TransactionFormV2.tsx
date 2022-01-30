@@ -16,6 +16,7 @@ import Title from './generic/Title';
 import WalletContext, {AssetInfo} from '../providers/WalletContextProvider';
 import Autocomplete, {createFilterOptions} from '@mui/material/Autocomplete';
 import InfoIcon from '@mui/icons-material/Info';
+import {getAssetInfo} from "../providers/WalletContextFunctions";
 
 type Props = {
   title: string;
@@ -105,7 +106,7 @@ const SingleTransaction: React.FC<PropsSingle> = (props) => {
     }
     setLoading(true);
     try {
-      const asset = await walletContext.functions.loadAsset(assetId);
+      const asset = await walletContext.loadAsset(assetId);
       if (asset) {
         onChangeAsset(asset)
       }
@@ -115,24 +116,27 @@ const SingleTransaction: React.FC<PropsSingle> = (props) => {
     setLoading(false);
   };
 
-  const loadAssetFromTransaction = async () => {
-    try {
-      let newAsset = walletContext.assets.find((item) => item.id === transaction.assetIndex);
-      if (!newAsset) {
-        newAsset = await walletContext.functions.getAssetInfo(transaction.assetIndex);
-      }
-      setSelectedAsset(newAsset ?? ALGO_ASSET);
-    } catch (err) {
-      console.log(err);
-      setSelectedAsset(null);
-    }
-  };
+
 
   const onChangeAsset = (asset: AssetInfo | null) => {
     setTransaction({ ...transaction, assetIndex: asset ? asset.id : 0 })
   }
 
   useEffect(() => {
+    console.log("effect com walletContext", [transaction.assetIndex, walletContext.assets]);
+    const loadAssetFromTransaction = async () => {
+      try {
+        let newAsset = walletContext.assets.find((item) => item.id === transaction.assetIndex);
+        if (!newAsset) {
+          newAsset = await getAssetInfo(transaction.assetIndex);
+        }
+        setSelectedAsset(newAsset ?? ALGO_ASSET);
+      } catch (err) {
+        console.log(err);
+        setSelectedAsset(null);
+      }
+    };
+
     if(walletContext.assets.length > 0){
       loadAssetFromTransaction();
     }
