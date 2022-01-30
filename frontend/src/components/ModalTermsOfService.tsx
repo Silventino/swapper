@@ -1,13 +1,12 @@
-import { Button, Theme, Typography } from '@material-ui/core';
+import {Button, Theme, Typography} from '@material-ui/core';
 import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
-import React, { useContext } from 'react';
+import React from 'react';
 import MyModal from './generic/MyModal';
-import WalletContext from '../providers/WalletContextProvider';
-import { HEADER_HEIGHT } from '../constants';
+import {HEADER_HEIGHT} from '../constants';
 import DivCenter from './generic/DivCenter';
 import TermsOfService from './TermsOfService';
-import { red } from '@material-ui/core/colors';
+import {red} from '@material-ui/core/colors';
 
 type Props = {
   open: boolean;

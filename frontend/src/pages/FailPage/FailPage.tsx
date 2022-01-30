@@ -1,8 +1,8 @@
-import { Button, Grid, Theme, Typography } from '@material-ui/core';
+import {Button, Grid, Theme, Typography} from '@material-ui/core';
 import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
 import React from 'react';
-import { useHistory } from 'react-router';
+import {useHistory} from 'react-router';
 import 'reflect-metadata';
 import '../../App.css';
 import GridCenter from '../../components/generic/GridCenter';

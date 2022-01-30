@@ -1,8 +1,8 @@
-import { fromCompleteTransaction, toCompleteTransaction } from 'src/helpers/helper';
+import {fromCompleteTransaction, toCompleteTransaction} from 'src/helpers/helper';
 import CompleteTransaction from 'src/types/CompleteTransaction';
 import Swap from 'src/types/Swap';
 import SwapReq from 'src/types/SwapReq';
-import myAxios, { getConnectedWallet } from './myAxios';
+import myAxios, {getConnectedWallet} from './myAxios';
 
 const PREFIX = 'api';
 const ROUTE = 'transaction';

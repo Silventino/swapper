@@ -1,12 +1,12 @@
-import { Button, Grid, IconButton, Theme } from '@material-ui/core';
+import {Button, Grid, IconButton, Theme} from '@material-ui/core';
 import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
 import clsx from 'clsx';
-import React, { useContext, useEffect, useState } from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import 'reflect-metadata';
 import swapApi from 'src/api/swapApi';
-import { ALGO_ASSET, colors } from 'src/constants';
-import { getAssetImage, showError, showNotification } from 'src/helpers/helper';
+import {ALGO_ASSET, colors} from 'src/constants';
+import {getAssetImage, showError} from 'src/helpers/helper';
 import CompleteTransaction from 'src/types/CompleteTransaction';
 import '../App.css';
 import GridCenter from './generic/GridCenter';
@@ -14,8 +14,9 @@ import Loader from './generic/Loader';
 import MyInput from './generic/MyInput';
 // // import RainbowDiv from './generic/RainbowDiv';
 import Title from './generic/Title';
-import WalletContext, { AssetInfo } from '../providers/WalletContextProvider';
+import WalletContext, {AssetInfo} from '../providers/WalletContextProvider';
 import InfoIcon from '@mui/icons-material/Info';
+import {getAssetInfo} from "../providers/WalletContextFunctions";
 
 type Props = {
   index: number;
@@ -35,26 +36,11 @@ const TransactionSign: React.FC<Props> = (props) => {
 
   const walletContext = useContext(WalletContext);
 
-  const getAsset = async () => {
-    setLoading(true);
-    try {
-      let newAsset;
-      if (!transaction.assetIndex) {
-        newAsset = ALGO_ASSET;
-      } else {
-        newAsset = await walletContext.functions.getAssetInfo(transaction.assetIndex);
-      }
-      setSelectedAsset(newAsset ?? null);
-    } catch (err) {
-      showError(err);
-    }
-    setLoading(false);
-  };
 
   const signTransaction = async () => {
     setLoading(true);
     try {
-      const signed = await walletContext.functions.signTransaction(transaction);
+      const signed = await walletContext.signTransaction(transaction);
       await swapApi.signTransaction(signed);
       onSign();
     } catch (err) {
@@ -64,6 +50,23 @@ const TransactionSign: React.FC<Props> = (props) => {
   };
 
   useEffect(() => {
+    console.log("effect com walletContext.2");
+    const getAsset = async () => {
+      setLoading(true);
+      try {
+        let newAsset;
+        if (!transaction.assetIndex) {
+          newAsset = ALGO_ASSET;
+        } else {
+          newAsset = await getAssetInfo(transaction.assetIndex);
+        }
+        setSelectedAsset(newAsset ?? null);
+      } catch (err) {
+        showError(err);
+      }
+      setLoading(false);
+    };
+
     if (!transaction.assetIndex) {
       setOptedIn(true);
     } else {
@@ -79,7 +82,7 @@ const TransactionSign: React.FC<Props> = (props) => {
 
     const newIsSigned = Boolean(transaction.txID && transaction.blob);
     setIsSigned(newIsSigned);
-  }, [walletContext.accounts, transaction]);
+  }, [walletContext.accounts, walletContext.selectedAccount?.address, transaction]);
 
   if (!walletContext.selectedAccount) {
     return null;
@@ -93,7 +96,7 @@ const TransactionSign: React.FC<Props> = (props) => {
         </GridCenter>
 
         <GridCenter item xs={12}>
-          <a href={`https://www.nftexplorer.app/asset/${selectedAsset?.id}`} target={"_blank"} className={classes.row}>
+          <a href={`https://www.nftexplorer.app/asset/${selectedAsset?.id}`} target={"_blank"} rel="noreferrer" className={classes.row}>
             <div style={{ width: 40, height: 40 }} />
             <img src={getAssetImage(selectedAsset)} alt="" className={classes.img} />
             {

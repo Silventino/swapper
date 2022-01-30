@@ -1,11 +1,11 @@
-import { Theme, Typography } from '@material-ui/core';
+import {Theme, Typography} from '@material-ui/core';
 import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
-import React, { useContext } from 'react';
+import React, {useContext} from 'react';
 import ConnectButton from './ConnectButton';
 import MyModal from './generic/MyModal';
 import WalletContext from '../providers/WalletContextProvider';
-import { HEADER_HEIGHT } from '../constants';
+import {HEADER_HEIGHT} from '../constants';
 import DivCenter from './generic/DivCenter';
 import TermsOfService from './TermsOfService';
 
@@ -15,31 +15,32 @@ function ModalConnect() {
   const walletContext = useContext(WalletContext);
 
   return (
-    <MyModal open={!Boolean(walletContext.accounts.length)} onClose={() => {}} hideClose>
-      <Typography className={classes.medtxt}>Welcome to Swapper Tools!</Typography>
-      <br />
+    <MyModal open={!Boolean(walletContext.accounts.length)} onClose={() => {
+    }} hideClose>
+      <Typography className={classes.medtxt}>Welcome to Swapper!</Typography>
+      <br/>
       Here's how to make a swap:
-      <br />
+      <br/>
       1) Person A creates the swap
-      <br />
+      <br/>
       2) Person A signs the first transaction
-      <br />
+      <br/>
       3) Person A sends the link to the person B
-      <br />
+      <br/>
       4) Person B signs the second transaction
-      <br />
+      <br/>
       5) Both transactions will be safely sent at the same time to the blockchain
-      <br />
-      <br />
+      <br/>
+      <br/>
       To make this tool safe we are using the atomic transfer feature of Algorand, you can read more about it{' '}
-      <a href="https://developer.algorand.org/docs/get-details/atomic_transfers/" target="_blank">
+      <a href="https://developer.algorand.org/docs/get-details/atomic_transfers/" target="_blank" rel="noreferrer">
         clicking here
       </a>
       .
-      <br />
-      <TermsOfService />
+      <br/>
+      <TermsOfService/>
       <DivCenter>
-        <ConnectButton title={'Accept and Connect'} />
+        <ConnectButton title={'Accept and Connect'}/>
       </DivCenter>
     </MyModal>
   );
@@ -52,7 +53,7 @@ const useStyles = makeStyles<Theme>((theme) =>
       display: 'flex',
       justifyContent: 'center'
     },
-    swapGrid: { marginTop: 10 },
+    swapGrid: {marginTop: 10},
     bigtxt: {
       marginLeft: 10,
       marginRight: 10,

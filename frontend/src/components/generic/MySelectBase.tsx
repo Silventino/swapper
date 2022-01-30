@@ -1,7 +1,5 @@
-import { MenuItem, Select, Theme } from '@material-ui/core';
-import createStyles from '@material-ui/styles/createStyles';
-import makeStyles from '@material-ui/styles/makeStyles';
-import React, { useEffect } from 'react';
+import {MenuItem, Select} from '@material-ui/core';
+import React, {useEffect} from 'react';
 
 type Props<T> = {
   label?: string;
@@ -43,8 +41,7 @@ function MySelectBase<T>(props: Props<T>) {
   );
 }
 
-type StyleProps = {};
-
-const useStyles = makeStyles<Theme, StyleProps>((theme) => createStyles({}));
+// type StyleProps = {};
+// const useStyles = makeStyles<Theme, StyleProps>((theme) => createStyles({}));
 
 export default MySelectBase;

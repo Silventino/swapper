@@ -1,18 +1,18 @@
-import { Button, Grid, Theme } from '@material-ui/core';
+import {Button, Grid, Theme} from '@material-ui/core';
 import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
-import clsx from 'clsx';
-import React, { useContext, useEffect, useState } from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import 'reflect-metadata';
-import { colors } from 'src/constants';
-import { getAssetImage, showError } from 'src/helpers/helper';
+import {colors} from 'src/constants';
+import {getAssetImage, showError} from 'src/helpers/helper';
 import '../App.css';
 import GridCenter from './generic/GridCenter';
 import MyInput from './generic/MyInput';
 // // import RainbowDiv from './generic/RainbowDiv';
 import Title from './generic/Title';
 import Loader from './generic/Loader';
-import WalletContext, { AssetInfo } from '../providers/WalletContextProvider';
+import WalletContext, {AssetInfo} from '../providers/WalletContextProvider';
+import {getAssetInfo} from "../providers/WalletContextFunctions";
 
 type Props = {
   assetIndex: number;
@@ -28,22 +28,10 @@ const AssetOptIn: React.FC<Props> = (props) => {
 
   const walletContext = useContext(WalletContext);
 
-  const getAsset = async () => {
-    setLoading(true);
-    try {
-      let newAsset;
-      newAsset = await walletContext.functions.getAssetInfo(assetIndex);
-      setSelectedAsset(newAsset ?? null);
-    } catch (err) {
-      showError(err);
-    }
-    setLoading(false);
-  };
-
   const optinAsset = async () => {
     setLoading(true);
     try {
-      await walletContext.functions.optinAssets([assetIndex]);
+      await walletContext.optinAssets([assetIndex]);
       onOptIn();
     } catch (err) {
       showError(err);
@@ -52,6 +40,18 @@ const AssetOptIn: React.FC<Props> = (props) => {
   };
 
   useEffect(() => {
+    const getAsset = async () => {
+      setLoading(true);
+      try {
+        let newAsset;
+        newAsset = await getAssetInfo(assetIndex);
+        setSelectedAsset(newAsset ?? null);
+      } catch (err) {
+        showError(err);
+      }
+      setLoading(false);
+    };
+
     getAsset();
   }, [assetIndex]);
 

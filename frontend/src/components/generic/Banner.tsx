@@ -1,8 +1,8 @@
-import { Theme } from '@material-ui/core';
+import {Theme} from '@material-ui/core';
 import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
 import clsx from 'clsx';
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 
 const Banner: React.FC = (props) => {
   // const walletContext = useContext(WalletContext);

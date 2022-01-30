@@ -1,9 +1,9 @@
-import { Theme } from '@material-ui/core';
+import {Theme} from '@material-ui/core';
 import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import Particles from 'react-particles-js';
-import { colors } from 'src/constants';
+import {colors} from 'src/constants';
 
 const MyParticles: React.FC = () => {
   const classes = useStyles();

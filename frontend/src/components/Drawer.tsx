@@ -1,4 +1,4 @@
-import { Drawer, List, Theme } from '@material-ui/core';
+import {Drawer, List, Theme} from '@material-ui/core';
 import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
 import SwapIcon from '@mui/icons-material/Cached';
@@ -11,7 +11,7 @@ import ListItemText from '@mui/material/ListItemText';
 import React from 'react';
 import logo_full from '../assets/logo_full.png';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useHistory } from 'react-router';
+import {useHistory} from 'react-router';
 import AddIcon from '@mui/icons-material/Add';
 
 type Props = {

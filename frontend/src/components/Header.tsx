@@ -1,11 +1,11 @@
-import { IconButton, Theme } from '@material-ui/core';
+import {IconButton, Theme} from '@material-ui/core';
 import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 import MenuIcon from '@mui/icons-material/Menu';
 import clsx from 'clsx';
-import React, { useContext, useState } from 'react';
-import { colors, HEADER_HEIGHT } from 'src/constants';
+import React, {useContext, useState} from 'react';
+import {colors, HEADER_HEIGHT} from 'src/constants';
 import logo_full from '../assets/logo_full.png';
 import ConnectButton from './ConnectButton';
 import Drawer from './Drawer';
@@ -20,7 +20,7 @@ const Header: React.FC = (props) => {
   const classes = useStyles();
 
   const logout = () => {
-    walletContext.functions.logout();
+    walletContext.logout();
   };
 
   return (
@@ -46,7 +46,7 @@ const Header: React.FC = (props) => {
             options={walletContext.accounts.map((item) => item.address)}
             getOptionLabel={(x) => `${x?.substring(0, 5)}...${x?.substring(53)}`}
             value={walletContext.selectedAccount?.address}
-            onChange={(x) => (x ? walletContext.functions.selectAccount(x) : null)}
+            onChange={(x) => (x ? walletContext.selectAccount(x) : null)}
             style={{ paddingTop: 5, paddingBottom: 5 }}
           />
           <IconButton onClick={() => logout()} className={classes.headerButton} size="medium">
