@@ -1,8 +1,8 @@
-import { Theme, Grid, GridProps } from '@material-ui/core';
+import {Theme} from '@material-ui/core';
 import makeStyles from '@material-ui/styles/makeStyles';
 import createStyles from '@material-ui/styles/createStyles';
 import clsx from 'clsx';
-import React, { HTMLAttributes, useEffect } from 'react';
+import React, {HTMLAttributes} from 'react';
 
 type Props = HTMLAttributes<HTMLDivElement>;
 

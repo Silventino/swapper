@@ -1,16 +1,16 @@
-import MyAlgoClient, { AlgorandTxn } from '@randlabs/myalgo-connect';
-import algosdk, { TransactionLike } from 'algosdk';
+import MyAlgoClient, {AlgorandTxn} from '@randlabs/myalgo-connect';
+import algosdk, {TransactionLike} from 'algosdk';
 import axios from 'axios';
-import React, { createContext, useEffect, useState } from 'react';
+import React, {createContext, useEffect, useState} from 'react';
 import swapApi from 'src/api/swapApi';
 import assetApi from 'src/api/assetApi';
-import { ALGO_ASSET, DONATION_ADDRESS } from 'src/constants';
-import { waitForConfirmation } from 'src/helpers/algoHelper';
-import { useLocalStorage } from 'src/helpers/helper';
+import {ALGO_ASSET, DONATION_ADDRESS} from 'src/constants';
+import {waitForConfirmation} from 'src/helpers/algoHelper';
+import {useLocalStorage} from 'src/helpers/helper';
 import BaseTransaction from 'src/types/BaseTransaction';
 import CompleteTransaction from 'src/types/CompleteTransaction';
 import PartialTransaction from 'src/types/PartialTransaction';
-import { DonationInfo } from 'src/components/CheckboxDonation';
+import {DonationInfo} from 'src/components/CheckboxDonation';
 
 const TESTNET = false;
 
@@ -522,7 +522,8 @@ const WalletContextProvider: React.FC = ({ children }) => {
   const loadAssetsFromAddress = async (address: string) => {
     setLoadingAccount(true);
     try {
-      const [newSelectedAccount, newAssets] = await loadInfoFromAddress(address);
+      const info = await loadInfoFromAddress(address);
+      const newAssets = info[1];
       const newSet = new Set(assets.concat(newAssets));
       setAssets(Array.from(newSet.values()));
     } catch (err) {

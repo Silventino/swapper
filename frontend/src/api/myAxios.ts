@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { AccountDetailedInfo } from 'src/providers/WalletContextProvider';
+import {AccountDetailedInfo} from 'src/providers/WalletContextProvider';
 
 // const SERVER_URL = 'http://localhost:3002';
 const SERVER_URL = 'https://api.swapper.tools';

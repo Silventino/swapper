@@ -1,21 +1,20 @@
-import { Button, Divider, Grid, IconButton, TextField, Theme } from '@material-ui/core';
+import {Button, Divider, Grid, IconButton, TextField, Theme} from '@material-ui/core';
 import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
-import React, { useContext, useEffect, useState } from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import 'reflect-metadata';
-import { ALGO_ASSET, colors, EMPTY_PARTIAL_TRANSACTION } from 'src/constants';
-import { getAssetImage, getAssetLabel, showNotification } from 'src/helpers/helper';
+import {ALGO_ASSET, colors, EMPTY_PARTIAL_TRANSACTION} from 'src/constants';
+import {getAssetImage, getAssetLabel, showNotification} from 'src/helpers/helper';
 import PartialTransaction from 'src/types/PartialTransaction';
 import '../App.css';
 import GridCenter from './generic/GridCenter';
 import MyNumberInput from './generic/MyNumberInput';
-import MySelect from './generic/MySelect';
 // // import RainbowDiv from './generic/RainbowDiv';
 import Title from './generic/Title';
-import WalletContext, { AssetInfo } from '../providers/WalletContextProvider';
-import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
+import WalletContext, {AssetInfo} from '../providers/WalletContextProvider';
+import Autocomplete, {createFilterOptions} from '@mui/material/Autocomplete';
 import InfoIcon from '@mui/icons-material/Info';
 
 type Props = {
@@ -153,7 +152,12 @@ const SingleTransaction: React.FC<PropsSingle> = (props) => {
           <div className={classes.divWithRemove}>
             <div style={{ width: 40, height: 40 }} />
 
-            <a href={`https://www.nftexplorer.app/asset/${selectedAsset?.id}`} target={"_blank"} className={classes.row}>
+            <a
+              href={`https://www.nftexplorer.app/asset/${selectedAsset?.id}`}
+              target={"_blank"}
+              rel="noreferrer"
+              className={classes.row}
+            >
               <div style={{ width: 40, height: 40 }} />
               <img src={getAssetImage(selectedAsset)} alt="" className={classes.img} />
               {

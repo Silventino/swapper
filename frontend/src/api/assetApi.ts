@@ -1,4 +1,4 @@
-import { AssetInfo } from 'src/providers/WalletContextProvider';
+import {AssetInfo} from 'src/providers/WalletContextProvider';
 import myAxios from './myAxios';
 
 const PREFIX = 'api';

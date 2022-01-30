@@ -1,21 +1,21 @@
-import { Button, Grid, Theme } from '@material-ui/core';
+import {Button, Grid, Theme} from '@material-ui/core';
 import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
 import Alert from '@material-ui/core/Alert';
-import React, { useContext, useEffect, useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import React, {useContext, useEffect, useState} from 'react';
+import {useHistory, useParams} from 'react-router-dom';
 import 'reflect-metadata';
 import swapApi from 'src/api/swapApi';
 import AssetOptIn from 'src/components/AssetOptIn';
 import Loader from 'src/components/generic/Loader';
 import TransactionSign from 'src/components/TransactionSign';
-import { showError, showNotification } from 'src/helpers/helper';
+import {showError, showNotification} from 'src/helpers/helper';
 import Swap from 'src/types/Swap';
 import '../../App.css';
 import GridCenter from '../../components/generic/GridCenter';
 import WalletContext from '../../providers/WalletContextProvider';
 import CompleteTransaction from 'src/types/CompleteTransaction';
-import { STATUS_COMPLETED, STATUS_DEAD } from 'src/constants';
+import {STATUS_COMPLETED, STATUS_DEAD} from 'src/constants';
 
 function SignTransactionPage() {
   let { id } = useParams<{ id: string }>();

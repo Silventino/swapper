@@ -1,5 +1,4 @@
 import CompleteTransaction from './CompleteTransaction';
-import TransactionReq from './TransactionReq';
 
 declare type Swap = {
   txId: string;

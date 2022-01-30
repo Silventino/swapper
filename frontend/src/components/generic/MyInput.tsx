@@ -1,7 +1,5 @@
-import { FormControl, OutlinedInput, InputAdornment, InputLabel, Theme } from '@material-ui/core';
-import createStyles from '@material-ui/styles/createStyles';
-import makeStyles from '@material-ui/styles/makeStyles';
-import React, { ReactNode } from 'react';
+import {FormControl, InputAdornment, InputLabel, OutlinedInput} from '@material-ui/core';
+import React, {ReactNode} from 'react';
 
 type Props = {
   label: string;
@@ -37,8 +35,7 @@ const MyInput: React.FC<Props> = (props) => {
   );
 };
 
-type StyleProps = {};
-
-const useStyles = makeStyles<Theme, StyleProps>((theme) => createStyles({}));
+// type StyleProps = {};
+// const useStyles = makeStyles<Theme, StyleProps>((theme) => createStyles({}));
 
 export default MyInput;

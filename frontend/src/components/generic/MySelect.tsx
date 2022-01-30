@@ -1,7 +1,5 @@
-import { Theme, FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
-import makeStyles from '@material-ui/styles/makeStyles';
-import createStyles from '@material-ui/styles/createStyles';
-import React, { useEffect } from 'react';
+import {FormControl, InputLabel} from '@material-ui/core';
+import React, {useEffect} from 'react';
 
 import MySelectBase from './MySelectBase';
 
@@ -34,8 +32,7 @@ function MySelect<T>(props: Props<T>) {
   );
 }
 
-type StyleProps = {};
-
-const useStyles = makeStyles<Theme, StyleProps>((theme) => createStyles({}));
+// type StyleProps = {};
+// const useStyles = makeStyles<Theme, StyleProps>((theme) => createStyles({}));
 
 export default MySelect;

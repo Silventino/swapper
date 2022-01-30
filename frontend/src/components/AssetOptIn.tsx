@@ -1,18 +1,17 @@
-import { Button, Grid, Theme } from '@material-ui/core';
+import {Button, Grid, Theme} from '@material-ui/core';
 import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
-import clsx from 'clsx';
-import React, { useContext, useEffect, useState } from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import 'reflect-metadata';
-import { colors } from 'src/constants';
-import { getAssetImage, showError } from 'src/helpers/helper';
+import {colors} from 'src/constants';
+import {getAssetImage, showError} from 'src/helpers/helper';
 import '../App.css';
 import GridCenter from './generic/GridCenter';
 import MyInput from './generic/MyInput';
 // // import RainbowDiv from './generic/RainbowDiv';
 import Title from './generic/Title';
 import Loader from './generic/Loader';
-import WalletContext, { AssetInfo } from '../providers/WalletContextProvider';
+import WalletContext, {AssetInfo} from '../providers/WalletContextProvider';
 
 type Props = {
   assetIndex: number;

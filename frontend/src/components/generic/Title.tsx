@@ -1,8 +1,8 @@
-import { Theme, Typography } from '@material-ui/core';
+import {Theme, Typography} from '@material-ui/core';
 import makeStyles from '@material-ui/styles/makeStyles';
 import createStyles from '@material-ui/styles/createStyles';
-import React, { useEffect } from 'react';
-import { Variant } from '@material-ui/core/styles/createTypography';
+import React from 'react';
+import {Variant} from '@material-ui/core/styles/createTypography';
 import clsx from 'clsx';
 
 type Props = {

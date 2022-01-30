@@ -1,8 +1,8 @@
-import { Theme, Grid, GridProps } from '@material-ui/core';
+import {Grid, GridProps, Theme} from '@material-ui/core';
 import makeStyles from '@material-ui/styles/makeStyles';
 import createStyles from '@material-ui/styles/createStyles';
 import clsx from 'clsx';
-import React, { useEffect } from 'react';
+import React from 'react';
 
 type Props = GridProps;
 
