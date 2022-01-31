@@ -1,5 +1,4 @@
 import assetApi from "./assetApi";
-import {YLDY_ASSET} from "../constants";
 
 describe("assetApi", () => {
   it("should fetch one specific asset", async () => {
