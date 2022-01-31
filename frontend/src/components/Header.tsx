@@ -33,7 +33,7 @@ const Header: React.FC = (props) => {
         <Drawer open={open} setOpen={setOpen} />
 
         <a href={'/'} className={classes.title}>
-          <img src={logo_full} alt="logo" className={classes.logo} />
+          <img id="imgLogo" src={logo_full} alt="logo" className={classes.logo} />
           {/* <img src={icon} alt="logo" className={classes.logo} /> */}
         </a>
       </div>

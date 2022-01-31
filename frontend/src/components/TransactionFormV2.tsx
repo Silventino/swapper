@@ -11,12 +11,11 @@ import PartialTransaction from 'src/types/PartialTransaction';
 import '../App.css';
 import GridCenter from './generic/GridCenter';
 import MyNumberInput from './generic/MyNumberInput';
-// // import RainbowDiv from './generic/RainbowDiv';
 import Title from './generic/Title';
 import WalletContext, {AssetInfo} from '../providers/WalletContextProvider';
 import Autocomplete, {createFilterOptions} from '@mui/material/Autocomplete';
 import InfoIcon from '@mui/icons-material/Info';
-import {getAssetInfo} from "../providers/WalletContextFunctions";
+import assetApi from "../api/assetApi";
 
 type Props = {
   title: string;
@@ -116,8 +115,6 @@ const SingleTransaction: React.FC<PropsSingle> = (props) => {
     setLoading(false);
   };
 
-
-
   const onChangeAsset = (asset: AssetInfo | null) => {
     setTransaction({ ...transaction, assetIndex: asset ? asset.id : 0 })
   }
@@ -128,7 +125,7 @@ const SingleTransaction: React.FC<PropsSingle> = (props) => {
       try {
         let newAsset = walletContext.assets.find((item) => item.id === transaction.assetIndex);
         if (!newAsset) {
-          newAsset = await getAssetInfo(transaction.assetIndex);
+          newAsset = await assetApi.getAssetInfo(transaction.assetIndex);
         }
         setSelectedAsset(newAsset ?? ALGO_ASSET);
       } catch (err) {

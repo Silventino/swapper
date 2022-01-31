@@ -12,7 +12,7 @@ import MyInput from './generic/MyInput';
 import Title from './generic/Title';
 import Loader from './generic/Loader';
 import WalletContext, {AssetInfo} from '../providers/WalletContextProvider';
-import {getAssetInfo} from "../providers/WalletContextFunctions";
+import assetApi from "../api/assetApi";
 
 type Props = {
   assetIndex: number;
@@ -44,7 +44,7 @@ const AssetOptIn: React.FC<Props> = (props) => {
       setLoading(true);
       try {
         let newAsset;
-        newAsset = await getAssetInfo(assetIndex);
+        newAsset = await assetApi.getAssetInfo(assetIndex);
         setSelectedAsset(newAsset ?? null);
       } catch (err) {
         showError(err);
