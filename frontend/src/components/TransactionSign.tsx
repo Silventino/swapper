@@ -16,7 +16,7 @@ import MyInput from './generic/MyInput';
 import Title from './generic/Title';
 import WalletContext, {AssetInfo} from '../providers/WalletContextProvider';
 import InfoIcon from '@mui/icons-material/Info';
-import {getAssetInfo} from "../providers/WalletContextFunctions";
+import assetApi from "../api/assetApi";
 
 type Props = {
   index: number;
@@ -58,7 +58,7 @@ const TransactionSign: React.FC<Props> = (props) => {
         if (!transaction.assetIndex) {
           newAsset = ALGO_ASSET;
         } else {
-          newAsset = await getAssetInfo(transaction.assetIndex);
+          newAsset = await assetApi.getAssetInfo(transaction.assetIndex);
         }
         setSelectedAsset(newAsset ?? null);
       } catch (err) {

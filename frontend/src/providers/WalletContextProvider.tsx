@@ -10,7 +10,7 @@ import BaseTransaction from 'src/types/BaseTransaction';
 import CompleteTransaction from 'src/types/CompleteTransaction';
 import PartialTransaction from 'src/types/PartialTransaction';
 import {DonationInfo} from 'src/components/CheckboxDonation';
-import {getAssetInfo, getManyAssetInfo} from "./WalletContextFunctions";
+import assetApi from "../api/assetApi";
 
 export const TESTNET = false;
 
@@ -197,7 +197,7 @@ const WalletContextProvider: React.FC = ({children}) => {
       let i = 0;
       while (i < assetsNotFound.length) {
         const partialNotFound = assetsNotFound.slice(i, i + 10);
-        const otherAssets = await getManyAssetInfo(partialNotFound);
+        const otherAssets = await assetApi.getManyAssetInfo(partialNotFound);
         for (let j = 0; j < otherAssets.length; j++) {
           const asset = otherAssets[j];
           assetDict[asset.id] = asset;
@@ -209,7 +209,7 @@ const WalletContextProvider: React.FC = ({children}) => {
 
       const partialNotFound = assetsNotFound.slice(i, i + 10);
       if (partialNotFound.length) {
-        const otherAssets = await getManyAssetInfo(partialNotFound);
+        const otherAssets = await assetApi.getManyAssetInfo(partialNotFound);
         for (let j = 0; j < otherAssets.length; j++) {
           const asset = otherAssets[j];
           assetDict[asset.id] = asset;
@@ -530,7 +530,7 @@ const WalletContextProvider: React.FC = ({children}) => {
           setLoadingAccount(false);
           return alreadyLoaded;
         }
-        const newAsset = await getAssetInfo(assetId);
+        const newAsset = await assetApi.getAssetInfo(assetId);
         assets.push(newAsset);
         setAssets(assets);
         setLoadingAccount(false);
