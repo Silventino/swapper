@@ -19,7 +19,7 @@ const ConnectButton: React.FC<Props> = (props) => {
   };
 
   return (
-    <Button variant={'contained'} onClick={() => connect()}>
+    <Button id={"btnConnect"} variant={'contained'} onClick={() => connect()}>
       {props.title ?? 'Connect'}
     </Button>
   );
