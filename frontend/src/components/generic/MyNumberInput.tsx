@@ -1,6 +1,4 @@
-import { TextField, Theme } from "@material-ui/core";
-import createStyles from '@material-ui/styles/createStyles';
-import makeStyles from '@material-ui/styles/makeStyles';
+import {TextField} from "@material-ui/core";
 import React from "react";
 import NumberFormat from "react-number-format";
 
@@ -42,8 +40,7 @@ const MyNumberInput: React.FC<Props> = (props) => {
   );
 };
 
-type StyleProps = {};
-
-const useStyles = makeStyles<Theme, StyleProps>((theme) => createStyles({}));
+// type StyleProps = {};
+// const useStyles = makeStyles<Theme, StyleProps>((theme) => createStyles({}));
 
 export default MyNumberInput;

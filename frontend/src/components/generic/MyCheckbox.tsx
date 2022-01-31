@@ -1,7 +1,7 @@
-import { FormControl, OutlinedInput, InputAdornment, InputLabel, Theme } from '@material-ui/core';
+import {Theme} from '@material-ui/core';
 import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
-import React, { ReactNode } from 'react';
+import React from 'react';
 import {Checkbox, FormControlLabel} from "@mui/material";
 
 type Props = {

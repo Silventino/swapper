@@ -11,7 +11,7 @@ import ModalConnect from './components/ModalConnect';
 import ModalLoading from './components/ModalLoading';
 import WalletContext from './providers/WalletContextProvider';
 import {HEADER_HEIGHT} from './constants';
-import CreateSwapPage_OLD from './pages/CreateSwapPage_OLD';
+import CreateSwapPageOld from './pages/CreateSwapPageOld';
 import SignTransactionPage from './pages/SignTransactionPage';
 import SuccessPage from './pages/SuccessPage';
 import FailPage from './pages/FailPage';
@@ -52,7 +52,7 @@ function App() {
                 <OptoutPage/>
               </Route>
               <Route path="/old">
-                <CreateSwapPage_OLD/>
+                <CreateSwapPageOld/>
               </Route>
               <Route path="/">
                 <CreateSwapPage/>

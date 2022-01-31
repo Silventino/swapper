@@ -1,14 +1,14 @@
 // import reportWebVitals from "./reportWebVitals";
-import { adaptV4Theme, createTheme, StyledEngineProvider, ThemeProvider } from '@material-ui/core/styles';
+import {adaptV4Theme, createTheme, StyledEngineProvider, ThemeProvider} from '@material-ui/core/styles';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { ToastContainer } from 'react-toastify';
+import {ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'reflect-metadata';
 import App from './App';
 import './App.css';
-import { colors } from './constants';
-import { WalletContextProvider } from './providers/WalletContextProvider';
+import {colors} from './constants';
+import {WalletContextProvider} from './providers/WalletContextProvider';
 
 const darkTheme = createTheme(
   adaptV4Theme({

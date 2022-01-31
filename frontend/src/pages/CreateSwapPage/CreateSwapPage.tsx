@@ -1,22 +1,22 @@
-import { Button, Grid, Theme } from '@material-ui/core';
+import {Button, Grid, Theme} from '@material-ui/core';
 import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
-import React, { useContext, useState } from 'react';
+import React, {useContext, useState} from 'react';
 import 'reflect-metadata';
 import '../../App.css';
 
 import GridCenter from '../../components/generic/GridCenter';
 import TransactionFormV2 from '../../components/TransactionFormV2';
 import WalletContext from '../../providers/WalletContextProvider';
-import {ALGO_ASSET, EMPTY_PARTIAL_TRANSACTION, HEADER_HEIGHT} from '../../constants';
-import { showError, showNotification } from 'src/helpers/helper';
+import {ALGO_ASSET, EMPTY_PARTIAL_TRANSACTION} from '../../constants';
+import {showError, showNotification} from 'src/helpers/helper';
 import PartialTransaction from 'src/types/PartialTransaction';
-import { useHistory } from 'react-router-dom';
+import {useHistory} from 'react-router-dom';
 import Loader from 'src/components/generic/Loader';
 import ModalTermsOfService from 'src/components/ModalTermsOfService';
 import AddressForm from 'src/components/AddressForm';
-import { setTimeout } from 'timers';
-import CheckboxDonation, { DonationInfo } from "../../components/CheckboxDonation";
+import {setTimeout} from 'timers';
+import CheckboxDonation, {DonationInfo} from "../../components/CheckboxDonation";
 
 function CreateSwapPage() {
   const walletContext = useContext(WalletContext);
@@ -64,7 +64,7 @@ function CreateSwapPage() {
       });
       const allTransactions = newTransactionsA.concat(newTransactionsB);
 
-      const tx = await walletContext.functions.createAtomicTransaction(allTransactions, donationInfo);
+      const tx = await walletContext.createAtomicTransaction(allTransactions, donationInfo);
       setTimeout(() => {
         history.replace(`/tx/${tx}`);
         showNotification('Swap created!');

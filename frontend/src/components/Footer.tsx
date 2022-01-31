@@ -1,22 +1,19 @@
-import { Theme } from '@material-ui/core';
+import {Theme} from '@material-ui/core';
 import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
-import { Button, Typography } from '@mui/material';
+import {Button, Typography} from '@mui/material';
 import clsx from 'clsx';
-import React, { useContext } from 'react';
-import { useHistory } from 'react-router-dom';
-import { colors, HEADER_HEIGHT } from 'src/constants';
-import WalletContext from '../providers/WalletContextProvider';
+import React from 'react';
+import {useHistory} from 'react-router-dom';
+import {colors} from 'src/constants';
 
 const Footer: React.FC = (props) => {
-  const walletContext = useContext(WalletContext);
-
   const history = useHistory();
   const classes = useStyles();
 
   return (
     <div className={clsx(classes.footer)}>
-      <Typography className={classes.smalltxt}>Made with ❤️ by <a href='https://twitter.com/Silventino' target='_blank' >@silventino</a></Typography>
+      <Typography className={classes.smalltxt}>Made with ❤️ by <a href='https://twitter.com/Silventino' target='_blank' rel="noreferrer">@silventino</a></Typography>
       <Button
         style={{marginBottom: 15}}
         onClick={()=> history.push('/donate')}

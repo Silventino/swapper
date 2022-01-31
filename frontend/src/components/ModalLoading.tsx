@@ -1,8 +1,7 @@
-import { Theme, Typography } from '@material-ui/core';
+import {Theme, Typography} from '@material-ui/core';
 import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
 import React from 'react';
-import { HEADER_HEIGHT } from '../constants';
 import DivCenter from './generic/DivCenter';
 import Loader from './generic/Loader';
 import MyModal from './generic/MyModal';

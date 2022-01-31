@@ -1,8 +1,7 @@
-import { IconButton, Menu, MenuItem, Theme } from '@material-ui/core';
+import {IconButton, Menu, MenuItem, Theme} from '@material-ui/core';
 import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
-import Visibility from '@mui/icons-material/Visibility';
-import React, { useContext } from 'react';
+import React, {useContext} from 'react';
 import MyInput from './MyInput';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import WalletContext from '../../providers/WalletContextProvider';

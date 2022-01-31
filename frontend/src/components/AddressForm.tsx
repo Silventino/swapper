@@ -30,11 +30,11 @@ const AddressForm: React.FC<Props> = (props) => {
     if (!addressA) {
       setAddressA(walletContext.selectedAccount!.address);
     }
-  }, [addressA]);
+  }, [addressA, setAddressA, walletContext.selectedAccount]);
 
   const loadAssetsFromAddress = async () => {
     try {
-      await walletContext.functions.loadAssetsFromAddress(addressB);
+      await walletContext.loadAssetsFromAddress(addressB);
       showNotification('Assets loaded from second address.');
     } catch (err) {
       console.log('err', err);
@@ -55,7 +55,7 @@ const AddressForm: React.FC<Props> = (props) => {
             value={addressA}
             onChange={(txt) => {
               setAddressA(txt);
-              walletContext.functions.selectAccount(txt).catch((err) => {});
+              walletContext.selectAccount(txt).catch((err) => {});
             }}
             inputId={'personA-addr'}
           />
