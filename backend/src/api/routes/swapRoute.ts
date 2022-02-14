@@ -66,4 +66,19 @@ export default (app: Router) => {
       return res.status(error.statusCode || 500).send(error.message);
     }
   });
+
+  route.post('/createSwap', isAuth(), async (req: Request, res: Response) => {
+    try {
+      const ret = await getManager().transaction(async (EM) => {
+        const swapService = new SwapService(EM, req.body.wallet);
+        return await swapService.createSwap(req.body.data);
+      });
+      return res.json(ret).status(200);
+      // return res.json({ok: true}).status(200);
+    } catch (error: any) {
+      return res.status(error.statusCode || 500).send(error.message);
+    }
+  });
+
+
 };
