@@ -1,21 +1,22 @@
-import {Button, Divider, Grid, IconButton, TextField, Theme} from '@material-ui/core';
+import { Button, Divider, Grid, IconButton, TextField, Theme } from '@material-ui/core';
 import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import 'reflect-metadata';
-import {ALGO_ASSET, colors, EMPTY_PARTIAL_TRANSACTION} from 'src/constants';
-import {getAssetImage, getAssetLabel, showNotification} from 'src/helpers/helper';
+import { ALGO_ASSET, colors, EMPTY_PARTIAL_TRANSACTION } from 'src/constants';
+import { getAssetImage, getAssetLabel, showNotification } from 'src/helpers/helper';
 import PartialTransaction from 'src/types/PartialTransaction';
 import '../App.css';
 import GridCenter from './generic/GridCenter';
 import MyNumberInput from './generic/MyNumberInput';
 import Title from './generic/Title';
-import WalletContext, {AssetInfo} from '../providers/WalletContextProvider';
-import Autocomplete, {createFilterOptions} from '@mui/material/Autocomplete';
+import WalletContext, { AssetInfo } from '../providers/WalletContextProvider';
+import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
 import InfoIcon from '@mui/icons-material/Info';
-import assetApi from "../api/assetApi";
+import assetApi from '../api/assetApi';
+import VerifiedMark from './VerifiedMark';
 
 type Props = {
   title: string;
@@ -60,14 +61,14 @@ const TransactionFormV2: React.FC<Props> = (props) => {
               setTransaction={(t) => updateTransaction(t, i)}
               canDelete={transactions.length > 1}
               onDelete={() => removeTransaction(i)}
-              id={id? `${id}-${i}` : undefined}
+              id={id ? `${id}-${i}` : undefined}
             />
           </Grid>
         ))}
 
         <GridCenter item xs={12}>
           <Button
-            id={id? `${id}-addAsset` : undefined}
+            id={id ? `${id}-addAsset` : undefined}
             startIcon={<AddIcon />}
             variant={'contained'}
             onClick={() => setTransactions([...transactions, { ...EMPTY_PARTIAL_TRANSACTION }])}
@@ -107,20 +108,20 @@ const SingleTransaction: React.FC<PropsSingle> = (props) => {
     try {
       const asset = await walletContext.loadAsset(assetId);
       if (asset) {
-        onChangeAsset(asset)
+        onChangeAsset(asset);
       }
     } catch (err) {
-      showNotification("Asset not found.")
+      showNotification('Asset not found.');
     }
     setLoading(false);
   };
 
   const onChangeAsset = (asset: AssetInfo | null) => {
-    setTransaction({ ...transaction, assetIndex: asset ? asset.id : 0 })
-  }
+    setTransaction({ ...transaction, assetIndex: asset ? asset.id : 0 });
+  };
 
   useEffect(() => {
-    console.log("effect com walletContext", [transaction.assetIndex, walletContext.assets]);
+    console.log('effect com walletContext', [transaction.assetIndex, walletContext.assets]);
     const loadAssetFromTransaction = async () => {
       try {
         let newAsset = walletContext.assets.find((item) => item.id === transaction.assetIndex);
@@ -134,10 +135,12 @@ const SingleTransaction: React.FC<PropsSingle> = (props) => {
       }
     };
 
-    if(walletContext.assets.length > 0){
+    if (walletContext.assets.length > 0) {
       loadAssetFromTransaction();
     }
   }, [transaction.assetIndex, walletContext.assets]);
+
+
 
   const filterOptions = createFilterOptions({
     limit: 40
@@ -150,45 +153,42 @@ const SingleTransaction: React.FC<PropsSingle> = (props) => {
   return (
     <Grid container spacing={3}>
       <GridCenter item xs={12}>
-          <div className={classes.divWithRemove}>
-            <div style={{ width: 40, height: 40 }} />
+        <div className={classes.divWithRemove}>
+          <div style={{ width: 40, height: 40 }} />
 
-            <a
-              href={`https://www.nftexplorer.app/asset/${selectedAsset?.id}`}
-              target={"_blank"}
-              rel="noreferrer"
-              className={classes.row}
-            >
+          <a href={`https://www.nftexplorer.app/asset/${selectedAsset?.id}`} target={'_blank'} rel="noreferrer">
+            <div className={classes.row}>
               <div style={{ width: 40, height: 40 }} />
               <img src={getAssetImage(selectedAsset)} alt="" className={classes.img} />
-              {
-                selectedAsset?.id === ALGO_ASSET.id ?
+              {selectedAsset?.id === ALGO_ASSET.id ? (
                 <div style={{ width: 40, height: 40 }} />
-                :
+              ) : (
                 <IconButton onClick={() => {}}>
                   <InfoIcon />
                 </IconButton>
-              }
-            </a>
-
-            <div className={classes.column}>
-              {
-                canDelete &&
-                <IconButton onClick={() => onDelete()}>
-                  <DeleteIcon />
-                </IconButton>
-              }
-              <div style={{ width: 40, height: 40 }} />
+              )}
             </div>
 
+
+            <VerifiedMark assetId={transaction.assetIndex} />
+          </a>
+
+          <div className={classes.column}>
+            {canDelete && (
+              <IconButton onClick={() => onDelete()}>
+                <DeleteIcon />
+              </IconButton>
+            )}
+            <div style={{ width: 40, height: 40 }} />
           </div>
+        </div>
       </GridCenter>
 
       <Grid item xs={12}>
         <Autocomplete
-          id={id? `${id}-asset` : undefined}
+          id={id ? `${id}-asset` : undefined}
           disablePortal
-          options={ walletContext.assets }
+          options={walletContext.assets}
           getOptionLabel={getAssetLabel}
           value={selectedAsset}
           onChange={(e, asset: AssetInfo | null) => onChangeAsset(asset)}
@@ -215,7 +215,7 @@ const SingleTransaction: React.FC<PropsSingle> = (props) => {
 
       <Grid item xs={12}>
         <MyNumberInput
-          id={id? `${id}-amount` : undefined}
+          id={id ? `${id}-amount` : undefined}
           label={'Amount'}
           fullWidth
           decimalScale={selectedAsset ? selectedAsset.decimals : 0}
@@ -253,14 +253,14 @@ const useStyles = makeStyles<Theme>((theme) =>
     },
     column: {
       display: 'flex',
-      flexDirection: 'column',
+      flexDirection: 'column'
     },
     row: {
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'flex-start',
       alignItems: 'flex-start'
-    },
+    }
   })
 );
 

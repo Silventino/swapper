@@ -28,6 +28,16 @@ class AssetApi {
       throw err;
     }
   }
+
+  async getIsVerifiedNft(assetId: string | number){
+    try {
+      const res = await myAxios.post<boolean>(`/${PREFIX}/${ROUTE}/getIsVerifiedNft`, { assetId });
+      return res.data;
+    } catch (err) {
+      console.log('err', err);
+      throw err;
+    }
+  }
 }
 
 const swapApi = new AssetApi();
