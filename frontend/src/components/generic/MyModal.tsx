@@ -1,4 +1,4 @@
-import {IconButton, Modal, Paper} from '@material-ui/core';
+import { IconButton, Modal, Paper } from '@material-ui/core';
 import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
 import CloseIcon from '@mui/icons-material/Close';
@@ -71,7 +71,7 @@ const MyModal: React.FC<Props> = (props) => {
                 top: 0,
                 right: 0
               }}
-              size="large"
+              // size="large"
             >
               <CloseIcon />
             </IconButton>

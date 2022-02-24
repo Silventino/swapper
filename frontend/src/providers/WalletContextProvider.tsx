@@ -1,16 +1,16 @@
-import MyAlgoClient, {AlgorandTxn} from '@randlabs/myalgo-connect';
-import algosdk, {TransactionLike} from 'algosdk';
+import MyAlgoClient, { AlgorandTxn } from '@randlabs/myalgo-connect';
+import algosdk, { TransactionLike } from 'algosdk';
 import axios from 'axios';
-import React, {createContext, useCallback, useEffect, useState} from 'react';
+import React, { createContext, useCallback, useEffect, useState } from 'react';
 import swapApi from 'src/api/swapApi';
-import {ALGO_ASSET, DONATION_ADDRESS} from 'src/constants';
-import {waitForConfirmation} from 'src/helpers/algoHelper';
-import {useLocalStorage} from 'src/helpers/helper';
+import { ALGO_ASSET, DONATION_ADDRESS } from 'src/constants';
+import { waitForConfirmation } from 'src/helpers/algoHelper';
+import { useLocalStorage } from 'src/helpers/helper';
 import BaseTransaction from 'src/types/BaseTransaction';
 import CompleteTransaction from 'src/types/CompleteTransaction';
 import PartialTransaction from 'src/types/PartialTransaction';
-import {DonationInfo} from 'src/components/CheckboxDonation';
-import assetApi from "../api/assetApi";
+import { DonationInfo } from 'src/components/CheckboxDonation';
+import assetApi from '../api/assetApi';
 
 export const TESTNET = false;
 
@@ -18,7 +18,7 @@ const token_testnet = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 const server_testnet = 'http://127.0.0.1';
 const port_testnet = 4001;
 
-const token = {'X-API-Key': 'aDo90XU8i07qRS8ze8KlFaqn7B2AkgFl6uJg04T2'};
+const token = { 'X-API-Key': 'aDo90XU8i07qRS8ze8KlFaqn7B2AkgFl6uJg04T2' };
 const server = 'https://mainnet-algorand.api.purestake.io/ps2';
 const port = 443;
 
@@ -99,7 +99,7 @@ type PropsWalletContext = {
   // functions
   connectMyAlgo: () => Promise<void>;
   selectAccount: (addr: string) => Promise<void>;
-  createAtomicTransaction: (t: PartialTransaction[], d?: DonationInfo) => Promise<string>;
+  createAtomicTransaction: (t: PartialTransaction[], d?: DonationInfo, r?: number) => Promise<string>;
   signTransaction: (t: CompleteTransaction) => Promise<CompleteTransaction>;
   signTransactions: (t: CompleteTransaction[]) => Promise<CompleteTransaction[]>;
   sendTransactions: (blobs: Uint8Array[]) => Promise<string>;
@@ -121,10 +121,8 @@ const DEFAULT_WALLET_CONTEXT_VALUE = {
   myAlgoClient: new MyAlgoClient(),
 
   // functions
-  connectMyAlgo: async () => {
-  },
-  selectAccount: async (addr: string) => {
-  },
+  connectMyAlgo: async () => {},
+  selectAccount: async (addr: string) => {},
   createAtomicTransaction: async (t: PartialTransaction[]) => {
     return '';
   },
@@ -156,7 +154,7 @@ const DEFAULT_WALLET_CONTEXT_VALUE = {
 
 const WalletContext = createContext<PropsWalletContext>(DEFAULT_WALLET_CONTEXT_VALUE);
 
-const WalletContextProvider: React.FC = ({children}) => {
+const WalletContextProvider: React.FC = ({ children }) => {
   const [selectedAccount, setSelectedAccount] = useLocalStorage<AccountDetailedInfo | null>('selectedAccount', null);
   const [accounts, setAccounts] = useLocalStorage<AccountInfo[]>('accounts', []);
   const [assetDict, setAssetDict] = useLocalStorage<AssetInfo[]>('assets', []);
@@ -219,11 +217,11 @@ const WalletContextProvider: React.FC = ({children}) => {
       ///////////////////////////////////////////////////////////////////////////////////////
 
       newAssets.push(ALGO_ASSET);
-      setAssetDict({...assetDict});
+      setAssetDict({ ...assetDict });
 
       return [newSelectedAccount, newAssets];
     },
-    [assetDict, setAssetDict],
+    [assetDict, setAssetDict]
   );
 
   const selectAccount = useCallback(
@@ -241,33 +239,27 @@ const WalletContextProvider: React.FC = ({children}) => {
       }
       setLoadingAccount(false);
     },
-    [loadInfoFromAddress, setSelectedAccount],
+    [loadInfoFromAddress, setSelectedAccount]
   );
 
-  const connectMyAlgo = useCallback(
-    async () => {
-      try {
-        const res = await myAlgoClient.connect();
-        setAccounts(res);
-        if (!res.length) {
-          throw new Error('Failed to connect wallet.');
-        }
-        selectAccount(res[0].address);
-      } catch (err) {
-        console.log('err', err);
-        throw err;
+  const connectMyAlgo = useCallback(async () => {
+    try {
+      const res = await myAlgoClient.connect();
+      setAccounts(res);
+      if (!res.length) {
+        throw new Error('Failed to connect wallet.');
       }
-    },
-    [myAlgoClient, setAccounts, selectAccount],
-  );
+      selectAccount(res[0].address);
+    } catch (err) {
+      console.log('err', err);
+      throw err;
+    }
+  }, [myAlgoClient, setAccounts, selectAccount]);
 
-  const getBaseTransaction = useCallback(
-    async () => {
-      let txn = (await algodClient.getTransactionParams().do()) as BaseTransaction;
-      return txn;
-    },
-    [algodClient],
-  );
+  const getBaseTransaction = useCallback(async () => {
+    let txn = (await algodClient.getTransactionParams().do()) as BaseTransaction;
+    return txn;
+  }, [algodClient]);
 
   const sendTransactions = useCallback(
     async (transactions: Uint8Array[]) => {
@@ -283,7 +275,7 @@ const WalletContextProvider: React.FC = ({children}) => {
         throw err;
       }
     },
-    [algodClient],
+    [algodClient]
   );
 
   const signTransactions = useCallback(
@@ -301,7 +293,7 @@ const WalletContextProvider: React.FC = ({children}) => {
         throw err;
       }
     },
-    [myAlgoClient],
+    [myAlgoClient]
   );
 
   const optinAssets = useCallback(
@@ -345,9 +337,8 @@ const WalletContextProvider: React.FC = ({children}) => {
         throw err;
       }
     },
-    [algodClient, getBaseTransaction, selectAccount, selectedAccount, sendTransactions, signTransactions],
+    [algodClient, getBaseTransaction, selectAccount, selectedAccount, sendTransactions, signTransactions]
   );
-
 
   const optoutAsset = useCallback(
     async (assetIndexes: number[] | string[]) => {
@@ -381,9 +372,8 @@ const WalletContextProvider: React.FC = ({children}) => {
         throw err;
       }
     },
-    [algodClient, getBaseTransaction, selectAccount, selectedAccount, sendTransactions, signTransactions],
+    [algodClient, getBaseTransaction, selectAccount, selectedAccount, sendTransactions, signTransactions]
   );
-
 
   const saveGroup = useCallback(
     async (groupID: Buffer, transactions: CompleteTransaction[], donation?: DonationInfo) => {
@@ -426,14 +416,14 @@ const WalletContextProvider: React.FC = ({children}) => {
 
       return txID;
     },
-    [myAlgoClient, getBaseTransaction, selectedAccount, sendTransactions],
+    [myAlgoClient, getBaseTransaction, selectedAccount, sendTransactions]
   );
 
   const createAtomicTransaction = useCallback(
-    async (transactions: PartialTransaction[], donation?: DonationInfo) => {
+    async (transactions: PartialTransaction[], donation?: DonationInfo, minutes: number = 30) => {
       try {
         const baseTnx = await getBaseTransaction();
-        baseTnx.lastRound = baseTnx.firstRound + 500;
+        baseTnx.lastRound = baseTnx.firstRound + minutes * 15;
 
         const newTransactions: CompleteTransaction[] = [];
         for (let i = 0; i < transactions.length; i++) {
@@ -483,7 +473,7 @@ const WalletContextProvider: React.FC = ({children}) => {
         throw err;
       }
     },
-    [assets, getBaseTransaction, saveGroup],
+    [assets, getBaseTransaction, saveGroup]
   );
 
   const signTransaction = useCallback(
@@ -498,9 +488,8 @@ const WalletContextProvider: React.FC = ({children}) => {
         throw err;
       }
     },
-    [myAlgoClient],
+    [myAlgoClient]
   );
-
 
   const loadAssetsFromAddress = useCallback(
     async (address: string) => {
@@ -516,9 +505,8 @@ const WalletContextProvider: React.FC = ({children}) => {
       }
       setLoadingAccount(false);
     },
-    [assets, loadInfoFromAddress],
+    [assets, loadInfoFromAddress]
   );
-
 
   const loadAsset = useCallback(
     async (assetIdStr: string) => {
@@ -540,9 +528,8 @@ const WalletContextProvider: React.FC = ({children}) => {
         throw err;
       }
     },
-    [assets],
+    [assets]
   );
-
 
   const logout = () => {
     setAccounts([]);
@@ -589,5 +576,7 @@ const WalletContextProvider: React.FC = ({children}) => {
     </WalletContext.Provider>
   );
 };
-export {WalletContextProvider};
+
+export { WalletContextProvider };
+
 export default WalletContext;
