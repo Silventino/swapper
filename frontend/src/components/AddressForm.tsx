@@ -70,7 +70,7 @@ const AddressForm: React.FC<Props> = (props) => {
       </MyModal>
 
       <Grid container spacing={4}>
-        <Grid item xs={12} className={classes.header}>
+        <Grid item xs={12} className={classes.header} style={{ paddingTop: 10 }}>
           <div className={classes.emptyDiv} />
 
           <Title className={classes.title} variant={'h4'}>{`Who is swapping?`}</Title>
@@ -141,7 +141,8 @@ const useStyles = makeStyles<Theme>((theme) =>
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'space-between',
-      paddingTop: 10
+      paddingTop: 10,
+      alignItems: 'center'
     },
     emptyDiv: {
       width: 40,
