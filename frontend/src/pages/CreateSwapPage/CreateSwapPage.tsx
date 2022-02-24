@@ -9,7 +9,7 @@ import GridCenter from '../../components/generic/GridCenter';
 import TransactionFormV2 from '../../components/TransactionFormV2';
 import WalletContext from '../../providers/WalletContextProvider';
 import { ALGO_ASSET, EMPTY_PARTIAL_TRANSACTION } from '../../constants';
-import { showError, showNotification } from 'src/helpers/helper';
+import { showError, showNotification, useLocalStorage } from 'src/helpers/helper';
 import PartialTransaction from 'src/types/PartialTransaction';
 import { useHistory } from 'react-router-dom';
 import Loader from 'src/components/generic/Loader';
@@ -37,7 +37,7 @@ function CreateSwapPage() {
 
   const [addressA, setAddressA] = useState(walletContext.selectedAccount?.address ?? '');
   const [addressB, setAddressB] = useState('');
-  const [minutes, setMinutes] = useState(30);
+  const [minutes, setMinutes] = useLocalStorage('TimeLimit', 30);
 
   const [transactionsA, setTransactionsA] = useState<PartialTransaction[]>([{ ...EMPTY_PARTIAL_TRANSACTION }]);
 
