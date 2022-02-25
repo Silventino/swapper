@@ -55,7 +55,7 @@ const VerifiedMark: React.FC<Props> = (props) => {
       <div className={classes.card}>
         <div className={classes.centerColumn}>
           <span>{collectionName}</span>
-          <span>Verified by NFTx</span>
+          <span style={{ fontSize: 11, fontWeight: 900 }}>VERIFIED BY NFTx</span>
         </div>
 
         <svg
@@ -104,7 +104,7 @@ const useStyles = makeStyles<Theme>((theme) =>
       // height: 25
     },
     emptyCard: {
-      height: 48,
+      height: 42,
       marginTop: 10
     },
     centerColumn: {
