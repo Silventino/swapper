@@ -42,7 +42,7 @@ export default class AssetService {
     return asset[0];
   }
 
-  async getIsVerifiedNft(assetId: string) {
+  async checkIsVerifiedNft(assetId: string) {
     const assetModel = getRepository(Asset);
     const asset = await assetModel.findOne({ where: { id: assetId } });
     if (!asset) {
@@ -50,16 +50,16 @@ export default class AssetService {
     }
     const verificationTime = moment(asset.verifiedNftTime, 'YYYYMMDD');
     const today = moment();
-    if (verificationTime.isValid() && Math.abs(verificationTime.diff(today, "days")) < 15) {
+    if (verificationTime.isValid() && Math.abs(verificationTime.diff(today, 'days')) < 15) {
       return asset.verifiedNft ?? false;
     }
 
-    const res = await this.getIsVerifiedNftPuppeteer(assetId);
+    const res = await this.checkIsVerifiedNftPuppeteer(assetId);
     await assetModel.update({ id: asset.id }, { verifiedNft: res, verifiedNftTime: today.format('YYYYMMDD') });
     return res;
   }
 
-  async getIsVerifiedNftPuppeteer(assetId: string) {
+  async checkIsVerifiedNftPuppeteer(assetId: string) {
     const browser = await puppeteer.launch();
     try {
       const page = await browser.newPage();

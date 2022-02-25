@@ -58,7 +58,11 @@ code {
 
 a {
   color: inherit;
-  /* text-decoration: none; */
+  text-decoration: none;
+}
+
+a p {
+  text-decoration: underline;
 }
 
 /*animate the background gradient position, use vh so that start/end syncs up viewport horizontal*/

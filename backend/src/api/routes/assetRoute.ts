@@ -18,14 +18,14 @@ export default (app: Router) => {
     }
   });
 
-  route.post('/getIsVerifiedNft', async (req: Request<{ parent: string }>, res: Response) => {
-    try {
-      // const EM = getManager();
-      const assetService = new AssetService();
-      const ret = await assetService.getIsVerifiedNft(req.body.assetId);
-      return res.json(ret).status(200);
-    } catch (error: any) {
-      return res.status(error.statusCode || 500).send(error.message);
-    }
-  });
+  // route.post('/checkIsVerifiedNft', async (req: Request<{ parent: string }>, res: Response) => {
+  //   try {
+  //     // const EM = getManager();
+  //     const assetService = new AssetService();
+  //     const ret = await assetService.checkIsVerifiedNft(req.body.assetId);
+  //     return res.json(ret).status(200);
+  //   } catch (error: any) {
+  //     return res.status(error.statusCode || 500).send(error.message);
+  //   }
+  // });
 };
