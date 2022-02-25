@@ -5,7 +5,7 @@ import SwapReq from 'src/types/SwapReq';
 import myAxios, {getConnectedWallet} from './myAxios';
 
 const PREFIX = 'api';
-const ROUTE = 'transaction';
+const ROUTE = 'swap';
 
 class SwapApi {
   async getSwap( parent: string) {

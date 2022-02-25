@@ -43,4 +43,10 @@ export default class Asset {
 
   @Column()
   destroyed!: boolean;
+
+  @Column({ default: false })
+  verifiedNft?: boolean;
+
+  @Column({ default: '' })
+  verifiedNftTime?: string;
 }

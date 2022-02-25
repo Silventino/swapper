@@ -12,12 +12,6 @@ import PartialTransaction from 'src/types/PartialTransaction';
 import { DonationInfo } from 'src/components/CheckboxDonation';
 import assetApi from '../api/assetApi';
 
-export const TESTNET = false;
-
-const token_testnet = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
-const server_testnet = 'http://127.0.0.1';
-const port_testnet = 4001;
-
 const token = { 'X-API-Key': 'aDo90XU8i07qRS8ze8KlFaqn7B2AkgFl6uJg04T2' };
 const server = 'https://mainnet-algorand.api.purestake.io/ps2';
 const port = 443;
@@ -164,19 +158,11 @@ const WalletContextProvider: React.FC = ({ children }) => {
   const [loadingAccount, setLoadingAccount] = useState(false);
 
   const [myAlgoClient] = useState(new MyAlgoClient());
-  const [algodClient] = useState(
-    TESTNET
-      ? new algosdk.Algodv2(token_testnet, server_testnet, port_testnet)
-      : new algosdk.Algodv2(token, server, port)
-  );
+  const [algodClient] = useState(new algosdk.Algodv2(token, server, port));
 
   const loadInfoFromAddress = useCallback(
     async (address: string): Promise<[x: AccountDetailedInfo, y: AssetInfo[]]> => {
-      const res = await axios.get<AccountDetailedInfo>(
-        TESTNET
-          ? `https://testnet.algoexplorerapi.io/v2/accounts/${address}`
-          : `https://algoexplorerapi.io/v2/accounts/${address}`
-      );
+      const res = await axios.get<AccountDetailedInfo>(`https://algoexplorerapi.io/v2/accounts/${address}`);
       const newSelectedAccount = res.data;
 
       const assetsNotFound = [];
