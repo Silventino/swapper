@@ -1,8 +1,8 @@
-import {Theme, Typography} from '@material-ui/core';
+import { Theme, Typography } from '@material-ui/core';
 import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
 import React from 'react';
-import {HEADER_HEIGHT} from '../constants';
+import { HEADER_HEIGHT } from '../constants';
 
 function TermsOfService() {
   const classes = useStyles();
@@ -12,8 +12,8 @@ function TermsOfService() {
       <br />
       By using this website, you agree to only buy or sell artwork and gaming NFTs when using this tool, and never buy
       or sell investments or securities here. Listings are the responsibility of the seller. Due diligence is the
-      responsibility of the buyer - check the ASA ID. And of course, all swaps are final, since your Algorand
-      transactions are immutable.
+      responsibility of the buyer - check the ASA ID. And of course, all swaps are final, since Algorand transactions
+      are immutable.
       <br />
       <br />
       ONLY click in the button below and use the app if you agree with all the statements above.
@@ -44,8 +44,6 @@ const useStyles = makeStyles<Theme>((theme) =>
       textAlign: 'center'
     },
     smalltxt: {
-      marginLeft: 10,
-      marginRight: 10,
       fontSize: 16,
       color: '#fff',
       marginBottom: 15
