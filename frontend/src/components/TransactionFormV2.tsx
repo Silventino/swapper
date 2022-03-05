@@ -17,6 +17,7 @@ import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
 import InfoIcon from '@mui/icons-material/Info';
 import assetApi from '../api/assetApi';
 import VerifiedMark from './VerifiedMark';
+import ImgWithLoader from './ImgWithLoader';
 
 type Props = {
   title: string;
@@ -140,8 +141,6 @@ const SingleTransaction: React.FC<PropsSingle> = (props) => {
     }
   }, [transaction.assetIndex, walletContext.assets]);
 
-
-
   const filterOptions = createFilterOptions({
     limit: 40
   });
@@ -159,7 +158,7 @@ const SingleTransaction: React.FC<PropsSingle> = (props) => {
           <a href={`https://www.nftexplorer.app/asset/${selectedAsset?.id}`} target={'_blank'} rel="noreferrer">
             <div className={classes.row}>
               <div style={{ width: 40, height: 40 }} />
-              <img src={getAssetImage(selectedAsset)} alt="" className={classes.img} />
+              <ImgWithLoader src={getAssetImage(selectedAsset)} alt="" className={classes.img} />
               {selectedAsset?.id === ALGO_ASSET.id ? (
                 <div style={{ width: 40, height: 40 }} />
               ) : (
@@ -168,7 +167,6 @@ const SingleTransaction: React.FC<PropsSingle> = (props) => {
                 </IconButton>
               )}
             </div>
-
 
             <VerifiedMark assetId={transaction.assetIndex} />
           </a>

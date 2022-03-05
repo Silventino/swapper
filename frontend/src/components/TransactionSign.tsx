@@ -1,12 +1,12 @@
-import {Button, Grid, IconButton, Theme} from '@material-ui/core';
+import { Button, Grid, IconButton, Theme } from '@material-ui/core';
 import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
 import clsx from 'clsx';
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import 'reflect-metadata';
 import swapApi from 'src/api/swapApi';
-import {ALGO_ASSET, colors} from 'src/constants';
-import {getAssetImage, showError} from 'src/helpers/helper';
+import { ALGO_ASSET, colors } from 'src/constants';
+import { getAssetImage, showError } from 'src/helpers/helper';
 import CompleteTransaction from 'src/types/CompleteTransaction';
 import '../App.css';
 import GridCenter from './generic/GridCenter';
@@ -14,9 +14,11 @@ import Loader from './generic/Loader';
 import MyInput from './generic/MyInput';
 // // import RainbowDiv from './generic/RainbowDiv';
 import Title from './generic/Title';
-import WalletContext, {AssetInfo} from '../providers/WalletContextProvider';
+import WalletContext, { AssetInfo } from '../providers/WalletContextProvider';
 import InfoIcon from '@mui/icons-material/Info';
-import assetApi from "../api/assetApi";
+import assetApi from '../api/assetApi';
+import ImgWithLoader from './ImgWithLoader';
+import VerifiedMark from './VerifiedMark';
 
 type Props = {
   index: number;
@@ -36,7 +38,6 @@ const TransactionSign: React.FC<Props> = (props) => {
 
   const walletContext = useContext(WalletContext);
 
-
   const signTransaction = async () => {
     setLoading(true);
     try {
@@ -50,7 +51,7 @@ const TransactionSign: React.FC<Props> = (props) => {
   };
 
   useEffect(() => {
-    console.log("effect com walletContext.2");
+    console.log('effect com walletContext.2');
     const getAsset = async () => {
       setLoading(true);
       try {
@@ -96,17 +97,20 @@ const TransactionSign: React.FC<Props> = (props) => {
         </GridCenter>
 
         <GridCenter item xs={12}>
-          <a href={`https://www.nftexplorer.app/asset/${selectedAsset?.id}`} target={"_blank"} rel="noreferrer" className={classes.row}>
-            <div style={{ width: 40, height: 40 }} />
-            <img src={getAssetImage(selectedAsset)} alt="" className={classes.img} />
-            {
-              selectedAsset?.id === ALGO_ASSET.id ?
+          <a href={`https://www.nftexplorer.app/asset/${selectedAsset?.id}`} target={'_blank'} rel="noreferrer">
+            <div className={classes.row}>
               <div style={{ width: 40, height: 40 }} />
-              :
-              <IconButton onClick={() => {}}>
-                <InfoIcon />
-              </IconButton>
-            }
+              <ImgWithLoader src={getAssetImage(selectedAsset)} alt="" className={classes.img} />
+              {selectedAsset?.id === ALGO_ASSET.id ? (
+                <div style={{ width: 40, height: 40 }} />
+              ) : (
+                <IconButton onClick={() => {}}>
+                  <InfoIcon />
+                </IconButton>
+              )}
+            </div>
+
+            <VerifiedMark assetId={transaction.assetIndex ?? 0} />
           </a>
         </GridCenter>
 
