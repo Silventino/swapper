@@ -1,8 +1,5 @@
-import { Theme } from '@material-ui/core';
-import createStyles from '@material-ui/styles/createStyles';
-import makeStyles from '@material-ui/styles/makeStyles';
-import React, { useContext, useEffect, useState } from 'react';
-import WalletContext, { AccountInfo } from '../../providers/WalletContextProvider';
+import React, {useContext, useEffect, useState} from 'react';
+import WalletContext, {AccountInfo} from '../../providers/WalletContextProvider';
 import MySelect from './MySelect';
 
 type Props = {
@@ -24,7 +21,7 @@ const ConnectedWalletSelect: React.FC<Props> = (props) => {
   useEffect(() => {
     const newSelected = walletContext.accounts.find((item) => item.address === value);
     setSelected(newSelected ?? null);
-  }, [value]);
+  }, [value, walletContext.accounts]);
 
   return (
     <>
@@ -41,8 +38,7 @@ const ConnectedWalletSelect: React.FC<Props> = (props) => {
   );
 };
 
-type StyleProps = {};
-
-const useStyles = makeStyles<Theme, StyleProps>((theme) => createStyles({}));
+// type StyleProps = {};
+// const useStyles = makeStyles<Theme, StyleProps>((theme) => createStyles({}));
 
 export default ConnectedWalletSelect;

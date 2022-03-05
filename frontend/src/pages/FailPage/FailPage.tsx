@@ -1,25 +1,30 @@
-import { Grid, Theme, Typography } from '@material-ui/core';
+import {Button, Grid, Theme, Typography} from '@material-ui/core';
 import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
 import React from 'react';
+import {useHistory} from 'react-router';
 import 'reflect-metadata';
-import '../App.css';
-import GridCenter from '../components/generic/GridCenter';
+import '../../App.css';
+import GridCenter from '../../components/generic/GridCenter';
 
-function MaintenancePage() {
+function FailPage() {
   const classes = useStyles();
+
+  const history = useHistory();
 
   return (
     <Grid container spacing={4} className={classes.container}>
       <GridCenter key={`transaction${0}`} item xs={12} className={classes.swapGrid}>
-        <Typography className={classes.bigtxt}>🛠️</Typography>
-        <Typography className={classes.medtxt}>Under Maintenance.</Typography>
+        <Typography className={classes.bigtxt}>😔</Typography>
+        <Typography className={classes.medtxt}>Fail...</Typography>
+        <Typography className={classes.smalltxt}>The swap was not completed.</Typography>
         <Typography className={classes.smalltxt}>
-          Swapper is under maintenance,{' '}
-          <a href="https://twitter.com/Silventino" target="_blank">
-            follow me on Twitter for further updates.
-          </a>
+          You took too long to complete the swap and now it is invalid. Please, create another one.
         </Typography>
+
+        <Button variant="contained" className={classes.btn} onClick={() => history.push('/')}>
+          NEW SWAP
+        </Button>
       </GridCenter>
     </Grid>
   );
@@ -28,7 +33,7 @@ function MaintenancePage() {
 const useStyles = makeStyles<Theme>((theme) =>
   createStyles({
     container: {
-      maxWidth: 400
+      maxWidth: 500
     },
     swapGrid: {
       marginTop: 10,
@@ -60,8 +65,11 @@ const useStyles = makeStyles<Theme>((theme) =>
       height: 300,
       margin: 15,
       borderRadius: 10
+    },
+    btn: {
+      marginTop: 20
     }
   })
 );
 
-export default MaintenancePage;
+export default FailPage;

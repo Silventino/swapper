@@ -1,15 +1,15 @@
-import { Button, Grid, Theme, Typography } from '@material-ui/core';
+import {Button, Grid, Theme, Typography} from '@material-ui/core';
 import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
 import React from 'react';
 import 'reflect-metadata';
-import { DONATION_ADDRESS } from 'src/constants';
-import { showError, showNotification } from 'src/helpers/helper';
-import '../App.css';
-import qr from '../assets/qr.jpeg';
-import GridCenter from '../components/generic/GridCenter';
+import {DONATION_ADDRESS} from 'src/constants';
+import {showError, showNotification} from 'src/helpers/helper';
+import '../../App.css';
+import qr from '../../assets/qr.jpeg';
+import GridCenter from '../../components/generic/GridCenter';
 
-function DonatePage() {
+function SuccessPage() {
   const classes = useStyles();
 
   const copyToClipboard = () => {
@@ -24,10 +24,11 @@ function DonatePage() {
   return (
     <Grid container spacing={4} className={classes.container}>
       <GridCenter key={`transaction${0}`} item xs={12} className={classes.swapGrid}>
-        <Typography className={classes.bigtxt}>❤️</Typography>
-        <Typography className={classes.medtxt}>Buy me a coffee</Typography>
+        <Typography className={classes.bigtxt}>🎉</Typography>
+        <Typography className={classes.medtxt}>Success!</Typography>
+        <Typography className={classes.smalltxt}>The swap was completed.</Typography>
         <Typography className={classes.smalltxt}>
-          If you like the app, consider donating any amount of ALGO, YLDY or Finite to:
+          If this app helped you, please consider donating any amount to:
         </Typography>
 
         <img src={qr} className={classes.qr} alt={'qr-code'} />
@@ -79,4 +80,4 @@ const useStyles = makeStyles<Theme>((theme) =>
   })
 );
 
-export default DonatePage;
+export default SuccessPage;

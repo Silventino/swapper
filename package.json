@@ -6,8 +6,7 @@
   "scripts": {
     "start": "start cmd.exe @cmd /k \"cd backend && yarn start\" && start cmd.exe @cmd /k \"cd frontend && yarn start\"",
     "build": "start cmd.exe @cmd /k \"cd backend && yarn build\" && start cmd.exe @cmd /k \"cd frontend && yarn build\"",
-    "install": "start cmd.exe @cmd /k \"cd backend && yarn && exit\" && start cmd.exe @cmd /k \"cd frontend && yarn && exit\"",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "install": "start cmd.exe @cmd /k \"cd backend && yarn && exit\" && start cmd.exe @cmd /k \"cd frontend && yarn && exit\""
   },
   "author": "",
   "license": "MIT",

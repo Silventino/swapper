@@ -71,7 +71,7 @@ const MyModal: React.FC<Props> = (props) => {
                 top: 0,
                 right: 0
               }}
-              size="large"
+              // size="large"
             >
               <CloseIcon />
             </IconButton>

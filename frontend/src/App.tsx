@@ -2,7 +2,7 @@ import { Theme } from '@material-ui/core';
 import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
 import React, { useContext } from 'react';
-import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
+import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 import 'reflect-metadata';
 import './App.css';
 import Header from './components/Header';
@@ -11,13 +11,11 @@ import ModalConnect from './components/ModalConnect';
 import ModalLoading from './components/ModalLoading';
 import WalletContext from './providers/WalletContextProvider';
 import { HEADER_HEIGHT } from './constants';
-import CreateSwapPageV2 from './pages/CreateSwapPageV2';
 import SignTransactionPage from './pages/SignTransactionPage';
 import SuccessPage from './pages/SuccessPage';
 import FailPage from './pages/FailPage';
 import OptoutPage from './pages/OptoutPage';
-import CreateSwapPageV3 from './pages/CreateSwapPageV3';
-import MyParticles from './components/generic/MyParticles';
+import CreateSwapPage from './pages/CreateSwapPage';
 import DonatePage from './pages/DonatePage';
 
 function App() {
@@ -52,11 +50,8 @@ function App() {
               <Route path="/optout">
                 <OptoutPage />
               </Route>
-              <Route path="/old">
-                <CreateSwapPageV2 />
-              </Route>
               <Route path="/">
-                <CreateSwapPageV3 />
+                <CreateSwapPage />
               </Route>
               <Route path="/*">
                 <Redirect to={'/'} />
@@ -65,7 +60,6 @@ function App() {
           </div>
           <Footer />
         </div>
-
       </div>
     </Router>
   );

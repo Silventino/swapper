@@ -1,14 +1,11 @@
-import fs from 'fs';
 import http from 'http';
-import https from 'https';
-import path from 'path';
 import 'reflect-metadata';
 import { createConnection } from 'typeorm';
+import Transaction from './db/entity/Transaction';
 // import 'reflect-metadata'; // We need this in order to use @Decorators
 // import "reflect-metadata";
 import env from './loaders/env';
 import expressLoader from './loaders/express';
-import Transaction from './db/entity/Transaction';
 
 const main = async () => {
   try {

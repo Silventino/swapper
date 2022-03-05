@@ -3,22 +3,22 @@ import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
 import React, { useContext, useState } from 'react';
 import 'reflect-metadata';
-import '../App.css';
+import '../../App.css';
 
-import GridCenter from '../components/generic/GridCenter';
-import TransactionFormV2 from '../components/TransactionFormV2';
-import WalletContext from '../providers/WalletContextProvider';
-import {ALGO_ASSET, EMPTY_PARTIAL_TRANSACTION, HEADER_HEIGHT} from '../constants';
-import { showError, showNotification } from 'src/helpers/helper';
+import GridCenter from '../../components/generic/GridCenter';
+import TransactionFormV2 from '../../components/TransactionFormV2';
+import WalletContext from '../../providers/WalletContextProvider';
+import { ALGO_ASSET, EMPTY_PARTIAL_TRANSACTION } from '../../constants';
+import { showError, showNotification, useLocalStorage } from 'src/helpers/helper';
 import PartialTransaction from 'src/types/PartialTransaction';
 import { useHistory } from 'react-router-dom';
 import Loader from 'src/components/generic/Loader';
 import ModalTermsOfService from 'src/components/ModalTermsOfService';
 import AddressForm from 'src/components/AddressForm';
 import { setTimeout } from 'timers';
-import CheckboxDonation, { DonationInfo } from "../components/CheckboxDonation";
+import CheckboxDonation, { DonationInfo } from '../../components/CheckboxDonation';
 
-function CreateSwapPageV3() {
+function CreateSwapPage() {
   const walletContext = useContext(WalletContext);
 
   const [loading, setLoading] = useState(false);
@@ -37,6 +37,7 @@ function CreateSwapPageV3() {
 
   const [addressA, setAddressA] = useState(walletContext.selectedAccount?.address ?? '');
   const [addressB, setAddressB] = useState('');
+  const [minutes, setMinutes] = useLocalStorage('TimeLimit', 30);
 
   const [transactionsA, setTransactionsA] = useState<PartialTransaction[]>([{ ...EMPTY_PARTIAL_TRANSACTION }]);
 
@@ -64,7 +65,7 @@ function CreateSwapPageV3() {
       });
       const allTransactions = newTransactionsA.concat(newTransactionsB);
 
-      const tx = await walletContext.functions.createAtomicTransaction(allTransactions, donationInfo);
+      const tx = await walletContext.createAtomicTransaction(allTransactions, donationInfo, minutes);
       setTimeout(() => {
         history.replace(`/tx/${tx}`);
         showNotification('Swap created!');
@@ -99,7 +100,14 @@ function CreateSwapPageV3() {
       />
       <Grid container spacing={4} className={classes.container}>
         <Grid item xs={12} className={classes.swapGrid}>
-          <AddressForm addressA={addressA} setAddressA={setAddressA} addressB={addressB} setAddressB={setAddressB} />
+          <AddressForm
+            addressA={addressA}
+            setAddressA={setAddressA}
+            addressB={addressB}
+            setAddressB={setAddressB}
+            minutes={minutes}
+            setMinutes={setMinutes}
+          />
         </Grid>
 
         <Grid item xs={12} md={6}>
@@ -107,7 +115,7 @@ function CreateSwapPageV3() {
             title={"You'll Send"}
             transactions={transactionsA}
             setTransactions={(t) => setTransactionsA([...t])}
-            id={"personA"}
+            id={'personA'}
           />
         </Grid>
 
@@ -116,19 +124,21 @@ function CreateSwapPageV3() {
             title={"You'll Receive"}
             transactions={transactionsB}
             setTransactions={(t) => setTransactionsB([...t])}
-            id={"personB"}
+            id={'personB'}
           />
         </Grid>
 
         <GridCenter item xs={12}>
-          <CheckboxDonation
-            donationInfo={donationInfo}
-            setDonationInfo={setDonationInfo}
-          />
+          <CheckboxDonation donationInfo={donationInfo} setDonationInfo={setDonationInfo} />
         </GridCenter>
 
-        <GridCenter item xs={12} >
-          <Button id={"btn-letsgo"} variant={'contained'} onClick={() => setOpenTermsOfService(true)} style={{marginBottom: 35}}>
+        <GridCenter item xs={12}>
+          <Button
+            id={'btn-letsgo'}
+            variant={'contained'}
+            onClick={() => setOpenTermsOfService(true)}
+            style={{ marginBottom: 35 }}
+          >
             LET'S GO!
           </Button>
         </GridCenter>
@@ -146,4 +156,4 @@ const useStyles = makeStyles<Theme>((theme) =>
   })
 );
 
-export default CreateSwapPageV3;
+export default CreateSwapPage;

@@ -23,13 +23,13 @@ myAxios.interceptors.response.use(
 );
 
 export const getConnectedWallet = () => {
-  const myWallet = JSON.parse(localStorage.getItem("selectedAccount") ?? "null") as AccountDetailedInfo | null
-  if(!myWallet){
-    throw new Error("Please connect your wallet first.")
+  const myWallet = JSON.parse(localStorage.getItem('selectedAccount') ?? 'null') as AccountDetailedInfo | null;
+  if (!myWallet) {
+    throw new Error('Please connect your wallet first.');
   }
 
-  console.log("myWallet.address", myWallet.address)
+  console.log('myWallet.address', myWallet.address);
   return myWallet.address;
-}
+};
 
 export default myAxios;
