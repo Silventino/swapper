@@ -1,14 +1,30 @@
-import {fromCompleteTransaction, toCompleteTransaction} from 'src/helpers/helper';
+import { fromCompleteTransaction, toCompleteTransaction } from 'src/helpers/helper';
 import CompleteTransaction from 'src/types/CompleteTransaction';
 import Swap from 'src/types/Swap';
 import SwapReq from 'src/types/SwapReq';
-import myAxios, {getConnectedWallet} from './myAxios';
+import myAxios, { getConnectedWallet } from './myAxios';
 
 const PREFIX = 'api';
 const ROUTE = 'swap';
 
 class SwapApi {
-  async getSwap( parent: string) {
+  async getMySwaps({ skip, take }: { skip: number; take: number }) {
+    try {
+      const myWallet = getConnectedWallet();
+      const res = await myAxios.post<Swap[]>(
+        `/${PREFIX}/${ROUTE}/getMySwaps`,
+        { skip, take },
+        { headers: { Authorization: myWallet } }
+      );
+      const data = res.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+
+  async getSwap(parent: string) {
     try {
       const myWallet = getConnectedWallet();
       const res = await myAxios.post<SwapReq>(
@@ -32,7 +48,7 @@ class SwapApi {
     }
   }
 
-  async insertSwap( transactions: CompleteTransaction[], parent: string) {
+  async insertSwap(transactions: CompleteTransaction[], parent: string) {
     try {
       const myWallet = getConnectedWallet();
       const treated = transactions.map((item) => fromCompleteTransaction(item));
@@ -49,7 +65,7 @@ class SwapApi {
     }
   }
 
-  async signTransaction( signed: CompleteTransaction) {
+  async signTransaction(signed: CompleteTransaction) {
     try {
       const myWallet = getConnectedWallet();
       const treated = fromCompleteTransaction(signed);
@@ -66,7 +82,7 @@ class SwapApi {
     }
   }
 
-  async completeSwap( txId: string) {
+  async completeSwap(txId: string) {
     try {
       const myWallet = getConnectedWallet();
       let res = await myAxios.post(`/${PREFIX}/${ROUTE}/complete`, { txId }, { headers: { Authorization: myWallet } });
@@ -78,7 +94,7 @@ class SwapApi {
     }
   }
 
-  async killSwap( txId: string) {
+  async killSwap(txId: string) {
     try {
       const myWallet = getConnectedWallet();
       let res = await myAxios.post(`/${PREFIX}/${ROUTE}/kill`, { txId }, { headers: { Authorization: myWallet } });

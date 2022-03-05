@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 import Transaction from './Transaction';
 
 @Entity()
@@ -8,6 +8,9 @@ export default class Swap {
 
   @Column()
   status!: number;
+
+  @CreateDateColumn()
+  createdAt!: Date;
 
   @OneToMany(() => Transaction, (tx: Transaction) => tx.swap)
   transactions!: Transaction[];

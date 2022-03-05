@@ -78,5 +78,5 @@ type ResCheckVerification = {
   error?: string;
 };
 
-const swapApi = new AssetApi();
-export default swapApi;
+const assetApi = new AssetApi();
+export default assetApi;

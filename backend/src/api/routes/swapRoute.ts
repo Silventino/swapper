@@ -80,5 +80,16 @@ export default (app: Router) => {
     }
   });
 
-
+  route.post('/getMySwaps', isAuth(), async (req: Request, res: Response) => {
+    try {
+      const ret = await getManager().transaction(async (EM) => {
+        const swapService = new SwapService(EM, req.body.wallet);
+        return await swapService.getMySwaps({ skip: req.body.skip, take: req.body.take });
+      });
+      return res.json(ret).status(200);
+      // return res.json({ok: true}).status(200);
+    } catch (error: any) {
+      return res.status(error.statusCode || 500).send(error.message);
+    }
+  });
 };

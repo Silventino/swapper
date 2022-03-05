@@ -1,16 +1,15 @@
 import algosdk, { Account, TransactionLike } from 'algosdk';
-import AlgodClient from "algosdk/dist/types/src/client/v2/algod/algod";
-import { EntityManager } from 'typeorm';
+import AlgodClient from 'algosdk/dist/types/src/client/v2/algod/algod';
+import { EntityManager, In } from 'typeorm';
 import { ALGO_ASSET, DONATION_ADDRESS, STATUS_COMPLETED, STATUS_DEAD, treatTransaction } from '../constants';
 import Swap from '../db/entity/Swap';
 import Transaction from '../db/entity/Transaction';
 import HttpError from '../etc/HttpError';
-import BaseTransaction from "../types/BaseTransaction";
-import CompleteTransaction from "../types/CompleteTransaction";
-import SwapData from "../types/SwapData";
+import BaseTransaction from '../types/BaseTransaction';
+import CompleteTransaction from '../types/CompleteTransaction';
+import SwapData from '../types/SwapData';
 import TransactionReq from '../types/TransactionReq';
-import AssetService from "./AssetService";
-
+import AssetService from './AssetService';
 
 export default class TransactionService {
   EM: EntityManager;
@@ -23,12 +22,11 @@ export default class TransactionService {
     this.EM = EM;
     this.connectedWallet = connectedWallet;
 
-
     const server = process.env.ALGOD_SERVER ?? '';
     const token = process.env.ALGOD_TOKEN ?? '';
     const port = process.env.ALGOD_PORT ?? '';
 
-    this.algodClient = new algosdk.Algodv2({'X-API-Key': token}, server, port);
+    this.algodClient = new algosdk.Algodv2({ 'X-API-Key': token }, server, port);
 
     const mnemonic = process.env.MNEMONIC ?? '';
     this.swapperBank = algosdk.mnemonicToSecretKey(mnemonic);
@@ -36,7 +34,7 @@ export default class TransactionService {
 
   async getSwap(parent: string) {
     const swapModel = this.EM.getRepository(Swap);
-    const swap = await swapModel.findOne({where: {txId: parent}, relations: ['transactions']});
+    const swap = await swapModel.findOne({ where: { txId: parent }, relations: ['transactions'] });
 
     if (!swap) {
       throw new HttpError(404, 'Swap not found.');
@@ -53,7 +51,7 @@ export default class TransactionService {
   async insertSwap(transactions: TransactionReq[], parent: string) {
     const transactionModel = this.EM.getRepository(Transaction);
     const swapModel = this.EM.getRepository(Swap);
-    await swapModel.insert({txId: parent});
+    await swapModel.insert({ txId: parent });
     for (let i = 0; i < transactions.length; i++) {
       const untreated = transactions[i];
       const treated = new Transaction();
@@ -73,12 +71,12 @@ export default class TransactionService {
 
   async completeSwap(txId: number) {
     const swapModel = this.EM.getRepository(Swap);
-    await swapModel.update(txId, {status: STATUS_COMPLETED});
+    await swapModel.update(txId, { status: STATUS_COMPLETED });
   }
 
   async killSwap(txId: number) {
     const swapModel = this.EM.getRepository(Swap);
-    await swapModel.update(txId, {status: STATUS_DEAD});
+    await swapModel.update(txId, { status: STATUS_DEAD });
   }
 
   ///////////////////////////////// new /////////////////////////////////////////////
@@ -90,7 +88,7 @@ export default class TransactionService {
 
   async createSwap(data: SwapData) {
     try {
-      const {transactions, creatorAddress, rounds, donation} = data;
+      const { transactions, creatorAddress, rounds, donation } = data;
       const baseTnx = await this.getBaseTransaction();
       baseTnx.lastRound = baseTnx.firstRound + rounds;
 
@@ -147,17 +145,15 @@ export default class TransactionService {
           lastRound: baseTnx.lastRound,
           genesisHash: baseTnx.genesisHash,
           genesisID: baseTnx.genesisID
-        },
+        }
       });
 
       // sign the transaction
       const signedTxn = txn.signTxn(this.swapperBank.sk);
 
-      const { txId } = await this.algodClient
-        .sendRawTransaction(signedTxn)
-        .do();
+      const { txId } = await this.algodClient.sendRawTransaction(signedTxn).do();
 
-      const treatedTransactions = newTransactions.map((t) => treatTransaction(t))
+      const treatedTransactions = newTransactions.map((t) => treatTransaction(t));
       await this.insertSwap(treatedTransactions, txId);
 
       return `https://app.swapper.tools/tx/${txId}`;
@@ -165,5 +161,21 @@ export default class TransactionService {
       console.log('err', err);
       throw err;
     }
+  }
+
+  ///
+
+  async getMySwaps({ skip, take }: { skip: number; take: number }) {
+    const transactionModel = this.EM.getRepository(Transaction);
+    const swapModel = this.EM.getRepository(Swap);
+
+    const res = await transactionModel.find({
+      select: ['parentTxID'],
+      where: [{ to: this.connectedWallet }, { from: this.connectedWallet }]
+    });
+    const ids = Array.from(new Set(res.map((t) => t.parentTxID)));
+
+    const swaps = await swapModel.find({ where: { txId: In(ids) }, relations: ['transactions'], skip, take });
+    return swaps;
   }
 }
