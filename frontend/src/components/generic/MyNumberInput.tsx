@@ -1,6 +1,6 @@
-import {TextField} from "@material-ui/core";
-import React from "react";
-import NumberFormat from "react-number-format";
+import { TextField } from '@material-ui/core';
+import React from 'react';
+import NumberFormat from 'react-number-format';
 
 type Props = {
   label: string;
@@ -11,18 +11,21 @@ type Props = {
   className?: string;
 
   id?: string;
+  max?: number;
+  onBlur?: () => void;
 };
 
 const MyNumberInput: React.FC<Props> = (props) => {
-  const { label, fullWidth, value, onChange, decimalScale, className, id } = props;
+  const { label, fullWidth, value, onChange, decimalScale, className, id, max, onBlur } = props;
   // useEffect(() => {}, []);
 
   return (
     <NumberFormat
       label={label}
+      max={max}
       decimalScale={decimalScale}
-      decimalSeparator={"."}
-      thousandSeparator={","}
+      decimalSeparator={'.'}
+      thousandSeparator={','}
       fullWidth={fullWidth === false ? false : true}
       value={value}
       customInput={TextField}
@@ -36,6 +39,7 @@ const MyNumberInput: React.FC<Props> = (props) => {
         }
         onChange(value.floatValue);
       }}
+      onBlur={onBlur}
     />
   );
 };

@@ -1,22 +1,22 @@
-import {Button, Grid, Theme} from '@material-ui/core';
+import { Button, Grid, Theme } from '@material-ui/core';
 import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
 import Alert from '@material-ui/core/Alert';
-import React, {useCallback, useContext, useEffect, useState} from 'react';
-import {useHistory, useParams} from 'react-router-dom';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
 import 'reflect-metadata';
 import swapApi from 'src/api/swapApi';
 import AssetOptIn from 'src/components/AssetOptIn';
 import Loader from 'src/components/generic/Loader';
 import TransactionSign from 'src/components/TransactionSign';
-import {showError, showNotification} from 'src/helpers/helper';
+import { showError, showNotification } from 'src/helpers/helper';
 import Swap from 'src/types/Swap';
 import '../../App.css';
 import GridCenter from '../../components/generic/GridCenter';
 import WalletContext from '../../providers/WalletContextProvider';
 import CompleteTransaction from 'src/types/CompleteTransaction';
-import {STATUS_COMPLETED, STATUS_DEAD} from 'src/constants';
-import {verifyGroup} from "../../providers/WalletContextFunctions";
+import { STATUS_COMPLETED, STATUS_DEAD } from 'src/constants';
+import { verifyGroup } from '../../providers/WalletContextFunctions';
 
 function SignTransactionPage() {
   let { id } = useParams<{ id: string }>();
@@ -45,7 +45,7 @@ function SignTransactionPage() {
 
   const getTransaction = useCallback(
     async (showLoader: boolean = true) => {
-      console.log("effect com walletContext.3")
+      console.log('effect com walletContext.3');
       if (showLoader) {
         setLoading(true);
       }
@@ -74,7 +74,6 @@ function SignTransactionPage() {
     },
     [id, history]
   );
-
 
   const signAll = async () => {
     setLoading(true);
@@ -209,15 +208,16 @@ function SignTransactionPage() {
       <Grid container spacing={4} justifyContent={'center'} className={classes.container}>
         <Grid item xs={12}>
           <Alert
-          severity="info"
-          action={
-            <Button variant="contained" size="small" onClick={() => optinAll()}>
-              OPT-IN ALL
-            </Button>
-          }
-          >You need to opt-in these assets before continuing.</Alert>
+            severity="info"
+            action={
+              <Button variant="contained" size="small" onClick={() => optinAll()}>
+                OPT-IN ALL
+              </Button>
+            }
+          >
+            You need to opt-in these assets before continuing.
+          </Alert>
         </Grid>
-
 
         {notOptedInAssets.map((assetIndex, index) => (
           <GridCenter key={`transaction${index}`} item xs={12} md={6} className={classes.swapGrid}>
@@ -265,7 +265,7 @@ function SignTransactionPage() {
 
       {myUnsignedTransactions.length > 0 && (
         <GridCenter item xs={12} className={classes.buttonDiv}>
-          <Button id={"signAllBtn"} variant={'contained'} onClick={() => signAll()}>
+          <Button id={'signAllBtn'} variant={'contained'} onClick={() => signAll()}>
             SIGN ALL
           </Button>
         </GridCenter>

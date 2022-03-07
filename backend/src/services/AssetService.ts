@@ -1,7 +1,7 @@
 import { getRepository, In } from 'typeorm';
 import Asset from '../db/entity/Asset';
 import axios from 'axios';
-import puppeteer from 'puppeteer';
+// import puppeteer from 'puppeteer';
 import moment from 'moment';
 
 export default class AssetService {
@@ -60,36 +60,37 @@ export default class AssetService {
   }
 
   async checkIsVerifiedNftPuppeteer(assetId: string) {
-    const browser = await puppeteer.launch();
-    try {
-      const page = await browser.newPage();
-      await page.goto('https://www.nftexplorer.app/asset/' + assetId, { waitUntil: 'networkidle2' });
+    // const browser = await puppeteer.launch();
+    // try {
+    //   const page = await browser.newPage();
+    //   await page.goto('https://www.nftexplorer.app/asset/' + assetId, { waitUntil: 'networkidle2' });
 
-      await page.waitForSelector('div[class="display-6"]', { timeout: 5000 });
+    //   await page.waitForSelector('div[class="display-6"]', { timeout: 5000 });
 
-      // page.on('console', async (msg) => {
-      //     const msgArgs = msg.args();
-      //     for (let i = 0; i < msgArgs.length; ++i) {
-      //         console.log(await msgArgs[i].jsonValue());
-      //     }
-      // });
+    //   // page.on('console', async (msg) => {
+    //   //     const msgArgs = msg.args();
+    //   //     for (let i = 0; i < msgArgs.length; ++i) {
+    //   //         console.log(await msgArgs[i].jsonValue());
+    //   //     }
+    //   // });
 
-      const result = await page.evaluate(() => {
-        // @ts-ignore
-        const verified = document.querySelector(
-          'div[title="This creator has been validated by nftexplorer (however, please do your own due diligence, we take no responsibility)"]'
-        );
-        if (!verified) {
-          return false;
-        }
-        return true;
-      });
+    //   const result = await page.evaluate(() => {
+    //     // @ts-ignore
+    //     const verified = document.querySelector(
+    //       'div[title="This creator has been validated by nftexplorer (however, please do your own due diligence, we take no responsibility)"]'
+    //     );
+    //     if (!verified) {
+    //       return false;
+    //     }
+    //     return true;
+    //   });
 
-      browser.close();
-      return result;
-    } catch (err) {
-      browser.close();
-      return false;
-    }
+    //   browser.close();
+    //   return result;
+    // } catch (err) {
+    //   browser.close();
+    //   return false;
+    // }
+    return false;
   }
 }

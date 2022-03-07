@@ -59,11 +59,17 @@ const AddressForm: React.FC<Props> = (props) => {
           <Grid item xs={12}>
             <MyNumberInput
               id={'minutes'}
-              label={'Time limit (minutes)'}
+              label={'Time limit (minutes, max: 60)'}
               fullWidth
               decimalScale={0}
               value={minutes}
               onChange={(txt) => setMinutes(txt)}
+              onBlur={() => {
+                if (minutes > 60) {
+                  setMinutes(60);
+                }
+              }}
+              max={60}
             />
           </Grid>
         </Grid>

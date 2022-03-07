@@ -235,6 +235,7 @@ const useStyles = makeStyles<Theme>((theme) =>
       padding: '0px 20px 20px 20px',
       borderRadius: '5px',
       paddingTop: 20
+      // maxWidth: '100vw'
     },
     img: {
       width: 200,

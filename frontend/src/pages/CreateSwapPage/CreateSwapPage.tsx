@@ -150,7 +150,7 @@ function CreateSwapPage() {
 const useStyles = makeStyles<Theme>((theme) =>
   createStyles({
     container: {
-      maxWidth: 1000
+      maxWidth: 'min(100vw, 1000px)'
     },
     swapGrid: { marginTop: 10 }
   })
