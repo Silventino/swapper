@@ -62,6 +62,47 @@ export type TransactionInfo = {
   payment: any;
 };
 
+export type TransactionInfoV2 = {
+  'current-round': number;
+  transaction: {
+    'block-rewards-level': number;
+    'close-rewards': number;
+    'closing-amount': number;
+    'confirmed-round': number;
+    'decompiled-code': unknown;
+    fee: number;
+    'first-valid': number;
+    id: string;
+    index: number;
+    'inner-tx-offset': number;
+    'intra-round-offset': number;
+    'last-valid': number;
+    logs: unknown[];
+    note: string;
+    'payment-transaction': {
+      amount: number;
+      'close-acc-rewards': number;
+      'close-amount': number;
+      'close-balance': number;
+      receiver: string;
+      'receiver-acc-rewards': number;
+      'receiver-balance': number;
+      'receiver-tx-counter': number;
+    };
+    'receiver-rewards': number;
+    'round-time': number;
+    sender: string;
+    'sender-acc-rewards': number;
+    'sender-balance': number;
+    'sender-rewards': number;
+    'sender-tx-counter': number;
+    signature: {
+      sig: string;
+    };
+    'tx-type': string;
+  };
+};
+
 export type AssetInfo = {
   id: number;
   creator: string;
