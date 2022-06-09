@@ -122,7 +122,7 @@ const SingleTransaction: React.FC<PropsSingle> = (props) => {
   };
 
   useEffect(() => {
-    console.log('effect com walletContext', [transaction.assetIndex, walletContext.assets]);
+    // console.log('effect com walletContext', [transaction.assetIndex, walletContext.assets]);
     const loadAssetFromTransaction = async () => {
       try {
         let newAsset = walletContext.assets.find((item) => item.id === transaction.assetIndex);

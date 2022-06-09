@@ -51,7 +51,7 @@ const TransactionSign: React.FC<Props> = (props) => {
   };
 
   useEffect(() => {
-    console.log('effect com walletContext.2');
+    // console.log('effect com walletContext.2');
     const getAsset = async () => {
       setLoading(true);
       try {

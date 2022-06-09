@@ -4,11 +4,32 @@ import axios from 'axios';
 // import puppeteer from 'puppeteer';
 import moment from 'moment';
 
+function adaptAssetFromResponse(res: GetAssetResponse): Asset {
+  return {
+    id: res.asset.index,
+    creator: res.asset.params.creator,
+    owner: res.asset.params.manager,
+    total: res.asset.params.total,
+    decimals: res.asset.params.decimals,
+    defaultfrozen: res.asset.params['default-frozen'],
+    unitname: res.asset.params['unit-name'],
+    assetname: res.asset.params.name,
+    url: res.asset.params.url,
+    managerkey: '',
+    reserveaddr: res.asset.params.reserve,
+    circulatingsupply: res.asset.params.total,
+    verified: false,
+    destroyed: res.asset.deleted,
+    verifiedNft: false,
+    verifiedNftTime: ''
+  };
+}
+
 export default class AssetService {
   async getAssetInfo(assetId: string | number) {
     try {
-      const res = await axios.get<Asset>(`https://algoexplorerapi.io/v1/asset/${assetId}`);
-      return res.data;
+      const res = await axios.get<GetAssetResponse>(`https://algoindexer.algoexplorerapi.io/v2/assets/${assetId}`);
+      return adaptAssetFromResponse(res.data);
     } catch (err) {
       console.log('err', err);
       throw err;

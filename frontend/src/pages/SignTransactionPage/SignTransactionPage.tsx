@@ -45,7 +45,7 @@ function SignTransactionPage() {
 
   const getTransaction = useCallback(
     async (showLoader: boolean = true) => {
-      console.log('effect com walletContext.3');
+      // console.log('effect com walletContext.3');
       if (showLoader) {
         setLoading(true);
       }

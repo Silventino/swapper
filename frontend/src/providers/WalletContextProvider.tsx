@@ -32,14 +32,34 @@ export type AccountDetailedInfo = {
     'asset-id': number;
     creator: string;
     'is-frozen': boolean;
+    deleted: boolean;
+    'opted-in-at-round': number;
+    decimals: number;
+    'unit-name': string;
+    name: string;
+    verification: {
+      score: number;
+      reputation: string;
+      name: string;
+      title: string;
+      description: string;
+      'unit-name': string;
+      url: string;
+    };
   }[];
-  'created-apps': [];
-  'created-assets': [];
+
+  'created-apps': any[];
+  'created-assets': any[];
   'pending-rewards': number;
   'reward-base': number;
   rewards: number;
   round: number;
   status: string;
+};
+
+export type AccountDetailedInfoRes = {
+  account: AccountDetailedInfo;
+  'current-round': number;
 };
 
 export type TransactionInfo = {
@@ -203,8 +223,8 @@ const WalletContextProvider: React.FC = ({ children }) => {
 
   const loadInfoFromAddress = useCallback(
     async (address: string): Promise<[x: AccountDetailedInfo, y: AssetInfo[]]> => {
-      const res = await axios.get<AccountDetailedInfo>(`https://algoexplorerapi.io/v2/accounts/${address}`);
-      const newSelectedAccount = res.data;
+      const res = await axios.get<AccountDetailedInfoRes>(`https://indexer.algoexplorerapi.io/v2/accounts/${address}`);
+      const newSelectedAccount = res?.data?.account;
 
       const assetsNotFound = [];
       let newAssets: AssetInfo[] = [];
