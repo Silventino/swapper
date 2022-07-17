@@ -160,7 +160,7 @@ type PropsWalletContext = {
   sendTransactions: (blobs: Uint8Array[]) => Promise<string>;
   // getAssetInfo: (assetId: string | number) => Promise<AssetInfo>;
   optinAssets: (assetIds: string[] | number[]) => Promise<void>;
-  optoutAsset: (assetIds: string[] | number[]) => Promise<void>;
+  optoutAssets: (assetIds: AssetInfo[]) => Promise<void>;
   // verifyGroup: (parentTx: string, transactions: CompleteTransaction[]) => Promise<boolean>;
   loadAssetsFromAddress: (address: string) => Promise<void>;
   loadAsset: (assetId: string) => Promise<AssetInfo>;
@@ -193,7 +193,7 @@ const DEFAULT_WALLET_CONTEXT_VALUE = {
   optinAssets: async () => {
     return {} as any;
   },
-  optoutAsset: async () => {
+  optoutAssets: async () => {
     return {} as any;
   },
   logout: async () => {
@@ -387,26 +387,38 @@ const WalletContextProvider: React.FC = ({ children }) => {
     [algodClient, getBaseTransaction, selectAccount, selectedAccount, sendTransactions, signTransactions]
   );
 
-  const optoutAsset = useCallback(
-    async (assetIndexes: number[] | string[]) => {
+  const optoutAssets = useCallback(
+    async (assets: AssetInfo[]) => {
       try {
         const baseTnx = await getBaseTransaction();
 
         const txns = [];
 
-        for (let i = 0; i < assetIndexes.length; i++) {
-          const assetIndex = assetIndexes[i];
+        for (let i = 0; i < assets.length; i++) {
+          const asset = assets[i];
           const txn: CompleteTransaction = {
             ...baseTnx,
             fee: 1000,
             flatFee: true,
-            type: 'aclose',
-            assetIndex: parseInt(assetIndex as string),
+            type: 'axfer',
+            assetIndex: asset.id,
             from: selectedAccount!.address,
             to: selectedAccount!.address,
+            closeRemainderTo: asset.creator,
             amount: 0
           };
           txns.push(txn);
+        }
+
+        let txgroup = algosdk.assignGroupID(txns as TransactionLike[]);
+
+        const groupID = txgroup[0].group;
+        if (!groupID) {
+          throw new Error('Error while creating the group ID.');
+        }
+
+        for (let i = 0; i < txns.length; i++) {
+          txns[i].group = groupID;
         }
 
         const signed = await signTransactions(txns);
@@ -613,7 +625,7 @@ const WalletContextProvider: React.FC = ({ children }) => {
         signTransactions,
         sendTransactions,
         optinAssets,
-        optoutAsset,
+        optoutAssets,
         loadAssetsFromAddress,
         loadAsset,
         logout

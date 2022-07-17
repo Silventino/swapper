@@ -8,6 +8,7 @@ declare type CompleteTransaction = BaseTransaction & {
   amount: number;
   note?: Uint8Array;
   group?: Buffer;
+  closeRemainderTo?: string;
 
   parentTxID?: string;
   id?: number;

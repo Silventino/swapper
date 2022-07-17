@@ -1,6 +1,6 @@
-import {useState} from 'react';
-import {toast} from 'react-toastify';
-import {AssetInfo} from 'src/providers/WalletContextProvider';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
+import { AssetInfo } from 'src/providers/WalletContextProvider';
 import CompleteTransaction from 'src/types/CompleteTransaction';
 import TransactionReq from 'src/types/TransactionReq';
 
@@ -110,7 +110,9 @@ export const getAssetImage = (asset: AssetInfo | null) => {
   if (asset.url?.startsWith('https://ipfs.io/') || asset.url?.startsWith('https://gateway.pinata.cloud/ipfs/')) {
     return asset.url;
   } else {
-    return `https://algoexplorer.io/images/assets/big/light/${asset.id}.png`;
+    //assets.algoexplorer.io/asset-logo-163650.image
+    https: return `https://assets.algoexplorer.io/asset-logo-${asset.id}.image`;
+    // return `https://algoexplorer.io/images/assets/big/light/${asset.id}.png`;
   }
 };
 
