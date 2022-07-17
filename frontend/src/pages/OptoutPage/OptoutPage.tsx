@@ -9,14 +9,12 @@ import { getAssetLabel, showError, showNotification } from 'src/helpers/helper';
 import WalletContext, { AssetInfo } from 'src/providers/WalletContextProvider';
 import '../../App.css';
 import GridCenter from '../../components/generic/GridCenter';
-import AddIcon from '@mui/icons-material/Add';
 import AssetPreview from 'src/components/AssetPreview';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Loader from 'src/components/generic/Loader';
 
 function OptoutPage() {
   const classes = useStyles();
-  const history = useHistory();
   const walletContext = useContext(WalletContext);
 
   const [selectedAsset, setSelectedAsset] = useState<null | AssetInfo>(null);
@@ -72,7 +70,7 @@ function OptoutPage() {
       setLoading(true);
       await walletContext.optoutAssets(assetsToOptout);
       setLoading(false);
-      showNotification('Optout completed.');
+      showNotification('Opt-out transaction completed.');
       setAssetsToOptout([]);
       setSearchTxt('');
     } catch (err) {
@@ -93,7 +91,7 @@ function OptoutPage() {
   return (
     <Grid container className={classes.container}>
       <GridCenter key={`transaction${0}`} item xs={12} className={classes.swapGrid}>
-        <Typography className={classes.medtxt}>Asset OptOut</Typography>
+        <Typography className={classes.medtxt}>Asset Opt-Out</Typography>
       </GridCenter>
 
       <Grid item xs={12} style={{ marginBottom: 5 }}>
