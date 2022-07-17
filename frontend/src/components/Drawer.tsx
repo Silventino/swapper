@@ -1,4 +1,4 @@
-import {Drawer, List, Theme} from '@material-ui/core';
+import { Drawer, List, Theme } from '@material-ui/core';
 import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
 import SwapIcon from '@mui/icons-material/Cached';
@@ -11,7 +11,7 @@ import ListItemText from '@mui/material/ListItemText';
 import React from 'react';
 import logo_full from '../assets/logo_full.png';
 import DeleteIcon from '@mui/icons-material/Delete';
-import {useHistory} from 'react-router';
+import { useHistory } from 'react-router';
 import AddIcon from '@mui/icons-material/Add';
 
 type Props = {
@@ -43,6 +43,21 @@ const MyDrawer: React.FC<Props> = (props) => {
             </ListItemIcon>
             <ListItemText primary={'New Swap'} />
           </ListItem>
+
+          <ListItem
+            button
+            onClick={() => {
+              history.push('/optout');
+              setOpen(false);
+            }}
+            className={classes.drawerItem}
+          >
+            <ListItemIcon>
+              <DeleteIcon />
+            </ListItemIcon>
+            <ListItemText primary={'Asset Opt-Out'} />
+          </ListItem>
+
           <ListItem button onClick={() => {}} className={classes.drawerItem} disabled>
             <ListItemIcon>
               <HistoryIcon />
@@ -60,12 +75,6 @@ const MyDrawer: React.FC<Props> = (props) => {
               <AddIcon />
             </ListItemIcon>
             <ListItemText primary={'Asset Opt-In - SOON'} />
-          </ListItem>
-          <ListItem button onClick={() => {}} className={classes.drawerItem} disabled>
-            <ListItemIcon>
-              <DeleteIcon />
-            </ListItemIcon>
-            <ListItemText primary={'Asset Opt-Out - SOON'} />
           </ListItem>
           <ListItem button onClick={() => {}} className={classes.drawerItem} disabled>
             <ListItemIcon>
