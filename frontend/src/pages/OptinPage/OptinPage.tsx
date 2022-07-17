@@ -12,6 +12,7 @@ import WalletContext, { AssetInfo } from 'src/providers/WalletContextProvider';
 import '../../App.css';
 import GridCenter from '../../components/generic/GridCenter';
 import AddIcon from '@mui/icons-material/Add';
+import { useParams } from 'react-router-dom';
 
 function OptinPage() {
   const classes = useStyles();
@@ -20,11 +21,19 @@ function OptinPage() {
   const [assetsToOptin, setAssetsToOptin] = useState<AssetInfo[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchTxt, setSearchTxt] = useState('');
+  let { urlIds } = useParams<{ urlIds: undefined | string }>();
 
-  const parseSearchTxt = async () => {
+  useEffect(() => {
+    if (urlIds) {
+      const parsedUrlIds = parseSearchTxt(urlIds);
+    }
+  }, [urlIds]);
+
+  const parseSearchTxt = async (txt?: string) => {
     try {
+      const txtToParse = txt ?? searchTxt;
       let newAssets: AssetInfo[] = [];
-      const cleaning = searchTxt.split(',').map((item) => item.replace(/\D/g, ''));
+      const cleaning = txtToParse.split(',').map((item) => item.replace(/\D/g, ''));
       const ids = [...new Set(cleaning)];
 
       for (let i = 0; i < ids.length; i++) {
@@ -79,31 +88,39 @@ function OptinPage() {
         <Typography className={classes.medtxt}>Asset Opt-In</Typography>
       </GridCenter>
 
-      <Grid item xs={12} style={{ marginBottom: 5 }}>
-        <TextField
-          fullWidth
-          value={searchTxt}
-          onChange={(e) => {
-            let value = e.target.value;
-            setSearchTxt(value);
-          }}
-          label="Asset"
-          helperText="Write a list of comma separated IDs and press Enter"
-          onKeyDown={
-            ((event: any) => {
-              if (event?.keyCode === 13) {
-                parseSearchTxt();
-              }
-            }) as any
-          }
-        />
-      </Grid>
+      {!urlIds && (
+        <Grid item xs={12} style={{ marginBottom: 5 }}>
+          <TextField
+            fullWidth
+            value={searchTxt}
+            onChange={(e) => {
+              let value = e.target.value;
+              setSearchTxt(value);
+            }}
+            label="Asset"
+            helperText="Write a list of comma separated IDs and press Enter"
+            onKeyDown={
+              ((event: any) => {
+                if (event?.keyCode === 13) {
+                  parseSearchTxt();
+                }
+              }) as any
+            }
+          />
+        </Grid>
+      )}
 
       {assetsToOptin.map((item) => (
-        <GridCenter item xs={12} md={4}>
+        <GridCenter item xs={12} md={4} key={item.id}>
           <AssetPreview asset={item} onDelete={onDelete} />
         </GridCenter>
       ))}
+
+      {Boolean(urlIds && assetsToOptin.length === 0) && (
+        <GridCenter item xs={12} md={4} style={{ color: '#fff' }}>
+          All assets are already in the wallet.
+        </GridCenter>
+      )}
 
       {assetsToOptin.length > 0 && (
         <GridCenter item xs={12} style={{ marginBottom: 10 }}>

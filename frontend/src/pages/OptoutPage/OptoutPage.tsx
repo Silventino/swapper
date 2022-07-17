@@ -2,7 +2,6 @@ import { Autocomplete, Button, createFilterOptions, Grid, TextField, Theme, Typo
 import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
 import { useContext, useEffect, useState } from 'react';
-import { useHistory } from 'react-router';
 import 'reflect-metadata';
 import { colors } from 'src/constants';
 import { getAssetLabel, showError, showNotification } from 'src/helpers/helper';
@@ -128,7 +127,7 @@ function OptoutPage() {
       </Grid>
 
       {assetsToOptout.map((item) => (
-        <GridCenter item xs={12} md={4}>
+        <GridCenter item xs={12} md={4} key={item.id}>
           <AssetPreview asset={item} onDelete={onDelete} />
         </GridCenter>
       ))}
