@@ -58,30 +58,39 @@ const MyDrawer: React.FC<Props> = (props) => {
             <ListItemText primary={'Asset Opt-Out'} />
           </ListItem>
 
-          <ListItem button onClick={() => {}} className={classes.drawerItem} disabled>
+          <ListItem
+            button
+            onClick={() => {
+              history.push('/optin');
+              setOpen(false);
+            }}
+            className={classes.drawerItem}
+          >
+            <ListItemIcon>
+              <AddIcon />
+            </ListItemIcon>
+            <ListItemText primary={'Asset Opt-In'} />
+          </ListItem>
+
+          {/* <ListItem button onClick={() => {}} className={classes.drawerItem} disabled>
             <ListItemIcon>
               <HistoryIcon />
             </ListItemIcon>
             <ListItemText primary={'Swap History - SOON'} />
-          </ListItem>
-          <ListItem button onClick={() => {}} className={classes.drawerItem} disabled>
+          </ListItem> */}
+          {/* <ListItem button onClick={() => {}} className={classes.drawerItem} disabled>
             <ListItemIcon>
               <ImageIcon />
             </ListItemIcon>
             <ListItemText primary={'NFT Gallery - SOON'} />
-          </ListItem>
-          <ListItem button onClick={() => {}} className={classes.drawerItem} disabled>
-            <ListItemIcon>
-              <AddIcon />
-            </ListItemIcon>
-            <ListItemText primary={'Asset Opt-In - SOON'} />
-          </ListItem>
-          <ListItem button onClick={() => {}} className={classes.drawerItem} disabled>
+          </ListItem> */}
+
+          {/* <ListItem button onClick={() => {}} className={classes.drawerItem} disabled>
             <ListItemIcon>
               <FaqIcon />
             </ListItemIcon>
             <ListItemText primary={'FAQ - SOON'} />
-          </ListItem>
+          </ListItem> */}
         </List>
       </div>
     </Drawer>
