@@ -1,16 +1,16 @@
-import { Autocomplete, Button, createFilterOptions, Grid, TextField, Theme, Typography } from '@material-ui/core';
+import { Button, Grid, Theme, Typography } from '@material-ui/core';
 import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { useContext, useEffect, useState } from 'react';
 import 'reflect-metadata';
+import Loader from 'src/components/generic/Loader';
 import { colors } from 'src/constants';
-import { getAssetLabel, showError, showNotification } from 'src/helpers/helper';
+import { showError, showNotification } from 'src/helpers/helper';
 import WalletContext, { AssetInfo } from 'src/providers/WalletContextProvider';
 import '../../App.css';
 import GridCenter from '../../components/generic/GridCenter';
 import AssetOptoutPreview from './AssetOptoutPreview';
-import DeleteIcon from '@mui/icons-material/Delete';
-import Loader from 'src/components/generic/Loader';
 
 function OptoutPage() {
   const classes = useStyles();

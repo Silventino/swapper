@@ -1,8 +1,9 @@
 import { Button, Grid, TextField, Theme, Typography } from '@material-ui/core';
 import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
-import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
 import { useContext, useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import 'reflect-metadata';
 import AssetPreview from 'src/components/AssetPreview';
 import Loader from 'src/components/generic/Loader';
@@ -11,8 +12,6 @@ import { showError, showNotification } from 'src/helpers/helper';
 import WalletContext, { AssetInfo } from 'src/providers/WalletContextProvider';
 import '../../App.css';
 import GridCenter from '../../components/generic/GridCenter';
-import AddIcon from '@mui/icons-material/Add';
-import { useParams } from 'react-router-dom';
 
 function OptinPage() {
   const classes = useStyles();
@@ -22,12 +21,6 @@ function OptinPage() {
   const [loading, setLoading] = useState(false);
   const [searchTxt, setSearchTxt] = useState('');
   let { urlIds } = useParams<{ urlIds: undefined | string }>();
-
-  useEffect(() => {
-    if (urlIds) {
-      const parsedUrlIds = parseSearchTxt(urlIds);
-    }
-  }, [urlIds]);
 
   const parseSearchTxt = async (txt?: string) => {
     try {
@@ -57,6 +50,12 @@ function OptinPage() {
 
     setSearchTxt('');
   };
+
+  useEffect(() => {
+    if (urlIds) {
+      parseSearchTxt(urlIds);
+    }
+  }, [urlIds]);
 
   const completeOptin = async () => {
     try {
