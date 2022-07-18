@@ -8,7 +8,7 @@ import { getAssetLabel, showError, showNotification } from 'src/helpers/helper';
 import WalletContext, { AssetInfo } from 'src/providers/WalletContextProvider';
 import '../../App.css';
 import GridCenter from '../../components/generic/GridCenter';
-import AssetPreview from 'src/components/AssetPreview';
+import AssetOptoutPreview from './AssetOptoutPreview';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Loader from 'src/components/generic/Loader';
 
@@ -16,71 +16,53 @@ function OptoutPage() {
   const classes = useStyles();
   const walletContext = useContext(WalletContext);
 
-  const [selectedAsset, setSelectedAsset] = useState<null | AssetInfo>(null);
-  const [assetsToOptout, setAssetsToOptout] = useState<AssetInfo[]>([]);
+  const [emptyAssets, setEmptyAssets] = useState<AssetInfo[]>([]);
+  const [checkControl, setCheckControl] = useState<boolean[]>([]);
   const [loading, setLoading] = useState(false);
-  const [searchTxt, setSearchTxt] = useState('');
-
-  const filterOptions = createFilterOptions({
-    limit: 40
-  });
-
-  const addSelectedAssetToOptout = () => {
-    if (selectedAsset) {
-      const index = assetsToOptout.findIndex((item) => item.id === selectedAsset.id);
-      if (index === -1) {
-        setAssetsToOptout([...assetsToOptout, selectedAsset]);
-      }
-      setSelectedAsset(null);
-    }
-  };
-
-  const parseSearchTxt = () => {
-    try {
-      let newAssets: AssetInfo[] = [];
-      const cleaning = searchTxt.split(',').map((item) => item.replace(/\D/g, ''));
-      const ids = [...new Set(cleaning)];
-
-      for (let i = 0; i < ids.length; i++) {
-        let assetId = parseInt(ids[i]);
-        if (assetId && !isNaN(assetId)) {
-          const asset = walletContext.assets.find((item) => item.id === assetId);
-          if (asset) {
-            newAssets.push(asset);
-          }
-        }
-      }
-
-      if (newAssets.length) {
-        newAssets = newAssets.filter((item) => assetsToOptout.findIndex((item2) => item.id === item2.id) === -1);
-        setAssetsToOptout([...assetsToOptout, ...newAssets]);
-      }
-    } catch {}
-
-    setSearchTxt('');
-  };
 
   useEffect(() => {
-    addSelectedAssetToOptout();
-  }, [selectedAsset]);
+    if (!walletContext.selectedAccount) {
+      return;
+    }
+
+    const newAssets: AssetInfo[] = [];
+    const emptyIds = walletContext.selectedAccount.assets
+      .filter((item) => item.amount === 0)
+      .map((item) => item['asset-id']);
+
+    for (let i = 0; i < emptyIds.length; i++) {
+      let assetId = emptyIds[i];
+      if (assetId && !isNaN(assetId)) {
+        const asset = walletContext.assets.find((item) => item.id === assetId);
+        if (asset) {
+          newAssets.push(asset);
+        }
+      }
+    }
+
+    const newCheckControl = newAssets.map((item) => false);
+    setCheckControl(newCheckControl);
+    setEmptyAssets(newAssets);
+  }, [walletContext.selectedAccount]);
 
   const completeOptout = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
+      const assetsToOptout = emptyAssets.filter((item, index) => checkControl[index]);
       await walletContext.optoutAssets(assetsToOptout);
-      setLoading(false);
       showNotification('Opt-out transaction completed.');
-      setAssetsToOptout([]);
-      setSearchTxt('');
     } catch (err) {
       showError(err);
-      setLoading(false);
     }
+    setLoading(false);
   };
 
-  const onDelete = (asset: AssetInfo) => {
-    const newAssets = assetsToOptout.filter((item) => item.id !== asset.id);
-    setAssetsToOptout(newAssets);
+  const selectAll = () => {
+    const max = Math.min(emptyAssets.length, 64);
+    for (let i = 0; i < max; i++) {
+      checkControl[i] = true;
+    }
+    setCheckControl([...checkControl]);
   };
 
   if (loading) {
@@ -93,52 +75,30 @@ function OptoutPage() {
         <Typography className={classes.medtxt}>Asset Opt-Out</Typography>
       </GridCenter>
 
-      <Grid item xs={12} style={{ marginBottom: 5 }}>
-        <Autocomplete
-          disablePortal
-          options={walletContext.assets}
-          getOptionLabel={getAssetLabel}
-          value={selectedAsset}
-          onChange={(e, asset: AssetInfo | null) => setSelectedAsset(asset)}
-          renderInput={(params) => {
-            return (
-              <TextField
-                {...params}
-                onChange={(e) => {
-                  let value = e.target.value;
-                  setSearchTxt(value);
-                }}
-                label="Asset"
-                helperText="Start typing to filter assets or write a list of comma separated IDs and press Enter"
-                // disabled={loading}
-                onKeyDown={
-                  ((event: any) => {
-                    if (event?.keyCode === 13) {
-                      parseSearchTxt();
-                    }
-                  }) as any
-                }
-              />
-            );
-          }}
-          filterOptions={filterOptions as any}
-          autoSelect
-        />
-      </Grid>
+      <GridCenter item xs={12} style={{ marginBottom: 10 }}>
+        <Button variant={'contained'} onClick={selectAll}>
+          {emptyAssets.length <= 64 ? 'Select all' : 'Select first 64'}
+        </Button>
+      </GridCenter>
 
-      {assetsToOptout.map((item) => (
-        <GridCenter item xs={12} md={4} key={item.id}>
-          <AssetPreview asset={item} onDelete={onDelete} />
-        </GridCenter>
+      {emptyAssets.map((item, index) => (
+        <Grid item xs={12} md={6} key={item.id}>
+          <AssetOptoutPreview
+            asset={item}
+            onClick={() => {
+              checkControl[index] = !checkControl[index];
+              setCheckControl([...checkControl]);
+            }}
+            checked={checkControl[index]}
+          />
+        </Grid>
       ))}
 
-      {assetsToOptout.length > 0 && (
-        <GridCenter item xs={12} style={{ marginBottom: 10 }}>
-          <Button startIcon={<DeleteIcon />} variant={'contained'} onClick={() => completeOptout()}>
-            OPTOUT
-          </Button>
-        </GridCenter>
-      )}
+      <GridCenter item xs={12}>
+        <Button startIcon={<DeleteIcon />} variant={'contained'} onClick={() => completeOptout()}>
+          OPTOUT
+        </Button>
+      </GridCenter>
     </Grid>
   );
 }

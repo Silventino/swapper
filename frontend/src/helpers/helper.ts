@@ -126,3 +126,10 @@ export const getAssetLabel = (item: AssetInfo) => {
 
   return `${item.assetname} (${item.unitname} - ${item.id})`;
 };
+
+export const sleep = (x: number) =>
+  new Promise((res) => {
+    setTimeout(() => {
+      res(true);
+    }, x);
+  });

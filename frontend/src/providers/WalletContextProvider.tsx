@@ -5,7 +5,7 @@ import React, { createContext, useCallback, useEffect, useState } from 'react';
 import swapApi from 'src/api/swapApi';
 import { ALGO_ASSET, DONATION_ADDRESS } from 'src/constants';
 import { waitForConfirmation } from 'src/helpers/algoHelper';
-import { useLocalStorage } from 'src/helpers/helper';
+import { sleep, useLocalStorage } from 'src/helpers/helper';
 import BaseTransaction from 'src/types/BaseTransaction';
 import CompleteTransaction from 'src/types/CompleteTransaction';
 import PartialTransaction from 'src/types/PartialTransaction';
@@ -425,6 +425,7 @@ const WalletContextProvider: React.FC = ({ children }) => {
         const blobs = signed.map((item) => item.blob!);
         const txID = await sendTransactions(blobs);
         await waitForConfirmation(algodClient, txID, 10000);
+        await sleep(4000);
         await selectAccount(selectedAccount!.address);
       } catch (err) {
         console.log('err', err);
