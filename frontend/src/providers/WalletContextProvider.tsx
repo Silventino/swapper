@@ -378,6 +378,7 @@ const WalletContextProvider: React.FC = ({ children }) => {
 
         const txID = await sendTransactions(blobs);
         await waitForConfirmation(algodClient, txID, 10000);
+        await sleep(4000);
         await selectAccount(selectedAccount!.address);
       } catch (err) {
         console.log('err', err);

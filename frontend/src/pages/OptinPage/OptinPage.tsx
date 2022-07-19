@@ -32,7 +32,7 @@ function OptinPage() {
       for (let i = 0; i < ids.length; i++) {
         let assetId = parseInt(ids[i]);
         if (assetId && !isNaN(assetId)) {
-          const index = walletContext.assets.findIndex((item) => item.id === assetId);
+          const index = walletContext.selectedAccount?.assets.findIndex((item) => item['asset-id'] === assetId);
           if (index === -1) {
             const asset = await walletContext.loadAsset(assetId.toString());
             newAssets.push(asset);
