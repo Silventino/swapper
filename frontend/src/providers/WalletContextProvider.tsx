@@ -228,7 +228,7 @@ const WalletContextProvider: React.FC = ({ children }) => {
 
       const assetsNotFound = [];
       let newAssets: AssetInfo[] = [];
-      for (let i = 0; i < newSelectedAccount.assets.length; i++) {
+      for (let i = 0; i < newSelectedAccount.assets?.length ?? 0; i++) {
         const asset = newSelectedAccount.assets[i];
         const knownAsset = assetDict[asset['asset-id']];
         if (knownAsset) {
@@ -293,7 +293,7 @@ const WalletContextProvider: React.FC = ({ children }) => {
     try {
       const res = await myAlgoClient.connect();
       setAccounts(res);
-      if (!res.length) {
+      if (!res?.length) {
         throw new Error('Failed to connect wallet.');
       }
       selectAccount(res[0].address);
@@ -598,13 +598,13 @@ const WalletContextProvider: React.FC = ({ children }) => {
   };
 
   useEffect(() => {
-    if (!selectedAccount && accounts.length) {
+    if (!selectedAccount && accounts?.length) {
       selectAccount(accounts[0].address);
     }
   }, [selectedAccount, accounts, selectAccount]);
 
   useEffect(() => {
-    if (!assets.length && selectedAccount) {
+    if (!assets?.length && selectedAccount) {
       selectAccount(selectedAccount.address);
     }
   }, [assets, selectedAccount, selectAccount]);
