@@ -51,6 +51,9 @@ function App() {
               <Route path="/optout">
                 <OptoutPage />
               </Route>
+              <Route path="/gallery">
+                <OptoutPage />
+              </Route>
               <Route path="/optin/:urlIds">
                 <OptinPage />
               </Route>

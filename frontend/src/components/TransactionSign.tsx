@@ -38,6 +38,12 @@ const TransactionSign: React.FC<Props> = (props) => {
 
   const walletContext = useContext(WalletContext);
 
+  const [imageUrl, setImageUrl] = useState('');
+
+  useEffect(() => {
+    getAssetImage(selectedAsset).then((url) => setImageUrl(url));
+  }, [selectedAsset]);
+
   const signTransaction = async () => {
     setLoading(true);
     try {
@@ -100,7 +106,7 @@ const TransactionSign: React.FC<Props> = (props) => {
           <a href={`https://www.nftexplorer.app/asset/${selectedAsset?.id}`} target={'_blank'} rel="noreferrer">
             <div className={classes.row}>
               <div style={{ width: 40, height: 40 }} />
-              <ImgWithLoader src={getAssetImage(selectedAsset)} alt="" className={classes.img} />
+              <ImgWithLoader src={imageUrl} alt="" className={classes.img} />
               {selectedAsset?.id === ALGO_ASSET.id ? (
                 <div style={{ width: 40, height: 40 }} />
               ) : (

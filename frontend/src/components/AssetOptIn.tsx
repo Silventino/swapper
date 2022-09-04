@@ -1,18 +1,18 @@
-import {Button, Grid, Theme} from '@material-ui/core';
+import { Button, Grid, Theme } from '@material-ui/core';
 import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import 'reflect-metadata';
-import {colors} from 'src/constants';
-import {getAssetImage, showError} from 'src/helpers/helper';
+import { colors } from 'src/constants';
+import { getAssetImage, showError } from 'src/helpers/helper';
 import '../App.css';
 import GridCenter from './generic/GridCenter';
 import MyInput from './generic/MyInput';
 // // import RainbowDiv from './generic/RainbowDiv';
 import Title from './generic/Title';
 import Loader from './generic/Loader';
-import WalletContext, {AssetInfo} from '../providers/WalletContextProvider';
-import assetApi from "../api/assetApi";
+import WalletContext, { AssetInfo } from '../providers/WalletContextProvider';
+import assetApi from '../api/assetApi';
 
 type Props = {
   assetIndex: number;
@@ -25,6 +25,7 @@ const AssetOptIn: React.FC<Props> = (props) => {
 
   const [selectedAsset, setSelectedAsset] = useState<AssetInfo | null>(null);
   const [loading, setLoading] = useState(false);
+  const [imageUrl, setImageUrl] = useState('');
 
   const walletContext = useContext(WalletContext);
 
@@ -55,6 +56,10 @@ const AssetOptIn: React.FC<Props> = (props) => {
     getAsset();
   }, [assetIndex]);
 
+  useEffect(() => {
+    getAssetImage(selectedAsset).then((url) => setImageUrl(url));
+  }, [selectedAsset]);
+
   if (!walletContext.selectedAccount) {
     return null;
   }
@@ -67,7 +72,7 @@ const AssetOptIn: React.FC<Props> = (props) => {
         </GridCenter>
 
         <GridCenter item xs={12}>
-          <img src={getAssetImage(selectedAsset)} alt="" className={classes.img} />
+          <img src={imageUrl} alt="" className={classes.img} />
         </GridCenter>
 
         <Grid item xs={12}>

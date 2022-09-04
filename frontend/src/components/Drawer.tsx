@@ -2,9 +2,9 @@ import { Drawer, List, Theme } from '@material-ui/core';
 import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
 import SwapIcon from '@mui/icons-material/Cached';
-import HistoryIcon from '@mui/icons-material/History';
 import ImageIcon from '@mui/icons-material/Image';
-import FaqIcon from '@mui/icons-material/LiveHelp';
+// import HistoryIcon from '@mui/icons-material/History';
+// import FaqIcon from '@mui/icons-material/LiveHelp';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
@@ -72,17 +72,26 @@ const MyDrawer: React.FC<Props> = (props) => {
             <ListItemText primary={'Asset Opt-In'} />
           </ListItem>
 
+          <ListItem
+            button
+            onClick={() => {
+              history.push('/gallery');
+              setOpen(false);
+            }}
+            className={classes.drawerItem}
+            disabled
+          >
+            <ListItemIcon>
+              <ImageIcon />
+            </ListItemIcon>
+            <ListItemText primary={'Gallery'} />
+          </ListItem>
+
           {/* <ListItem button onClick={() => {}} className={classes.drawerItem} disabled>
             <ListItemIcon>
               <HistoryIcon />
             </ListItemIcon>
             <ListItemText primary={'Swap History - SOON'} />
-          </ListItem> */}
-          {/* <ListItem button onClick={() => {}} className={classes.drawerItem} disabled>
-            <ListItemIcon>
-              <ImageIcon />
-            </ListItemIcon>
-            <ListItemText primary={'NFT Gallery - SOON'} />
           </ListItem> */}
 
           {/* <ListItem button onClick={() => {}} className={classes.drawerItem} disabled>

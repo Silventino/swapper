@@ -3,6 +3,12 @@ import { toast } from 'react-toastify';
 import { AssetInfo } from 'src/providers/WalletContextProvider';
 import CompleteTransaction from 'src/types/CompleteTransaction';
 import TransactionReq from 'src/types/TransactionReq';
+import { decodeAddress } from 'algosdk';
+import { CID } from 'multiformats/cid';
+import * as mfsha2 from 'multiformats/hashes/sha2';
+import * as digest from 'multiformats/hashes/digest';
+import { CIDVersion } from 'multiformats/types/src/cid';
+import axios from 'axios';
 
 export const showError = (err: Error | any) => {
   if (err.response?.body?.message) {
@@ -72,7 +78,6 @@ export function useLocalStorage<T>(key: string, initialValue: T): [T, (obj: T) =
       return item ? JSON.parse(item) : initialValue;
     } catch (error) {
       // If error also return initialValue
-      console.log(error);
       return initialValue;
     }
   });
@@ -88,29 +93,102 @@ export function useLocalStorage<T>(key: string, initialValue: T): [T, (obj: T) =
       window.localStorage.setItem(key, JSON.stringify(valueToStore));
     } catch (error) {
       // A more advanced implementation would handle the error case
-      console.log(error);
     }
   };
 
   return [storedValue, setValue];
 }
 
-export const getAssetImage = (asset: AssetInfo | null) => {
-  if (!asset) {
-    return 'https://jsvasconcelos.pt/images/Icon/imageNotFound.png';
-  }
-  if (asset.url?.startsWith('ipfs://')) {
-    const code = asset.url.replace('ipfs://', '');
-    return `https://ipfs.io/ipfs/${code}`;
+export const ARC3_URL_SUFFIX = '#arc3';
+
+export function resolveProtocol(asset: AssetInfo | null): string {
+  if (!asset) return '';
+  let url = asset.url;
+  let reserveAddr = asset.reserveaddr ?? '';
+  if (url.endsWith(ARC3_URL_SUFFIX)) url = url.slice(0, url.length - ARC3_URL_SUFFIX.length);
+
+  let chunks = url.split('://');
+  // Check if prefix is template-ipfs and if {ipfscid:..} is where CID would normally be
+  if (chunks[0] === 'template-ipfs' && chunks[1].startsWith('{ipfscid:')) {
+    // Look for something like: template:ipfs://{ipfscid:1:raw:reserve:sha2-256} and parse into components
+    chunks[0] = 'ipfs';
+    const cidComponents = chunks[1].split(':');
+    if (cidComponents.length !== 5) {
+      // give up
+      return url;
+    }
+    const [, cidVersion, cidCodec, asaField, cidHash] = cidComponents;
+
+    // const cidVersionInt = parseInt(cidVersion) as CIDVersion
+    if (cidHash.split('}')[0] !== 'sha2-256') {
+      return url;
+    }
+    if (cidCodec !== 'raw' && cidCodec !== 'dag-pb') {
+      return url;
+    }
+    if (asaField !== 'reserve') {
+      return url;
+    }
+    let cidCodecCode;
+    if (cidCodec === 'raw') {
+      cidCodecCode = 0x55;
+    } else if (cidCodec === 'dag-pb') {
+      cidCodecCode = 0x70;
+    }
+
+    // get 32 bytes Uint8Array reserve address - treating it as 32-byte sha2-256 hash
+    const addr = decodeAddress(reserveAddr);
+    const mhdigest = digest.create(mfsha2.sha256.code, addr.publicKey);
+
+    const cid = CID.create(parseInt(cidVersion) as CIDVersion, cidCodecCode ?? 0, mhdigest);
+    chunks[1] = cid.toString() + '/' + chunks[1].split('/').slice(1).join('/');
   }
 
-  if (asset.url?.endsWith('.png') || asset.url?.endsWith('.jpg') || asset.url?.endsWith('.jpeg')) {
-    return asset.url;
+  // No protocol specified, give up
+  if (chunks.length < 2) return url;
+
+  //Switch on the protocol
+  switch (chunks[0]) {
+    case 'ipfs': //Its ipfs, use the configured gateway
+      return `https://ipfs.io/ipfs/${chunks[1]}`;
+
+    case 'https': //Its already http, just return it
+      return url;
+    // TODO: Future options may include arweave or algorand
   }
-  if (asset.url?.startsWith('https://ipfs.io/') || asset.url?.startsWith('https://gateway.pinata.cloud/ipfs/')) {
-    return asset.url;
-  } else {
-    return `https://assets.algoexplorer.io/asset-logo-${asset.id}.image`;
+
+  return url;
+}
+
+export const getAssetImage = async (asset: AssetInfo | null) => {
+  try {
+    if (!asset) {
+      return 'https://jsvasconcelos.pt/images/Icon/imageNotFound.png';
+    }
+
+    let assetUrl = asset.url;
+
+    if (assetUrl?.startsWith('template-ipfs')) {
+      const assetDataUrl = resolveProtocol(asset);
+      const json = await axios.get<{ image: string }>(assetDataUrl);
+      assetUrl = json.data.image;
+    }
+
+    if (assetUrl?.startsWith('ipfs://')) {
+      const code = assetUrl.replace('ipfs://', '');
+      return `https://ipfs.io/ipfs/${code}`;
+    }
+
+    if (assetUrl?.endsWith('.png') || assetUrl?.endsWith('.jpg') || assetUrl?.endsWith('.jpeg')) {
+      return assetUrl;
+    }
+    if (assetUrl?.startsWith('https://ipfs.io/') || assetUrl?.startsWith('https://gateway.pinata.cloud/ipfs/')) {
+      return assetUrl;
+    } else {
+      return `https://assets.algoexplorer.io/asset-logo-${asset.id}.image`;
+    }
+  } catch {
+    return 'https://jsvasconcelos.pt/images/Icon/imageNotFound.png';
   }
 };
 

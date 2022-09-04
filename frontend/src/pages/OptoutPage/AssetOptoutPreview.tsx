@@ -1,7 +1,7 @@
 import { Theme } from '@material-ui/core';
 import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import 'reflect-metadata';
 import { colors } from 'src/constants';
 import { getAssetImage } from 'src/helpers/helper';
@@ -17,12 +17,17 @@ type Props = {
 const AssetOptoutPreview: React.FC<Props> = (props) => {
   const { asset, onClick, checked } = props;
   const classes = useStyles();
+  const [imageUrl, setImageUrl] = useState('');
+
+  useEffect(() => {
+    getAssetImage(asset).then((url) => setImageUrl(url));
+  }, [asset]);
 
   return (
     <div className={classes.container} onClick={onClick}>
       <Checkbox checked={checked} />
 
-      <img src={getAssetImage(asset)} alt="" className={classes.img} />
+      <img src={imageUrl} alt="" className={classes.img} />
 
       <p className={classes.txt}>{`${asset?.id} - ${asset?.assetname}`}</p>
     </div>

@@ -1,7 +1,7 @@
 import { Grid, IconButton, Theme } from '@material-ui/core';
 import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import 'reflect-metadata';
 import { colors } from 'src/constants';
 import { getAssetImage } from 'src/helpers/helper';
@@ -21,6 +21,11 @@ const AssetPreview: React.FC<Props> = (props) => {
   const { asset, onDelete } = props;
   const classes = useStyles();
 
+  const [imageUrl, setImageUrl] = useState('');
+  useEffect(() => {
+    getAssetImage(asset).then((url) => setImageUrl(url));
+  }, [asset]);
+
   return (
     <div className={classes.container}>
       <Grid container spacing={4}>
@@ -32,7 +37,7 @@ const AssetPreview: React.FC<Props> = (props) => {
           <div style={{ display: 'flex', flexDirection: 'row' }}>
             <div style={{ width: 40, height: 40 }} />
 
-            <img src={getAssetImage(asset)} alt="" className={classes.img} />
+            <img src={imageUrl} alt="" className={classes.img} />
 
             <div style={{ width: 40, height: 40 }}>
               {onDelete && (
