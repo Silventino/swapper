@@ -6,25 +6,35 @@ import 'reflect-metadata';
 import AssetPreview from 'src/components/AssetPreview';
 import MyAddressInput from 'src/components/generic/MyAddressInput';
 import { colors } from 'src/constants';
+import { showError } from 'src/helpers/helper';
 import WalletContext, { AssetInfo } from 'src/providers/WalletContextProvider';
 import '../../App.css';
 import GridCenter from '../../components/generic/GridCenter';
+import Loader from '../../components/generic/Loader';
 
 function OptoutPage() {
   const classes = useStyles();
   const walletContext = useContext(WalletContext);
   const [address, setAddress] = useState(walletContext.selectedAccount?.address ?? '');
+  const [loading, setLoading] = useState(true);
   const [assets, setAssets] = useState<AssetInfo[]>([]);
 
   useEffect(() => {
-    if (address) {
-      walletContext.getAssetsFromAddress(address, true).then((newAssets) => {
-        newAssets = newAssets.filter((item) => item.id !== 0);
-        setAssets(newAssets);
-      });
+    if (address && address.length === 58) {
+      setLoading(true);
+      walletContext
+        .getAssetsFromAddress(address, true)
+        .then((newAssets) => {
+          newAssets = newAssets?.filter((item) => item.id !== 0);
+          setAssets(newAssets ?? []);
+          setLoading(false);
+        })
+        .catch(() => {
+          showError(new Error('Error while loading assets. Please try again late.'));
+        });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [address, walletContext.getAssetsFromAddress]);
+  }, [address, setLoading]);
 
   return (
     <Grid container className={classes.container}>
@@ -36,11 +46,20 @@ function OptoutPage() {
         <MyAddressInput label={'Address'} fullWidth value={address} onChange={setAddress} />
       </GridCenter>
 
-      {assets.map((item) => (
-        <Grid item xs={12} sm={6} md={4}>
-          <AssetPreview asset={item} />
-        </Grid>
-      ))}
+      {loading && (
+        <GridCenter item xs={12}>
+          <div className={classes.loaderDiv}>
+            <Loader size={80} />
+          </div>
+        </GridCenter>
+      )}
+
+      {!loading &&
+        assets.map((item) => (
+          <Grid item xs={12} sm={6} md={4}>
+            <AssetPreview asset={item} />
+          </Grid>
+        ))}
     </Grid>
   );
 }
@@ -59,13 +78,6 @@ const useStyles = makeStyles<Theme>((theme) =>
       marginTop: 10
       // padding: 15
     },
-    bigtxt: {
-      marginLeft: 10,
-      marginRight: 10,
-      fontSize: 100,
-      color: '#fff',
-      textAlign: 'center'
-    },
     medtxt: {
       marginLeft: 10,
       marginRight: 10,
@@ -74,21 +86,8 @@ const useStyles = makeStyles<Theme>((theme) =>
       color: '#fff',
       textAlign: 'center'
     },
-    smalltxt: {
-      marginLeft: 10,
-      marginRight: 10,
-      fontSize: 20,
-      color: '#fff',
-      textAlign: 'center'
-    },
-    qr: {
-      width: 300,
-      height: 300,
-      margin: 15,
-      borderRadius: 10
-    },
-    btn: {
-      marginTop: 20
+    loaderDiv: {
+      marginTop: 30
     }
   })
 );

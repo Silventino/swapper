@@ -21,7 +21,7 @@ function OptoutPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!walletContext.selectedAccount) {
+    if (!walletContext.selectedAccount?.assets) {
       return;
     }
 

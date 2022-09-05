@@ -27,26 +27,28 @@ export type AccountDetailedInfo = {
   'amount-without-pending-rewards': number;
   'apps-local-state': [];
   'apps-total-schema': { 'num-byte-slice': number; 'num-uint': number };
-  assets: {
-    amount: number;
-    'asset-id': number;
-    creator: string;
-    'is-frozen': boolean;
-    deleted: boolean;
-    'opted-in-at-round': number;
-    decimals: number;
-    'unit-name': string;
-    name: string;
-    verification: {
-      score: number;
-      reputation: string;
-      name: string;
-      title: string;
-      description: string;
-      'unit-name': string;
-      url: string;
-    };
-  }[];
+  assets:
+    | {
+        amount: number;
+        'asset-id': number;
+        creator: string;
+        'is-frozen': boolean;
+        deleted: boolean;
+        'opted-in-at-round': number;
+        decimals: number;
+        'unit-name': string;
+        name: string;
+        verification: {
+          score: number;
+          reputation: string;
+          name: string;
+          title: string;
+          description: string;
+          'unit-name': string;
+          url: string;
+        };
+      }[]
+    | null;
 
   'created-apps': any[];
   'created-assets': any[];
@@ -232,8 +234,9 @@ const WalletContextProvider: React.FC = ({ children }) => {
 
       const assetsNotFound = [];
       let newAssets: AssetInfo[] = [];
-      for (let i = 0; i < newSelectedAccount.assets?.length ?? 0; i++) {
-        const asset = newSelectedAccount.assets[i];
+      const len = newSelectedAccount.assets?.length ?? 0;
+      for (let i = 0; i < len; i++) {
+        const asset = newSelectedAccount.assets![i];
         if (onlyHolding && asset.amount === 0) {
           continue;
         }
