@@ -13,6 +13,7 @@ import Title from './generic/Title';
 import Loader from './generic/Loader';
 import WalletContext, { AssetInfo } from '../providers/WalletContextProvider';
 import assetApi from '../api/assetApi';
+import ImgWithLoader from './ImgWithLoader';
 
 type Props = {
   assetIndex: number;
@@ -72,7 +73,7 @@ const AssetOptIn: React.FC<Props> = (props) => {
         </GridCenter>
 
         <GridCenter item xs={12}>
-          <img src={imageUrl} alt="" className={classes.img} />
+          <ImgWithLoader src={imageUrl} alt="" className={classes.img} />
         </GridCenter>
 
         <Grid item xs={12}>

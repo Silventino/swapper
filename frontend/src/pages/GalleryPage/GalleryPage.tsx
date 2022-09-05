@@ -1,20 +1,46 @@
 import { Grid, Theme, Typography } from '@material-ui/core';
 import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
+import { useContext, useEffect, useState } from 'react';
 import 'reflect-metadata';
+import AssetPreview from 'src/components/AssetPreview';
+import MyAddressInput from 'src/components/generic/MyAddressInput';
 import { colors } from 'src/constants';
+import WalletContext, { AssetInfo } from 'src/providers/WalletContextProvider';
 import '../../App.css';
 import GridCenter from '../../components/generic/GridCenter';
 
 function OptoutPage() {
   const classes = useStyles();
-  // const walletContext = useContext(WalletContext);
+  const walletContext = useContext(WalletContext);
+  const [address, setAddress] = useState(walletContext.selectedAccount?.address ?? '');
+  const [assets, setAssets] = useState<AssetInfo[]>([]);
+
+  useEffect(() => {
+    if (address) {
+      walletContext.getAssetsFromAddress(address, true).then((newAssets) => {
+        newAssets = newAssets.filter((item) => item.id !== 0);
+        setAssets(newAssets);
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [address, walletContext.getAssetsFromAddress]);
 
   return (
     <Grid container className={classes.container}>
-      <GridCenter key={`transaction${0}`} item xs={12} className={classes.swapGrid}>
+      <GridCenter item xs={12} className={classes.swapGrid}>
         <Typography className={classes.medtxt}>Gallery</Typography>
       </GridCenter>
+
+      <GridCenter item xs={12}>
+        <MyAddressInput label={'Address'} fullWidth value={address} onChange={setAddress} />
+      </GridCenter>
+
+      {assets.map((item) => (
+        <Grid item xs={12} sm={6} md={4}>
+          <AssetPreview asset={item} />
+        </Grid>
+      ))}
     </Grid>
   );
 }

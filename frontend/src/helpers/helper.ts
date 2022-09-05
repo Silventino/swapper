@@ -182,7 +182,7 @@ export const getAssetImage = async (asset: AssetInfo | null) => {
     if (assetUrl?.endsWith('.png') || assetUrl?.endsWith('.jpg') || assetUrl?.endsWith('.jpeg')) {
       return assetUrl;
     }
-    if (assetUrl?.startsWith('https://ipfs.io/') || assetUrl?.startsWith('https://gateway.pinata.cloud/ipfs/')) {
+    if (assetUrl?.startsWith('https') && assetUrl?.indexOf('ipfs') !== -1) {
       return assetUrl;
     } else {
       return `https://assets.algoexplorer.io/asset-logo-${asset.id}.image`;

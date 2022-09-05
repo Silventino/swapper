@@ -18,6 +18,7 @@ import OptoutPage from './pages/OptoutPage';
 import CreateSwapPage from './pages/CreateSwapPage';
 import DonatePage from './pages/DonatePage';
 import OptinPage from './pages/OptinPage';
+import GalleryPage from './pages/GalleryPage';
 
 function App() {
   const classes = useStyles();
@@ -52,7 +53,7 @@ function App() {
                 <OptoutPage />
               </Route>
               <Route path="/gallery">
-                <OptoutPage />
+                <GalleryPage />
               </Route>
               <Route path="/optin/:urlIds">
                 <OptinPage />

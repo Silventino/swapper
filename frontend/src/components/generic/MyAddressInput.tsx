@@ -1,7 +1,5 @@
-import {IconButton, Menu, MenuItem, Theme} from '@material-ui/core';
-import createStyles from '@material-ui/styles/createStyles';
-import makeStyles from '@material-ui/styles/makeStyles';
-import React, {useContext} from 'react';
+import { IconButton, Menu, MenuItem } from '@material-ui/core';
+import React, { useContext } from 'react';
 import MyInput from './MyInput';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import WalletContext from '../../providers/WalletContextProvider';
@@ -54,8 +52,7 @@ const MyAddressInput: React.FC<Props> = (props) => {
   );
 };
 
-type StyleProps = {};
-
-const useStyles = makeStyles<Theme, StyleProps>((theme) => createStyles({}));
+// type StyleProps = {};
+// const useStyles = makeStyles<Theme, StyleProps>((theme) => createStyles({}));
 
 export default MyAddressInput;

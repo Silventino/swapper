@@ -1,11 +1,11 @@
-import {Theme} from '@material-ui/core';
+import { Theme } from '@material-ui/core';
 import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
-import {Checkbox, Typography} from '@mui/material';
+import { Checkbox, Typography } from '@mui/material';
 import clsx from 'clsx';
-import React, {useState} from 'react';
-import {ALGO_ASSET, colors, FINITE_ASSET, YLDY_ASSET} from '../constants';
-import {AssetInfo} from '../providers/WalletContextProvider';
+import React, { useState } from 'react';
+import { ALGO_ASSET, colors, YLDY_ASSET } from '../constants';
+import { AssetInfo } from '../providers/WalletContextProvider';
 import MyNumberInput from './generic/MyNumberInput';
 import MySelectBase from './generic/MySelectBase';
 
@@ -23,7 +23,7 @@ type Props = {
 const CheckboxDonation: React.FC<Props> = (props) => {
   const { donationInfo, setDonationInfo } = props;
   const classes = useStyles();
-  const [assets] = useState<AssetInfo[]>([ALGO_ASSET, YLDY_ASSET, FINITE_ASSET]);
+  const [assets] = useState<AssetInfo[]>([ALGO_ASSET, YLDY_ASSET]);
 
   return (
     <div

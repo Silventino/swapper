@@ -7,6 +7,7 @@ import { colors } from 'src/constants';
 import { getAssetImage } from 'src/helpers/helper';
 import { Checkbox } from '@mui/material';
 import { AssetInfo } from '../../providers/WalletContextProvider';
+import ImgWithLoader from 'src/components/ImgWithLoader';
 
 type Props = {
   asset: AssetInfo;
@@ -27,7 +28,7 @@ const AssetOptoutPreview: React.FC<Props> = (props) => {
     <div className={classes.container} onClick={onClick}>
       <Checkbox checked={checked} />
 
-      <img src={imageUrl} alt="" className={classes.img} />
+      <ImgWithLoader src={imageUrl} alt="" className={classes.img} />
 
       <p className={classes.txt}>{`${asset?.id} - ${asset?.assetname}`}</p>
     </div>

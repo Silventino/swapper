@@ -11,6 +11,7 @@ import MyInput from './generic/MyInput';
 // // import RainbowDiv from './generic/RainbowDiv';
 import { AssetInfo } from '../providers/WalletContextProvider';
 import DeleteIcon from '@mui/icons-material/Close';
+import ImgWithLoader from './ImgWithLoader';
 
 type Props = {
   asset: AssetInfo;
@@ -37,7 +38,7 @@ const AssetPreview: React.FC<Props> = (props) => {
           <div style={{ display: 'flex', flexDirection: 'row' }}>
             <div style={{ width: 40, height: 40 }} />
 
-            <img src={imageUrl} alt="" className={classes.img} />
+            <ImgWithLoader src={imageUrl} alt="" className={classes.img} />
 
             <div style={{ width: 40, height: 40 }}>
               {onDelete && (

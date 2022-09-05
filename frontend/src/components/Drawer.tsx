@@ -79,7 +79,6 @@ const MyDrawer: React.FC<Props> = (props) => {
               setOpen(false);
             }}
             className={classes.drawerItem}
-            disabled
           >
             <ListItemIcon>
               <ImageIcon />
