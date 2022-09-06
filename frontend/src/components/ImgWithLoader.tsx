@@ -45,7 +45,7 @@ const useStyles = makeStyles(() =>
       position: 'absolute',
       marginLeft: 'auto',
       marginRight: 'auto',
-      marginTop: 80,
+      marginTop: 30,
       left: 0,
       right: 0,
       textAlign: 'center',
