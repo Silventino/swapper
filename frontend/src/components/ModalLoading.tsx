@@ -1,7 +1,9 @@
-import {Theme, Typography} from '@material-ui/core';
+import { Theme, Typography } from '@material-ui/core';
 import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
-import React from 'react';
+import { Button } from '@mui/material';
+import React, { useContext } from 'react';
+import WalletContext from 'src/providers/WalletContextProvider';
 import DivCenter from './generic/DivCenter';
 import Loader from './generic/Loader';
 import MyModal from './generic/MyModal';
@@ -12,6 +14,7 @@ type Props = {
 
 function ModalLoading(props: Props) {
   const { loading } = props;
+  // const walletContext = useContext(WalletContext);
   const classes = useStyles();
 
   return (
@@ -19,6 +22,9 @@ function ModalLoading(props: Props) {
       <DivCenter className={classes.divButtons}>
         <Typography className={classes.smalltxt}>Loading Assets Info...</Typography>
         <Loader />
+        <Button variant={'contained'} onClick={() => {}}>
+          CANCEL
+        </Button>
       </DivCenter>
     </MyModal>
   );

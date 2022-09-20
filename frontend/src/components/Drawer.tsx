@@ -3,8 +3,6 @@ import createStyles from '@material-ui/styles/createStyles';
 import makeStyles from '@material-ui/styles/makeStyles';
 import SwapIcon from '@mui/icons-material/Cached';
 import ImageIcon from '@mui/icons-material/Image';
-// import HistoryIcon from '@mui/icons-material/History';
-// import FaqIcon from '@mui/icons-material/LiveHelp';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
@@ -101,6 +99,9 @@ const MyDrawer: React.FC<Props> = (props) => {
           </ListItem> */}
         </List>
       </div>
+      <div className={classes.versionDiv}>
+        <p>v1.27</p>
+      </div>
     </Drawer>
   );
 };
@@ -122,7 +123,8 @@ const useStyles = makeStyles<Theme>((theme) =>
     },
     drawerItem: {
       paddingRight: 35
-    }
+    },
+    versionDiv: { height: '100%', display: 'flex', alignItems: 'flex-end', justifyContent: 'center', paddingBottom: 20 }
   })
 );
 

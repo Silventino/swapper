@@ -1,7 +1,7 @@
 import MyAlgoClient, { AlgorandTxn } from '@randlabs/myalgo-connect';
 import algosdk, { TransactionLike } from 'algosdk';
 import axios from 'axios';
-import React, { createContext, useCallback, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useEffect, useRef, useState } from 'react';
 import swapApi from 'src/api/swapApi';
 import { ALGO_ASSET, DONATION_ADDRESS } from 'src/constants';
 import { waitForConfirmation } from 'src/helpers/algoHelper';
@@ -167,6 +167,7 @@ type PropsWalletContext = {
   loadAssetsFromAddress: (address: string) => Promise<void>;
   getAssetsFromAddress: (address: string, onlyHolding: boolean) => Promise<AssetInfo[]>;
   loadAsset: (assetId: string) => Promise<AssetInfo>;
+  stopLoadingAssets: () => void;
   logout: () => void;
 };
 
@@ -202,6 +203,9 @@ const DEFAULT_WALLET_CONTEXT_VALUE = {
   logout: async () => {
     return {} as any;
   },
+  stopLoadingAssets: async () => {
+    return {} as any;
+  },
   loadAssetsFromAddress: async () => {
     return {} as any;
   },
@@ -221,6 +225,7 @@ const WalletContextProvider: React.FC = ({ children }) => {
   const [assetDict, setAssetDict] = useLocalStorage<AssetInfo[]>('assets', []);
 
   const [accountAssets, setAccountAssets] = useState<AssetInfo[]>([]);
+  const forceStopLoading = useRef(false);
   const [assets, setAssets] = useState<AssetInfo[]>([]);
   const [loadingAccount, setLoadingAccount] = useState(false);
 
@@ -229,6 +234,7 @@ const WalletContextProvider: React.FC = ({ children }) => {
 
   const getInfoFromAddress = useCallback(
     async (address: string, onlyHolding: boolean = false): Promise<[x: AccountDetailedInfo, y: AssetInfo[]]> => {
+      forceStopLoading.current = false;
       const res = await axios.get<AccountDetailedInfoRes>(`https://indexer.algoexplorerapi.io/v2/accounts/${address}`);
       const newSelectedAccount = res?.data?.account;
 
@@ -251,7 +257,7 @@ const WalletContextProvider: React.FC = ({ children }) => {
 
       // LOADING ASSETS IN MULTIPLE REQUESTS //////////////////////////////////////////////
       let i = 0;
-      while (i < assetsNotFound.length) {
+      while (i < assetsNotFound.length && !forceStopLoading.current) {
         const partialNotFound = assetsNotFound.slice(i, i + 10);
         const otherAssets = await assetApi.getManyAssetInfo(partialNotFound);
         for (let j = 0; j < otherAssets.length; j++) {
@@ -259,7 +265,6 @@ const WalletContextProvider: React.FC = ({ children }) => {
           assetDict[asset.id] = asset;
         }
         newAssets = newAssets.concat(otherAssets);
-
         i = i + 10;
       }
 
@@ -620,6 +625,10 @@ const WalletContextProvider: React.FC = ({ children }) => {
     setSelectedAccount(null);
   };
 
+  const stopLoadingAssets = useCallback(() => {
+    forceStopLoading.current = true;
+  }, []);
+
   useEffect(() => {
     if (!selectedAccount && accounts?.length) {
       selectAccount(accounts[0].address);
@@ -654,6 +663,7 @@ const WalletContextProvider: React.FC = ({ children }) => {
         loadAssetsFromAddress,
         getAssetsFromAddress,
         loadAsset,
+        stopLoadingAssets,
         logout
       }}
     >
