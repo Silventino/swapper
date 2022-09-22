@@ -234,8 +234,12 @@ const WalletContextProvider: React.FC = ({ children }) => {
 
   const getInfoFromAddress = useCallback(
     async (address: string, onlyHolding: boolean = false): Promise<[x: AccountDetailedInfo, y: AssetInfo[]]> => {
+      console.log('flag 3');
       forceStopLoading.current = false;
-      const res = await axios.get<AccountDetailedInfoRes>(`https://indexer.algoexplorerapi.io/v2/accounts/${address}`);
+      const res = await axios.get<AccountDetailedInfoRes>(`https://indexer.algoexplorerapi.io/v2/accounts/${address}`, {
+        timeout: 15000
+      });
+      console.log('flag 4');
       const newSelectedAccount = res?.data?.account;
 
       const assetsNotFound = [];
@@ -243,6 +247,8 @@ const WalletContextProvider: React.FC = ({ children }) => {
       const len = newSelectedAccount.assets?.length ?? 0;
       for (let i = 0; i < len; i++) {
         const asset = newSelectedAccount.assets![i];
+        console.log('flag 5 - ', i);
+        console.log('flag 6 - ', asset);
         if (onlyHolding && asset.amount === 0) {
           continue;
         }
@@ -254,6 +260,7 @@ const WalletContextProvider: React.FC = ({ children }) => {
           assetsNotFound.push(asset['asset-id']);
         }
       }
+      console.log('flag 7');
 
       // LOADING ASSETS IN MULTIPLE REQUESTS //////////////////////////////////////////////
       let i = 0;
@@ -268,6 +275,8 @@ const WalletContextProvider: React.FC = ({ children }) => {
         i = i + 10;
       }
 
+      console.log('flag 8');
+
       const partialNotFound = assetsNotFound.slice(i, i + 10);
       if (partialNotFound.length) {
         const otherAssets = await assetApi.getManyAssetInfo(partialNotFound);
@@ -277,6 +286,9 @@ const WalletContextProvider: React.FC = ({ children }) => {
         }
         newAssets = newAssets.concat(otherAssets);
       }
+
+      console.log('flag 9');
+
       ///////////////////////////////////////////////////////////////////////////////////////
 
       newAssets.push(ALGO_ASSET);
@@ -289,15 +301,19 @@ const WalletContextProvider: React.FC = ({ children }) => {
 
   const selectAccount = useCallback(
     async (address: string) => {
+      console.log('flag 1');
       setLoadingAccount(true);
       try {
+        console.log('flag 2');
         const [newSelectedAccount, newAssets] = await getInfoFromAddress(address);
+
+        console.log('flag 10');
 
         setAssets([...newAssets]);
         setAccountAssets([...newAssets]);
         setSelectedAccount(newSelectedAccount);
       } catch (err) {
-        console.log('err', err);
+        console.log('flag err', err);
         throw err;
       }
       setLoadingAccount(false);
@@ -636,7 +652,7 @@ const WalletContextProvider: React.FC = ({ children }) => {
   }, [selectedAccount, accounts, selectAccount]);
 
   useEffect(() => {
-    if (!assets?.length && selectedAccount) {
+    if (!assets?.length && selectedAccount?.assets?.length) {
       selectAccount(selectedAccount.address);
     }
   }, [assets, selectedAccount, selectAccount]);
