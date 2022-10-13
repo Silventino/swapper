@@ -4,7 +4,7 @@ from pathlib import Path
 import subprocess
 
 buildPath = "../swapper-build"
-novoBuildPath = input("Qual o caminho para salvar a build? Padrão: '../swapper-build'")
+novoBuildPath = input("Where do you want to save the build? Default: '../swapper-build'")
 if (novoBuildPath != ''):
   buildPath = novoBuildPath
 
@@ -20,8 +20,8 @@ if(os.path.isdir(buildPath + '/backend')):
 # if(os.path.isdir(buildPath + '/certs')):
 #   shutil.rmtree(buildPath + '/certs')
 
-print("Esse processo pode demorar alguns minutos.")
-print("Buildando backend...")
+print("This process may take a while...")
+print("Building backend...")
 # if(os.path.isdir('./backend/src/shared')):
 #   shutil.rmtree('./backend/src/shared')
 # os.mkdir('./backend/src/shared')
@@ -45,7 +45,7 @@ with open( buildPath + '/backend/ormconfig.js', "w", encoding="utf_8") as f:
 
 
 
-print("Buildando frontend...")
+print("Building frontend...")
 subprocess.check_output('cmd /c "yarn --cwd ./frontend/ build"', shell=True)
 shutil.copytree('./frontend/build',  buildPath + '/frontend')
 # shutil.copyfile('./files-build/frontend/package.json',  buildPath + '/frontend/package.json')
@@ -56,12 +56,11 @@ shutil.copyfile('./build_helper/serve.js', buildPath + '/frontend/serve.js')
 #   os.mkdir( buildPath + '/uploads')
 
 
-print("Finalizando build...")
 # shutil.copytree('./files-build/certs', buildPath + '/certs')
 # subprocess.check_output('cmd /c "git stash save --keep-index --include-untracked"', shell=True)
 # subprocess.check_output('cmd /c "git stash drop"', shell=True)
 
-print('Finalizado. Lembre-se de mudar os dados no arquivo .env')
+print('Done! When deploying, remember to change the data in the .env file.')
 
 
 # print(Path('C:/Git').relative_to('C:/Coisas'))
