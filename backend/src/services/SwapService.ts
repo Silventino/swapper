@@ -1,22 +1,19 @@
-import algosdk, { Account, TransactionLike } from 'algosdk';
+import algosdk from 'algosdk';
 import AlgodClient from 'algosdk/dist/types/src/client/v2/algod/algod';
 import { EntityManager } from 'typeorm';
-import { ALGO_ASSET, DONATION_ADDRESS, STATUS_COMPLETED, STATUS_DEAD, treatTransaction } from '../constants';
+import { STATUS_COMPLETED, STATUS_DEAD } from '../constants';
 import Swap from '../db/entity/Swap';
 import Transaction from '../db/entity/Transaction';
 import HttpError from '../etc/HttpError';
 import BaseTransaction from '../types/BaseTransaction';
-import CompleteTransaction from '../types/CompleteTransaction';
-import SwapData from '../types/SwapData';
 import TransactionReq from '../types/TransactionReq';
-import AssetService from './AssetService';
 
 export default class TransactionService {
   EM: EntityManager;
   connectedWallet: string;
 
   algodClient: AlgodClient;
-  swapperBank: Account;
+  // swapperBank: Account;
 
   constructor(EM: EntityManager, connectedWallet: string) {
     this.EM = EM;
@@ -28,8 +25,8 @@ export default class TransactionService {
 
     this.algodClient = new algosdk.Algodv2({ 'X-API-Key': token }, server, port);
 
-    const mnemonic = process.env.MNEMONIC ?? '';
-    this.swapperBank = algosdk.mnemonicToSecretKey(mnemonic);
+    // const mnemonic = process.env.MNEMONIC ?? '';
+    // this.swapperBank = algosdk.mnemonicToSecretKey(mnemonic);
   }
 
   async getSwap(parent: string) {
@@ -86,80 +83,80 @@ export default class TransactionService {
     return txn;
   }
 
-  async createSwap(data: SwapData) {
-    try {
-      const { transactions, creatorAddress, rounds, donation } = data;
-      const baseTnx = await this.getBaseTransaction();
-      baseTnx.lastRound = baseTnx.firstRound + rounds;
+  // async createSwap(data: SwapData) {
+  //   try {
+  //     const { transactions, creatorAddress, rounds, donation } = data;
+  //     const baseTnx = await this.getBaseTransaction();
+  //     baseTnx.lastRound = baseTnx.firstRound + rounds;
 
-      const assetService = new AssetService();
+  //     const assetService = new AssetService();
 
-      const newTransactions: CompleteTransaction[] = [];
-      for (let i = 0; i < transactions.length; i++) {
-        const transaction = transactions[i];
+  //     const newTransactions: CompleteTransaction[] = [];
+  //     for (let i = 0; i < transactions.length; i++) {
+  //       const transaction = transactions[i];
 
-        let assetInfo;
-        if (!transaction.assetIndex) {
-          assetInfo = ALGO_ASSET;
-        } else {
-          assetInfo = await assetService.getAssetInfo(transaction.assetIndex);
-        }
+  //       let assetInfo;
+  //       if (!transaction.assetIndex) {
+  //         assetInfo = ALGO_ASSET;
+  //       } else {
+  //         assetInfo = await assetService.getAssetInfo(transaction.assetIndex);
+  //       }
 
-        if (!assetInfo) {
-          throw new Error('Asset not found.');
-        }
+  //       if (!assetInfo) {
+  //         throw new Error('Asset not found.');
+  //       }
 
-        const txn: CompleteTransaction = {
-          ...baseTnx,
-          fee: 1000,
-          flatFee: true,
-          type: transaction.assetIndex === ALGO_ASSET.id ? 'pay' : 'axfer',
-          assetIndex: transaction.assetIndex === ALGO_ASSET.id ? undefined : transaction.assetIndex,
-          from: transaction.from,
-          to: transaction.to,
-          amount: transaction.amount * Math.pow(10, assetInfo.decimals)
-        };
-        newTransactions.push(txn);
-      }
+  //       const txn: CompleteTransaction = {
+  //         ...baseTnx,
+  //         fee: 1000,
+  //         flatFee: true,
+  //         type: transaction.assetIndex === ALGO_ASSET.id ? 'pay' : 'axfer',
+  //         assetIndex: transaction.assetIndex === ALGO_ASSET.id ? undefined : transaction.assetIndex,
+  //         from: transaction.from,
+  //         to: transaction.to,
+  //         amount: transaction.amount * Math.pow(10, assetInfo.decimals)
+  //       };
+  //       newTransactions.push(txn);
+  //     }
 
-      // Group transactions
-      let txgroup = algosdk.assignGroupID(newTransactions as TransactionLike[]);
+  //     // Group transactions
+  //     let txgroup = algosdk.assignGroupID(newTransactions as TransactionLike[]);
 
-      const groupID = txgroup[0].group;
-      if (!groupID) {
-        throw new Error('Error while creating the group ID.');
-      }
+  //     const groupID = txgroup[0].group;
+  //     if (!groupID) {
+  //       throw new Error('Error while creating the group ID.');
+  //     }
 
-      for (let i = 0; i < newTransactions.length; i++) {
-        newTransactions[i].group = groupID;
-      }
+  //     for (let i = 0; i < newTransactions.length; i++) {
+  //       newTransactions[i].group = groupID;
+  //     }
 
-      const txn = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
-        from: creatorAddress,
-        to: DONATION_ADDRESS,
-        amount: 1,
-        note: new Uint8Array(Buffer.from(JSON.stringify(groupID))),
-        suggestedParams: {
-          fee: 10,
-          firstRound: baseTnx.firstRound,
-          lastRound: baseTnx.lastRound,
-          genesisHash: baseTnx.genesisHash,
-          genesisID: baseTnx.genesisID
-        }
-      });
+  //     const txn = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
+  //       from: creatorAddress,
+  //       to: DONATION_ADDRESS,
+  //       amount: 1,
+  //       note: new Uint8Array(Buffer.from(JSON.stringify(groupID))),
+  //       suggestedParams: {
+  //         fee: 10,
+  //         firstRound: baseTnx.firstRound,
+  //         lastRound: baseTnx.lastRound,
+  //         genesisHash: baseTnx.genesisHash,
+  //         genesisID: baseTnx.genesisID
+  //       }
+  //     });
 
-      // sign the transaction
-      const signedTxn = txn.signTxn(this.swapperBank.sk);
+  //     // sign the transaction
+  //     // const signedTxn = txn.signTxn(this.swapperBank.sk);
 
-      const { txId } = await this.algodClient.sendRawTransaction(signedTxn).do();
+  //     const { txId } = await this.algodClient.sendRawTransaction(signedTxn).do();
 
-      const treatedTransactions = newTransactions.map((t) => treatTransaction(t));
-      await this.insertSwap(treatedTransactions, txId);
+  //     const treatedTransactions = newTransactions.map((t) => treatTransaction(t));
+  //     await this.insertSwap(treatedTransactions, txId);
 
-      return `https://app.swapper.tools/tx/${txId}`;
-    } catch (err) {
-      console.log('err', err);
-      throw err;
-    }
-  }
+  //     return `https://app.swapper.tools/tx/${txId}`;
+  //   } catch (err) {
+  //     console.log('err', err);
+  //     throw err;
+  //   }
+  // }
 }
